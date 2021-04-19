@@ -1,0 +1,29 @@
+{
+    "name":        "georgemesss/netitworks",
+    "type":        "library",
+    "description": "API client class for use with Ubiquiti's UniFi controller",
+    "keywords": [
+        "user",
+        "ubiquiti",
+        "unifi",
+        "controller",
+        "radius",
+        "manager"
+    ],
+    "homepage":    "https://github.com/georgemesss/netitworks",
+    "license":     "",
+    "authors": [
+        {
+            "name":     "George Mess",
+            "email":    "4onwb@protonmail.com"
+        }
+    ],
+    "require": {
+        "art-of-wifi/unifi-api-client": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "NetItWorks\\": "src/"
+        }
+    }
+}

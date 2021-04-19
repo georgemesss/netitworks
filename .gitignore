@@ -1,0 +1,5 @@
+
+# Ignora cartelle generate vendor e composer generate da tool 'composer' 
+/vendor/
+/sb_admin_template/
+/node_modules/

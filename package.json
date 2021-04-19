@@ -1,0 +1,9 @@
+{
+  "name": "netitworks",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "startbootstrap-sb-admin-2": "^4.1.3"
+  }
+}
