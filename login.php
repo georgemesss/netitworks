@@ -1,24 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>NetItWorks - Login</title>
-
-    <!-- Custom fonts for this template-->
-    <link href="node_modules/startbootstrap-sb-admin-2/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
-    <!-- Custom styles for this template-->
-    <link href="node_modules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css" rel="stylesheet">
-
-</head>
+<?php include "./head.html" ?>
 
 <body class="d-flex flex-column min-vh-100 bg-gradient-dark">
 
@@ -29,7 +12,7 @@
 
             <div class="col-xl-10 col-lg-12 col-md-9">
 
-            <br>
+                <br>
                 <h1 class="text-white text-center align-middle">Welcome to NetItWorks</h1>
 
                 <div class="card o-hidden border-0 shadow-lg my-5">
@@ -61,10 +44,7 @@
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                    </div>
-                                    <div class="text-center">
-                                        <a class="small" href="register.html">Create an Account!</a>
+                                        <a class="small" href="profile_reset_password.php">Forgot Password?</a>
                                     </div>
                                 </div>
                             </div>
@@ -82,25 +62,17 @@
     <footer class="py-4 mt-auto bg-light">
         <div class="container-fluid">
             <div class="d-flex justify-content-between small">
-                <div class="text-muted">LicenceHERE - NetItWorks 2021</div>
+                <div class="text-muted">Copyright (©) 2021 GeorgeMesss - GNU General Public License v3.0 or later</div>
                 <div>
-                    <a href="#">Privacy Policy</a>
+                    <a href="privacy_policy.php">Privacy Policy</a>
                     ·
-                    <a href="#">Terms &amp; Conditions</a>
+                    <a href="terms_conditions.php">Terms &amp; Conditions</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="node_modules/startbootstrap-sb-admin-2/vendor/jquery/jquery.min.js"></script>
-    <script src="node_modules/startbootstrap-sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="node_modules/startbootstrap-sb-admin-2/vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="node_modules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
+    <?php include "./scripts.html" ?>
 
 </body>
 
