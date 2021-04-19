@@ -32,6 +32,7 @@ Execute the following `git` command from the shell in your webserver desired dir
 
 ```sh
 git clone https://github.com/georgemesss/netitworks.git
+cd netitworks
 ```
 
 When git is done cloning, install Composer.
