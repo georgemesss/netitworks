@@ -20,38 +20,14 @@
                         <div class="col-md-6"><label class="labels">Nickname</label><input type="text" class="form-control" placeholder="Nickname" value=""></div>
                     </div>
                     <div class="row mt-3">
-                        <div class="col-md-12"><label class="labels">Phone Number</label><input type="text" class="form-control" placeholder="Phone Number" value=""></div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-md-12"><label class="labels">Email</label><input type="email" class="form-control" placeholder="Email" value=""></div>
+                        <div class="col-md-6"><label class="labels">Phone Number</label><input type="text" class="form-control" placeholder="Phone Number" value=""></div>
+                        <div class="col-md-6"><label class="labels">Email</label><input type="email" class="form-control" placeholder="Email" value=""></div>
                     </div>
                     <br>
                     <div class="row mt-2">
                         <div class="custom-control custom-switch">
-                            <label class="custom-control-label" for="accountStatusSwitch">Disable Account</label>
                             <input type="checkbox" class="custom-control-input" id="accountStatusSwitch">
-                        </div>
-                    </div>
-                    <div class="mt-5 text-center"><button class="btn btn-primary profile-button" data-toggle="modal" data-target="#profileEditModal" type="button">Save Details</button></div>
-                </div>
-            </div>
-
-            <!-- Modal Profile Edit -->
-            <div class="modal fade" id="profileEditModal" tabindex="-1" role="dialog" aria-labelledby="profileEditModal" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="profileEditModalLabel">Hey! Are you sure?</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            You are changing:
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-success">Save changes</button>
+                            <label class="custom-control-label" for="accountStatusSwitch">Disable Account</label>
                         </div>
                     </div>
                 </div>
@@ -63,46 +39,20 @@
                         <h4 class="text-right">Users Password Settings</h4>
                     </div>
                     <div class="row mt-2">
-                        <div class="col-md-6"><label class="labels">Old Password</label><input type="password" class="form-control" placeholder="Old Password" value=""></div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-md-12"><label class="labels">New Password</label><input type="password" class="form-control" placeholder="New Password" value=""></div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-md-12"><label class="labels">Retype New Password</label><input type="password" class="form-control" placeholder="Retype New Password" value=""></div>
-                    </div>
-                    <div class="mt-5 text-center"><button class="btn btn-primary profile-button" data-toggle="modal" data-target="#profileEditPassword" type="button">Save Details</button></div>
-                </div>
-            </div>
-
-            <!-- Modal Password Edit -->
-            <div class="modal fade" id="profileEditPassword" tabindex="-1" role="dialog" aria-labelledby="profileEditPassword" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="profileEditPasswordLabel">Hey! Are you sure you want to change the users PASSWORD ? </h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-danger">Change Password</button>
-                        </div>
+                        <div class="col-md-6"><label class="labels">New Password</label><input type="password" class="form-control" placeholder="New Password" value=""></div>
+                        <div class="col-md-6"><label class="labels">Retype New Password</label><input type="password" class="form-control" placeholder="Retype New Password" value=""></div>
                     </div>
                 </div>
             </div>
-
         </div>
-
         <div class="row">
             <div class="col-md-6 border-right">
                 <h4 class="text-center">Physical Address Limitation</h4>
                 <br>
                 <div class="row">
                     <div class="custom-control custom-switch">
-                        <label class="custom-control-label" for="hwaddressSwitch">Hardware Address Limitation</label>
                         <input type="checkbox" class="custom-control-input" id="hwaddressSwitch">
+                        <label class="custom-control-label" for="hwaddressSwitch">Hardware Address Limitation</label>
                     </div>
                 </div>
                 <br>
@@ -132,15 +82,19 @@
                     </table>
                 </div>
             </div>
-            <div class="col-md-6 border-right">
-                <h4 class="text-center">Group Ownership</h4>
-                <div class="row">
-                    <select class="custom-select" multiple>
-                        <option value="1">admins</option>
-                        <option value="2">guests</option>
-                    </select>
+            <div class="col-md-4 mx-auto">
+                <div class="p-3 py-5">
+                    <h4 class="text-center">Group Ownership</h4>
+                    <div class="row">
+                        <select class="custom-select" multiple>
+                            <option value="1">admins</option>
+                            <option value="2">users</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="mt-5 text-center"><button class="btn btn-primary profile-button" data-toggle="modal" data-target="#profileEditModal" type="button">Save Details</button></div>
+                <div class="col-12 d-flex align-items-center">
+                    <button class="btn btn-success" role="button">Create New User</button>
+                </div>
             </div>
         </div>
     </div>

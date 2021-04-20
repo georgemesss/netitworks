@@ -14,3 +14,15 @@
 <!-- Page level custom scripts -->
 <script src="node_modules/startbootstrap-sb-admin-2/js/demo/chart-area-demo.js"></script>
 <script src="node_modules/startbootstrap-sb-admin-2/js/demo/chart-pie-demo.js"></script>
+
+<!-- Datatables scripts -->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#users-list-datatable').DataTable();
+        $('.dataTables_length').addClass('bs-select');
+    });
+</script>

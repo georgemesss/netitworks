@@ -69,23 +69,22 @@
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            Guest Management
+            Self-Registered Management
         </div>
 
-        <!-- Nav Item - Guests Collapse Menu -->
+        <!-- Nav Item - Self-Registered Users Collapse Menu -->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGuestManagement"
                 aria-expanded="true" aria-controls="collapseGuestManagement">
                 <i class="fas fa-fw fa-cog"></i>
-                <span>Guests</span>
+                <span>Self-Registered Users</span>
             </a>
             <div id="collapseGuestManagement" class="collapse" aria-labelledby="collapseGuestManagement"
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">User Management:</h6>
+                    <h6 class="collapse-header">Self-Registered Users:</h6>
+                    <a class="collapse-item" href="guest_configure_auto_registration.php">Configure Registration</a>
                     <a class="collapse-item" href="guest_pending_approval.php">Pending Approval</a>
-                    <a class="collapse-item" href="guests.php">List Guests</a>
-                    <a class="collapse-item" href="guest_create.php">Create Guest</a>
                 </div>
             </div>
         </li>
@@ -100,6 +99,18 @@
 
         <!-- Nav Item - Devices Collapse Menu -->
         <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseControllerManagement"
+                aria-expanded="true" aria-controls="collapseControllerManagement">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Controller</span>
+            </a>
+            <div id="collapseControllerManagement" class="collapse" aria-labelledby="collapseControllerManagementLabel"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Controller Management:</h6>
+                    <a class="collapse-item" href="#">Configure Controller</a>
+                </div>
+            </div>
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDeviceManagement"
                 aria-expanded="true" aria-controls="collapseDeviceManagement">
                 <i class="fas fa-fw fa-cog"></i>
@@ -112,18 +123,6 @@
                     <a class="collapse-item" href="#">Configure Router</a>
                     <a class="collapse-item" href="#">Configure Switch</a>
                     <a class="collapse-item" href="#">Configure WiFi</a>
-                </div>
-            </div>
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseControllerManagement"
-                aria-expanded="true" aria-controls="collapseControllerManagement">
-                <i class="fas fa-fw fa-cog"></i>
-                <span>Controller</span>
-            </a>
-            <div id="collapseControllerManagement" class="collapse" aria-labelledby="collapseControllerManagementLabel"
-                data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Controller Management:</h6>
-                    <a class="collapse-item" href="#">Configure Controller</a>
                 </div>
             </div>
         </li>

@@ -60,8 +60,8 @@
                     <br>
                     <div class="row mt-2">
                         <div class="custom-control custom-switch">
-                            <label class="custom-control-label" for="accountStatusSwitch">Disable Account</label>
                             <input type="checkbox" class="custom-control-input" id="accountStatusSwitch">
+                            <label class="custom-control-label" for="accountStatusSwitch">Disable Account</label>
                         </div>
                     </div>
                     <div class="row">
@@ -162,8 +162,8 @@
                 <br>
                 <div class="row">
                     <div class="custom-control custom-switch">
-                        <label class="custom-control-label" for="hwaddressSwitch">Hardware Address Limitation</label>
                         <input type="checkbox" class="custom-control-input" id="hwaddressSwitch">
+                        <label class="custom-control-label" for="hwaddressSwitch">Hardware Address Limitation</label>
                     </div>
                 </div>
                 <br>
