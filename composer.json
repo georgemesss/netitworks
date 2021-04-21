@@ -23,7 +23,8 @@
     },
     "autoload": {
         "psr-4": {
-            "NetItWorks\\": "src/"
+            "NetItWorks\\": "src/",
+            "UniFi_API\\" : "vendor/art-of-wifi/unifi-api-client/src/"
         }
     }
 }

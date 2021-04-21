@@ -24,11 +24,15 @@
                         <div class="col-md-12"><label class="labels">Description</label><input type="text" class="form-control" placeholder="Description" value=""></div>
                     </div>
                     <div class="row mt-3">
-                        <div class="col-md-12"><label class="labels">VLAN ID</label><input type="email" class="form-control" placeholder="VLAN ID" value=""></div>
+                        <div class="col-md-12"><label class="labels">VLAN ID</label><input type="number" class="form-control" placeholder="VLAN ID" value=""></div>
                     </div>
                     <div class="row mt-3">
-                        <div class="col-md-6"><label class="labels">IP Range Start</label><input type="text" class="form-control" placeholder="192.168.1.2" value=""></div>
-                        <div class="col-md-6"><label class="labels">IP Range End</label><input type="text" class="form-control" placeholder="192.168.1.254" value=""></div>
+                        <div class="col-md-6"><label class="labels">IP Range Start</label>
+                            <input type="text" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="192.168.1.2">
+                        </div>
+                        <div class="col-md-6"><label class="labels">IP Range End</label>
+                            <input type="text" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="192.168.1.2">
+                        </div>
                     </div>
                     <br>
                     <div class="row mt-2">
@@ -67,14 +71,16 @@
                 <h4 class="text-center">Physical Address Limitation</h4>
                 <br>
                 <div class="custom-control custom-switch">
-                    <label class="custom-control-label" for="hwaddressSwitch">Hardware Group Address Limitation</label>
                     <input type="checkbox" class="custom-control-input" id="hwaddressSwitch">
+                    <label class="custom-control-label" for="hwaddressSwitch">Hardware Group Address Limitation</label>
                 </div>
                 <br>
                 <div class="row">
                     <div class="col-md-6">
-                        <label class="labels">MAC Address</label><input type="text" class="form-control" placeholder="MAC Address" value="">
-                        <label class="labels">IP Address [Optional]</label><input type="text" class="form-control" placeholder="MAC Address" value="">
+                        <label class="labels">MAC Address</label>
+                        <input type="text" class="form-control" minlength="7" maxlength="15" size="15" pattern="^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$" placeholder="00:1B:44:11:3A:B7">
+                        <label class="labels">IP Address [Optional]</label>
+                        <input type="text" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="192.168.1.2">
                     </div>
                     <div class="col-md-6">
                         <div class="mt-5 text-center"><button type="button" class="btn btn-primary">Add Device</button></div>

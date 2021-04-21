@@ -169,8 +169,10 @@
                 <br>
                 <div class="row">
                     <div class="col-md-6">
-                        <label class="labels">MAC Address</label><input type="text" class="form-control" placeholder="MAC Address" value="">
-                        <label class="labels">IP Address [Optional]</label><input type="text" class="form-control" placeholder="MAC Address" value="">
+                        <label class="labels">MAC Address</label>
+                        <input type="text" class="form-control" minlength="7" maxlength="15" size="15" pattern="^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$" placeholder="00:1B:44:11:3A:B7">
+                        <label class="labels">IP Address [Optional]</label>
+                        <input type="text" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="192.168.1.2">
                     </div>
                     <div class="col-md-6">
                         <div class="mt-5 text-center"><button type="button" class="btn btn-primary">Add Device</button></div>
