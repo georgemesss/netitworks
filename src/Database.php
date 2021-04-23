@@ -2,23 +2,19 @@
 
 namespace NetItWorks;
 
-use UniFi_API\Client;
-
 /**
  * Controller Class
  *
  */
-class Controller
+class Database
 {
 
-    public $name; 
-    public $description;
     public $ip;
     public $port; 
     public $username;
     public $password;
-    public $clientAPI;
     public $disabled;
+    private $connection;
 
     /**
      * Construct an instance of the Controller class
@@ -34,33 +30,27 @@ class Controller
      *                            recommended for production environments to prevent potential MitM attacks, default value (false)
      *                            disables validation of the controller certificate
      */
-    public function __construct($name, $description, $ip, $port, $username, $password, $disabled)
+    public function __construct($ip, $port, $username, $password, $disabled)
     {
-        $this->name = $name;
-        $this->description = $description;
         $this->ip = $ip;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;    
         $this->disabled=$disabled;
-        $this->clientAPI = new Client($this->username, $this->password, ("https://".$this->ip.":".$this->port), null, null, null);
-        $this->login();
+        $this->connection = mysqli_connect('p:'.$ip, $username, $password, null, null, null); //Up to now we won't specify the port (Doesn't work)
     }
 
-    public function login(){
-        $this->clientAPI->login();
-    }
     
-    public function getNetworks(){
-        return json_decode(json_encode($this->clientAPI->list_networkconf()), true);
-        
-    }
-
-    public function createNetwork($configuration){
-        return $this->clientAPI->create_network($configuration);
-    }
-
-    public function getConnectionStatus(){
-        return $this->clientAPI->stat_status();
-    }
+	/**
+	 *
+	 * Returns Connection ID of Database
+	 *
+	 * @return string $connection ID_Connessione database or false
+	 *
+	 */
+	public function getConnectionStatus()
+	{
+		return $this->connection;
+		
+	}
 }

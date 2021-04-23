@@ -83,8 +83,8 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Self-Registered Users:</h6>
-                    <a class="collapse-item" href="guest_configure_auto_registration.php">Configure Registration</a>
-                    <a class="collapse-item" href="guest_pending_approval.php">Pending Approval</a>
+                    <a class="collapse-item" href="self_registered_configure.php">Configure Registration</a>
+                    <a class="collapse-item" href="self_registered_pending_approval.php">Pending Approval</a>
                 </div>
             </div>
         </li>
@@ -94,11 +94,66 @@
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            Device Management
+            UniFi Management
+        </div>
+
+        <!-- Nav Item - Manage Networks Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseNetworkManagement"
+                aria-expanded="true" aria-controls="collapseNetworkManagement">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Manage Networks</span>
+            </a>
+            <div id="collapseNetworkManagement" class="collapse" aria-labelledby="collapseNetworkManagementLabel"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Manage Networks:</h6>
+                    <a class="collapse-item" href="networks.php">List Networks</a>
+                    <a class="collapse-item" href="network_create_wan.php">Create WAN</a>
+                    <a class="collapse-item" href="network_create_default_lan.php">Create Default LAN</a>
+                    <a class="collapse-item" href="network_create_specific_lan.php">Create Specific LAN</a>
+                    <a class="collapse-item" href="network_create_vpn.php">Create VPN</a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Nav Item - Manage Clients Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseClientManagement"
+                aria-expanded="true" aria-controls="collapseClientManagement">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Clients</span>
+            </a>
+            <div id="collapseClientManagement" class="collapse" aria-labelledby="collapseClientManagementLabel"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Manage Clients:</h6>
+                    <a class="collapse-item" href="#">List Clients</a>
+                </div>
+            </div>
+        </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            NetItWorks Management
         </div>
 
         <!-- Nav Item - Devices Collapse Menu -->
         <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatabaseManagement"
+                aria-expanded="true" aria-controls="collapseDatabaseManagement">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Database</span>
+            </a>
+            <div id="collapseDatabaseManagement" class="collapse" aria-labelledby="collapseDatabaseManagementLabel"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Database Management:</h6>
+                    <a class="collapse-item" href="database_configure.php">Configure Database</a>
+                </div>
+            </div>
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseControllerManagement"
                 aria-expanded="true" aria-controls="collapseControllerManagement">
                 <i class="fas fa-fw fa-cog"></i>
@@ -109,20 +164,6 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Controller Management:</h6>
                     <a class="collapse-item" href="controller_configure.php">Configure Controller</a>
-                </div>
-            </div>
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDeviceManagement"
-                aria-expanded="true" aria-controls="collapseDeviceManagement">
-                <i class="fas fa-fw fa-cog"></i>
-                <span>Devices</span>
-            </a>
-            <div id="collapseDeviceManagement" class="collapse" aria-labelledby="collapseDeviceManagementLabel"
-                data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Device Management:</h6>
-                    <a class="collapse-item" href="#">Configure Router</a>
-                    <a class="collapse-item" href="#">Configure Switch</a>
-                    <a class="collapse-item" href="#">Configure WiFi</a>
                 </div>
             </div>
         </li>
