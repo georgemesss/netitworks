@@ -38,21 +38,8 @@ if (isset($_POST['save_controller_details'])) {
     ?>
     ";
 
-    /*$newConfiguration .= 
-    '$controller' . " = new Controller("
-        . '$controller_conf[' . "name" . "'],"
-        . '$controller_conf[' . "description" . "'],"
-        . '$controller_conf[' . "ip" . "'],"
-        . '$controller_conf[' . "port" . "'],"        
-        . '$controller_conf[' . "username" . "'],"
-        . '$controller_conf[' . "password" . "'],"
-        . '$controller_conf[' . "disabled" . "']"    
-    . ');'
-    . ' ?>';*/
-
     file_put_contents("config/controller_config.php", $newConfiguration);
     header("Refresh:0");
-
 } else if (isset($_POST['reset_controller_details'])) {
 
     file_put_contents("config/controller_config.php", file_get_contents('config/controller_config_default.php'));
@@ -253,7 +240,5 @@ include "./head.html";
     </form>
 
     <?php include "./footer.html" ?>
-
-    <?php include "./scripts.html" ?>
 
 </body>

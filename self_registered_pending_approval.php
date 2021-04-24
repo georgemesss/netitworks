@@ -72,28 +72,32 @@
                             </thead>
                             <tbody>
                                 <tr role="row" class="odd">
-                                    <td class="sorting_1">username</td>
-                                    <td>
-                                        <span class="badge badge-danger">Pending Approval</span>
-                                    </td>
-                                    <td>No</td>
-                                    <td>admins</td>
-                                    <td>
-                                        <a class="btn btn-block btn-primary glow" href="user_edit.php">
-                                            <!-- Later to be transformed to button -->
-                                            <i class="fas fa-user-edit"></i>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-block btn-danger glow" type="button">
-                                            <i class="fas fa-user-times"></i>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-block btn-success glow" type="button">
-                                            <i class="fas fa-user-check"></i>
-                                        </button>
-                                    </td>
+                                    <form method="get" action="self_registered_pending_approval.php">
+                                        <td class="sorting_1">
+                                            <input type='hidden' name='username' value='username' />
+                                            username
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-danger">Pending Approval</span>
+                                        </td>
+                                        <td name="nomeVar">No</td>
+                                        <td>admins</td>
+                                        <td>
+                                            <button class="btn btn-block btn-primary glow" name="action" value="edit" type="submit">
+                                                <!-- Later to be transformed to button -->
+                                                <i class="fas fa-user-edit"></i>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-block btn-danger glow" name="action" value="deny" type="submit">
+                                                <i class="fas fa-user-times"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-block btn-success glow" name="action" value="approve" type="submit">
+                                                <i class="fas fa-user-check"></i>
+                                            </button>
+                                        </td>
+                                    </form>
                                 </tr>
                             </tbody>
                         </table>
@@ -110,7 +114,5 @@
     <!-- /.container-fluid -->
 
     <?php include "./footer.html" ?>
-
-    <?php include "./scripts.html" ?>
 
 </body>

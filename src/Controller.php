@@ -63,4 +63,32 @@ class Controller
     public function getConnectionStatus(){
         return $this->clientAPI->stat_status();
     }
+
+    public function getLastResults(){
+        return json_decode($this->clientAPI->get_last_results_raw());
+    }
+
+    public function deleteNetwork($netName){
+        return $this->clientAPI->delete_network($this->getNetworkId($netName));
+    }
+
+    public function getNetworkId($netName){
+        $netArrays = $this->getNetworks();
+        
+        foreach($netArrays as $network){
+            if($network['name'] === $netName)
+                return $network['_id'];
+        }
+
+    }
+
+    public function getControllerErrors(){
+        $errors = ($this->getLastResults());
+        $arrayErrors = json_decode(json_encode($errors), true);
+        $page_output_return_error =  explode(".", $arrayErrors['meta']['msg'])[2] . "'";
+        if (isset($arrayError['meta']['validationError']['field'])) {
+            $page_output_return_error .= " on '";
+            $page_output_return_error .= $arrayError['meta']['validationError']['field'] . "'";
+        }
+    }
 }

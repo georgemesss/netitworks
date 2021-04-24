@@ -10,7 +10,7 @@
     <div class="container-fluid mt-5 mb-5">
         <div class="row">
             <div class="col-md-3 border-right">
-                <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="img-profile rounded-circle" src="node_modules/startbootstrap-sb-admin-2/img/undraw_profile.svg"><span class="font-weight-bold">Username</span><span class="text-black-50">email@email.com</span><span> </span></div>
+                <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="img-profile rounded-circle" src="/netitworks/media/tux.svg"><span class="font-weight-bold">Username</span><span class="text-black-50">email@email.com</span><span> </span></div>
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" id="customFile">
                     <label class="custom-file-label" for="customFile">Edit Profile Image</label>
@@ -129,7 +129,5 @@
     </div>
 
     <?php include "./footer.html" ?>
-
-    <?php include "./scripts.html" ?>
 
 </body>

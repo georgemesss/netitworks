@@ -107,6 +107,4 @@ require_once 'src/common.php';
 
     <?php include "./footer.html" ?>
 
-    <?php include "./scripts.html" ?>
-
 </body>

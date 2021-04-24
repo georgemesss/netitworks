@@ -72,8 +72,6 @@
         </div>
     </footer>
 
-    <?php include "./scripts.html" ?>
-
 </body>
 
 </html>

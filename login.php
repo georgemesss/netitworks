@@ -58,7 +58,6 @@
 
     </div>
 
-
     <footer class="py-4 mt-auto bg-light">
         <div class="container-fluid">
             <div class="d-flex justify-content-between small">
@@ -71,8 +70,6 @@
             </div>
         </div>
     </footer>
-
-    <?php include "./scripts.html" ?>
 
 </body>
 

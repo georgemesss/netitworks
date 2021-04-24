@@ -2,6 +2,16 @@
 require_once 'config/controller_config.php';
 require_once 'config/database_config.php';
 require_once 'src/common.php';
+
+$networkArray = $controller->getNetworks();
+
+if (isset($_POST['network_delete'])) {
+    if ($controller->deleteNetwork($_POST['network_delete']))
+        $_SESSION['status_stdout'] = "Network Deleted";
+    else
+        $_SESSION['status_stderr'] = "Error on Deletion";
+    header("Refresh:0"); //Refresh page
+}
 ?>
 
 <!DOCTYPE html>
@@ -16,10 +26,6 @@ require_once 'src/common.php';
     <div class="container-fluid">
         <!-- Page Heading -->
         <h1 class="h3 mb-4 text-gray-800">List Networks</h1>
-
-        <?php
-        $networkArray = $controller->getNetworks();
-        ?>
 
         <div class="networks-list-filter px-1">
             <form>
@@ -65,16 +71,16 @@ require_once 'src/common.php';
                                         </td>
                                         <td class="sorting_1" id="networks-list-type">
                                             <?php
-                                                if ($key['purpose'] === 'corporate')
-                                                    echo "LAN";
-                                                elseif ($key['purpose'] === 'guest')
-                                                    echo "Guest LAN";
-                                                elseif ($key['purpose'] === 'remote-user-vpn')
-                                                    echo "VPN";
-                                                elseif ($key['purpose'] === 'wan')
-                                                    echo "WAN";
-                                                else
-                                                    echo $key['purpose'];
+                                            if ($key['purpose'] === 'corporate')
+                                                echo "LAN";
+                                            elseif ($key['purpose'] === 'guest')
+                                                echo "Guest LAN";
+                                            elseif ($key['purpose'] === 'remote-user-vpn')
+                                                echo "VPN";
+                                            elseif ($key['purpose'] === 'wan')
+                                                echo "WAN";
+                                            else
+                                                echo $key['purpose'];
                                             ?>
                                         </td>
                                         <td class="sorting_1">
@@ -86,14 +92,38 @@ require_once 'src/common.php';
                                             ?>
                                         </td>
                                         <td>
-                                            <button class="btn btn-block btn-primary glow" type="button">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
+                                            <form action="network.php" method="post">
+                                                <button class="btn btn-block btn-primary glow" name="network_edit" type="submit" value=<?php echo $key['name']; ?>>
+                                                    <i class="fas fas fa-edit"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                         <td>
-                                            <button class="btn btn-block btn-danger glow" type="button">
+                                            <button class="btn btn-block btn-danger glow" data-toggle="modal" data-target="#networkDeleteModal<?php echo $key['name']; ?>" type="button">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
+                                            <!-- Modal Network Delete -->
+                                            <form action="networks.php" method="post">
+                                                <div class="modal fade" id="networkDeleteModal<?php echo $key['name']; ?>" tabindex="-1" role="dialog" aria-labelledby="networkDeleteModal<?php echo $key['name']; ?>" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="networkDeleteModalLabel<?php echo $key['name']; ?>">Hey! Are you sure?</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                You are DELETING a Network
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-danger" name="network_delete" value=<?php echo $key['name']; ?>>Delete Network</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php } ?>
@@ -109,10 +139,12 @@ require_once 'src/common.php';
             </div>
         </div>
     </div>
+
+    <?php
+    printBanner();
+    ?>
     <!-- /.container-fluid -->
 
     <?php include "./footer.html" ?>
-
-    <?php include "./scripts.html" ?>
 
 </body>

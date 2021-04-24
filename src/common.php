@@ -3,6 +3,9 @@
 use NetItWorks\Controller;
 use NetItWorks\Database;
 
+$_SESSION['status_stdout'] = "";
+$_SESSION['status_stderr'] = "";
+
 $parentDir = dirname(__DIR__, 1);
 require_once $parentDir . '/vendor/autoload.php';
 require_once $parentDir . '/config/controller_config.php';
@@ -25,4 +28,34 @@ $database = new Database(
     $database_conf['disabled']
 );
 
-?>
+function switchToBoolean($switch)
+{
+    if (!isset($switch))
+        return false;
+    else
+        return true;
+}
+
+function printBanner()
+{
+    if (!empty($_SESSION['status_stderr']))
+        echo '<script type="text/javascript">toastr.error("' . $_SESSION['status_stderr'] . '"' . ') </script>';
+    elseif (!empty($_SESSION['status_stdout']))
+        echo '<script type="text/javascript">toastr.success("' . $_SESSION['status_stdout'] . '"' . ') </script>';
+}
+
+function ifEmptyInArray($array)
+{
+    for ($c = 0; $c < sizeof($array); $c++)
+        if (empty($array[$c]))
+            return true;
+    return false;
+}
+
+function ifAllElementStatusEqual($array)
+{
+    for ($c = 0; $c < sizeof($array); $c++)
+        if ((empty($array[0]) != empty($array[$c])))
+            return false;
+    return true;
+}

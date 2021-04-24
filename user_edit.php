@@ -9,6 +9,7 @@
 
     <div class="container-fluid mt-5 mb-5">
         <h1 class="text-center">Edit User</h1>
+        <?php $post = ($_POST) ?>
         <div class="row">
             <div class="col-md-3 border-right">
                 <div class="p-3 py-5">
@@ -209,7 +210,5 @@
     </div>
 
     <?php include "./footer.html" ?>
-
-    <?php include "./scripts.html" ?>
 
 </body>

@@ -210,6 +210,4 @@ include "./head.html";
 
     <?php include "./footer.html" ?>
 
-    <?php include "./scripts.html" ?>
-
 </body>

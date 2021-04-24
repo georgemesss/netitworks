@@ -95,6 +95,4 @@
 
     <?php include "./footer.html" ?>
 
-    <?php include "./scripts.html" ?>
-
 </body>
