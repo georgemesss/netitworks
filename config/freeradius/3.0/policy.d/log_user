@@ -1,0 +1,30 @@
+#
+#   -- NetITWorks Policy --
+#
+#   This policy logs the user request information
+#   into the access log table
+#
+log_user {
+	
+    #Insert log query
+    "%{sql: \
+    REPLACE INTO client_access_log( \
+    mac_address, \
+    user_name, \
+    date_time, \
+    ap_id, \
+    reply_status, \
+    reply_net_type, \
+    reply_net_attribute_type, \
+    reply_net_vlan_id) \
+    VALUES ( \
+    '%{Calling-Station-Id}', \
+    '%{User-Name}', \
+    '%S.%M', \
+    '%{Called-Station-Id}', \
+    '%{reply:Packet-Type}', \
+    '%{reply:Tunnel-Type}', \
+    '%{reply:Tunnel-Medium-Type}', \
+    '%{reply:Tunnel-Private-Group-Id}')}"
+
+}

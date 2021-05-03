@@ -1,0 +1,35 @@
+#
+#   -- NetITWorks Policy --
+#
+#   This policy checks that the device is permitted
+#   according to the user and group configuration
+#
+#
+#	IF User has Hardware Limitation ENABLED
+#   Checks if Radius Client is associatied with the client username
+#   On table "user_hw_limitation"
+filter_hw_address {
+    
+    #IF USER hw limitation is ENABLED
+    if("%{sql:SELECT hw_limitation_status FROM net_user WHERE id='%{User-Name}'}" == 1){
+
+        #IF Mac Address is NOT associated with User
+        if("%{sql:SELECT COUNT(mac_address) registered_device FROM user_hw_limitation WHERE user_id='%{User-Name}' AND mac_address='%{Calling-Station-Id}'}" != 1 ){
+            
+            #Reject authorization 
+                reject
+        }
+    }
+
+    #IF ACTIVE GROUP hw limitation is ENABLED
+    if("%{sql:SELECT net_group.hw_limitation_status from net_group left join net_user on net_group.name = net_user.active_net_group where net_user.id='%{User-Name}'}" == 1){
+        
+        #IF Mac Address is ALSO not associated with ACTIVE Group
+        if("%{sql:SELECT COUNT(mac_address) from group_hw_limitation left join net_user on group_hw_limitation.group_name = net_user.active_net_group where id='%{User-Name}' and mac_address='%{Calling-Station-Id}'}" != 1 ){
+            
+            #Reject authorization 
+                reject
+        }
+    }            
+
+}

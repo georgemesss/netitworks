@@ -1,0 +1,45 @@
+#
+#   -- NetITWorks Policy --
+#
+#   This policy checks that the client has given the correct
+#   username and password details
+#
+#   It also performs a check on the status of the user and group
+#   In case the user status is set to "pending" or "disabled"
+#   or the group's status is set to '0'
+#   The login is Denied
+#
+check_username {
+	
+    #IF Username exists
+    if("%{sql:SELECT COUNT(id) name FROM net_user WHERE id='%{User-Name}'}" == 1){
+
+        #IF User is ACTIVE
+        if("%{sql:SELECT status from net_user WHERE id='%{User-Name}'}" == 'active'){
+
+            #IF Group is ACTIVE
+            if("%{sql:SELECT net_group.status from net_user left join net_group on net_user.active_net_group = net_group.name where net_user.id='%{User-Name}'}" == 1){
+
+                #Set password field to pass to CHAP
+                update reply {
+                    &config:Cleartext-Password = "%{sql:SELECT password FROM net_user WHERE id='%{User-Name}'}"
+                    Tunnel-Type = "%{sql:SELECT net_type from net_user left join net_group on net_user.active_net_group = net_group.name where net_user.id='%{User-Name}'}"
+                    Tunnel-Medium-Type = "%{sql:SELECT net_attribute_type from net_user left join net_group on net_user.active_net_group = net_group.name where net_user.id='%{User-Name}'}"
+                    Tunnel-Private-Group-Id = "%{sql:SELECT net_vlan_id from net_user left join net_group on net_user.active_net_group = net_group.name where net_user.id='%{User-Name}'}"
+                }
+            }
+            else{
+                #Reject authorization 
+                reject
+            }
+        }
+        else{
+            #Reject authorization 
+            reject
+        }
+    }
+    else{
+        #Reject authorization 
+        reject
+    }
+}
