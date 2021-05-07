@@ -1,12 +1,15 @@
 <?php
-require_once 'config/controller_config.php';
-require_once 'config/database_config.php';
-require_once 'src/common.php';
 
-$networkArray = $controller->getNetworks();
+namespace NetItWorks;
+
+require_once("vendor/autoload.php");
+
+$environment = new Environment();
+
+$networkArray = $environment->controller->getNetworks();
 
 if (isset($_POST['network_delete'])) {
-    if ($controller->deleteNetwork($_POST['network_delete']))
+    if ($environment->controller->deleteNetwork($_POST['network_delete']))
         $_SESSION['status_stdout'] = "Network Deleted";
     else
         $_SESSION['status_stderr'] = "Error on Deletion";
@@ -141,7 +144,7 @@ if (isset($_POST['network_delete'])) {
     </div>
 
     <?php
-    printBanner();
+    $environment->printBanner();
     ?>
     <!-- /.container-fluid -->
 

@@ -1,29 +1,23 @@
 <?php
+namespace NetItWorks;
+require_once("vendor/autoload.php");
 
-/**
- * Class and Function List:
- * Function list:
- * Classes list:
- */
-/* DATABASE CONFIGURATION PAGE*/
-
-require_once 'config/database_config.php';
-require_once 'src/common.php';
+$environment = new Environment();
 
 if (isset($_POST['save_database_details'])) {
     if (isset($_POST['database_disabled']))
-        $database_disabled = true;
+        $environment->database_disabled = true;
     else
-        $database_disabled = false;
+        $environment->database_disabled = false;
 
     $newConfiguration .= "
     <?php
-        " . '$database_conf' . " = [
+        " . '$environment->database_conf' . " = [
             'ip' => '" . $_POST['database_ip'] . "', 
             'port' => '" . $_POST['database_port'] . "',
             'username' => '" . $_POST['database_username'] . "',
             'password' => '" . $_POST['database_password'] . "',
-            'disabled' => '" . $database_disabled . "'
+            'disabled' => '" . $environment->database_disabled . "'
         ];
     ?>
     ";
@@ -159,7 +153,7 @@ include "./head.html";
                         <div class="row justify-content-center">
                             <h4>Status: </h4>
                             <?php
-                            if (!$database->getConnectionStatus())
+                            if (!$environment->database->getConnectionStatus())
                                 echo ('<span class="badge badge-danger">Offline</span>');    
                             else
                                 echo ('<span class="badge badge-success">Online</span>');
@@ -170,7 +164,7 @@ include "./head.html";
                             <h4>Username: </h4>
                             <span class="badge badge-primary">
                                 <?php
-                                echo ($database->username);
+                                echo ($environment->database->username);
                                 ?>
                             </span>
                         </div>
@@ -178,7 +172,7 @@ include "./head.html";
                         <div class="row justify-content-center">
                             <h4>Database IP: </h4> <span class="badge badge-info">
                                 <?php
-                                echo ($database->ip);
+                                echo ($environment->database->ip);
                                 ?>
                             </span>
                         </div>
@@ -186,14 +180,14 @@ include "./head.html";
                         <div class="row justify-content-center">
                             <h4>Database Port: </h4> <span class="badge badge-info">
                                 <?php
-                                echo ($database->port);
+                                echo ($environment->database->port);
                                 ?>
                             </span>
                         </div>
                         <br>
                         <div class="row justify-content-center">
                             <?php
-                            if ($database->disabled)
+                            if ($environment->database->disabled)
                                 echo ('<h4>Database Disabled: </h4> <span class="badge badge-danger">True</span>');
                             else
                                 echo ('<h4>Database Disabled: </h4> <span class="badge badge-success">False</span>');

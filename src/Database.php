@@ -10,7 +10,7 @@ class Database
 {
 
     public $ip;
-    public $port; 
+    public $port;
     public $username;
     public $password;
     public $disabled;
@@ -35,22 +35,56 @@ class Database
         $this->ip = $ip;
         $this->port = $port;
         $this->username = $username;
-        $this->password = $password;    
-        $this->disabled=$disabled;
-        $this->connection = mysqli_connect('p:'.$ip, $username, $password, null, null, null); //Up to now we won't specify the port (Doesn't work)
+        $this->password = $password;
+        $this->disabled = $disabled;
+        $this->connection = mysqli_connect('p:' . $ip, $username, $password, "netitworks", null, null); //Up to now we won't specify the port (Doesn't work)
     }
 
-    
-	/**
-	 *
-	 * Returns Connection ID of Database
-	 *
-	 * @return string $connection ID_Connessione database or false
-	 *
-	 */
-	public function getConnectionStatus()
-	{
-		return $this->connection;
-		
-	}
+
+    /**
+     *
+     * Returns Connection ID of Database
+     *
+     * @return mysqli|false|null $connection ID_Connessione database or false
+     *
+     */
+    public function getConnectionStatus()
+    {
+        return $this->connection;
+    }
+
+    /**
+     *
+     * Sanification of Given Associative Array for SQL Query
+     *
+     * @param array  $data String to sanify
+     * @return array Returns cleared associative array of strings
+     *
+     */
+    function sanifyArray($array)
+    {
+        $keys = array_keys($array);
+        for ($i = 0; $i < count($keys); ++$i) {
+            $array[$keys[$i]] = $this->getConnectionStatus()->real_escape_string($array[$keys[$i]]);
+        }
+        return $array;
+    }
+
+    /**
+     *
+     * Query to database
+     *
+     * @param string  $query Query
+     * @return true|string Returns true or string of error
+     *
+     */
+    function query($query)
+    {
+        $result = $this->getConnectionStatus()->query($query);
+        if($result)
+            return true;
+        else
+            return $this->connection->error;
+        //To change return
+    }
 }

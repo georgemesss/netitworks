@@ -1,50 +1,41 @@
 <?php
-require_once 'config/controller_config.php';
-require_once 'config/database_config.php';
-require_once 'src/common.php';
+namespace NetItWorks;
+require_once("vendor/autoload.php");
 
-$listNetworkArray = $controller->getNetworks();
+$environment = new Environment();
+
+$listNetworkArray = $environment->controller->getNetworks();
 
 if (isset($_POST['form_network_create_btn'])) {
 
-    if (ifEmptyInArray(array(
-        $_POST['form_network_name'],
-        $_POST['form_network_subnet'],
-        $_POST['form_network_gateway'],
-        $_POST['form_network_domainName']
-    ))) {
-        $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        printBanner();
-    }
-
-    if (!ifAllElementStatusEqual(array(
+    if (!$environment->ifAllElementStatusEqual(array(
         $_POST['form_network_vlan_status'],
         $_POST['form_network_vlan_custom']
     ))) {
         $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        printBanner();
+        $environment->printBanner();
     }
-    if (!ifAllElementStatusEqual(array(
+    if (!$environment->ifAllElementStatusEqual(array(
         $_POST['form_dhcp_status'],
         $_POST['form_dhcp_range_start'],
         $_POST['form_dhcp_range_stop']
     ))) {
         $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        printBanner();
+        $environment->printBanner();
     }
-    if (!ifAllElementStatusEqual(array(
+    if (!$environment->ifAllElementStatusEqual(array(
         $_POST['form_dhcp_dns_status'],
         $_POST['form_dhcp_dns_custom']
     ))) {
         $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        printBanner();
+        $environment->printBanner();
     }
-    if (!ifAllElementStatusEqual(array(
+    if (!$environment->ifAllElementStatusEqual(array(
         $_POST['form_dhcp_gateway_status'],
         $_POST['form_dhcp_gateway_custom']
     ))) {
         $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        printBanner();
+        $environment->printBanner();
     }
     /* Sanitize Input Form Data */
 
@@ -116,8 +107,8 @@ if (isset($_POST['form_network_create_btn'])) {
 
     if (($_SESSION['status_stderr'])==="") {
 
-        if (!$controller->createNetwork($newNetworkArray)) {
-            $error = ($controller->getLastResults());
+        if (!$environment->controller->createNetwork($newNetworkArray)) {
+            $error = ($environment->controller->getLastResults());
             $arrayError = json_decode(json_encode($error), true);
             $_SESSION['status_stderr'] = "Oops..error '";
             $_SESSION['status_stderr'] .=  explode(".", $arrayError['meta']['msg'])[2] . "'";
@@ -154,16 +145,16 @@ if (isset($_POST['form_network_create_btn'])) {
                             <h4 class="text-right">General Network Settings</h4>
                         </div>
                         <div class="row mt-2">
-                            <div class="col-md-6"><label class="labels">Network Name</label><input type="text" name="form_network_name" onkeypress="return event.charCode != 32" class="form-control" placeholder="Network Name" value=""></div>
+                            <div class="col-md-6"><label class="labels">Network Name</label><input type="text" name="form_network_name" onkeypress="return event.charCode != 32" class="form-control" placeholder="Network Name" value="" required></div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-md-12"><label class="labels">Network Subnet</label><input type="text" name="form_network_subnet" class="form-control" placeholder="192.168.1.0/24" value=""></div>
+                            <div class="col-md-12"><label class="labels">Network Subnet</label><input type="text" name="form_network_subnet" class="form-control" placeholder="192.168.1.0/24" value="" required></div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-md-12"><label class="labels">Default Gateway</label><input type="text" name="form_network_gateway" class="form-control" placeholder="192.168.1.1" value=""></div>
+                            <div class="col-md-12"><label class="labels">Default Gateway</label><input type="text" name="form_network_gateway" class="form-control" placeholder="192.168.1.1" value="" required></div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-md-12"><label class="labels">Domain Name</label><input type="text" name="form_network_domainName" class="form-control" placeholder="localdomain" value=""></div>
+                            <div class="col-md-12"><label class="labels">Domain Name</label><input type="text" name="form_network_domainName" class="form-control" placeholder="localdomain" value="" required></div>
                         </div>
                         <br>
                         <div class="row mt-2">
@@ -280,7 +271,7 @@ if (isset($_POST['form_network_create_btn'])) {
             </div>
 
             <?php
-            printBanner();
+            $environment->printBanner();
             ?>
 
         </div>
