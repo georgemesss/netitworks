@@ -1,7 +1,8 @@
 <?php
-require_once 'config/controller_config.php';
-require_once 'config/database_config.php';
-require_once 'src/common.php';
+namespace NetItWorks;
+require_once("vendor/autoload.php");
+
+$environment = new Environment();
 ?>
 
 <!DOCTYPE html>
@@ -26,10 +27,10 @@ require_once 'src/common.php';
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-white text-uppercase mb-1">
-                                Database Status</div>
+                                $environment->database Status</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?php
-                                if (!$database->getConnectionStatus())
+                                if (!$environment->database->getConnectionStatus())
                                     echo ('<span class="badge badge-danger">Offline</span>');
                                 else
                                     echo ('<span class="badge badge-success">Online</span>');
@@ -38,20 +39,20 @@ require_once 'src/common.php';
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <span class="badge badge-primary">
                                     <?php
-                                    echo ($database->ip);
+                                    echo ($environment->database->ip);
                                     ?>
                                 </span>
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <span class="badge badge-primary">
                                     <?php
-                                    echo ($database->port);
+                                    echo ($environment->database->port);
                                     ?>
                                 </span>
                             </div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-database fa-2x text-gray-300"></i>
+                            <i class="fas fa-environment->database fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -67,7 +68,7 @@ require_once 'src/common.php';
                                 Controller Status</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?php
-                                if ($controller->getConnectionStatus())
+                                if ($environment->controller->getConnectionStatus())
                                     echo ('<span class="badge badge-success">Online</span>');
                                 else
                                     echo ('<span class="badge badge-danger">Offline</span>');
@@ -76,21 +77,21 @@ require_once 'src/common.php';
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <span class="badge badge-success">
                                     <?php
-                                    echo ($controller->name);
+                                    echo ($environment->controller->name);
                                     ?>
                                 </span>
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <span class="badge badge-primary">
                                     <?php
-                                    echo ($controller->ip);
+                                    echo ($environment->controller->ip);
                                     ?>
                                 </span>
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <span class="badge badge-primary">
                                     <?php
-                                    echo ($controller->port);
+                                    echo ($environment->controller->port);
                                     ?>
                                 </span>
                             </div>
