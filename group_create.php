@@ -14,88 +14,92 @@ require_once("vendor/autoload.php");
 if (isset($_POST['create_group']) && isset($_POST['name'])) {
 
     $groupToCreate = new Group();
-
-    /* Post Super-Global sanification*/
-    $_POST = $groupToCreate->database->sanifyArray($_POST);
-
-    if (!$groupToCreate->ifAllElementStatusEqual(array(
-        $_POST['ip_limitation_status'],
-        $_POST['ip_range_start'],
-        $_POST['ip_range_stop']
-    ))) {
-        $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        $groupToCreate->printBanner();
-    }
-
-    $_POST = $groupToCreate->emptyToNull($_POST);
-
-    if (!isset($_POST['disabled']))
-        $_POST['disabled'] = 1;
-    else
-        $_POST['disabled'] = 0;
-    if (!isset($_POST['admin_privilege_status']))
-        $_POST['admin_privilege_status'] = 0;
-    else
-        $_POST['admin_privilege_status'] = 1;
-    if (!isset($_POST['ip_limitation_status']))
-        $_POST['ip_limitation_status'] = 0;
-    else
-        $_POST['ip_limitation_status'] = 1;
-    if (!isset($_POST['hw_limitation_status']))
-        $_POST['hw_limitation_status'] = 0;
-    else
-        $_POST['hw_limitation_status'] = 1;
-    if (!isset($_POST['user_auto_registration']))
-        $_POST['user_auto_registration'] = 0;
-    else
-        $_POST['user_auto_registration'] = 1;
-    if (!isset($_POST['user_require_admin_approval']))
-        $_POST['user_require_admin_approval'] = 0;
-    else
-        $_POST['user_require_admin_approval'] = 1;
-
-
-    /* Pick up variables from form */
-    if ($_POST['net_type'] === "LAN") {
-        $_POST['net_type'] = 13;
-        $_POST['net_attribute_type'] = 6;
-    } elseif ($_POST['net_type'] === "VPN") {
-        $_POST['net_type'] = 3;
-        $_POST['net_attribute_type'] = 1;
-    } elseif ($_POST['net_type'] === "External") {
-        $_POST['net_type'] = 0;
-        $_POST['net_attribute_type'] = 0;
-        $_POST['net_vlan_id'] = 0;
-    }
-
-    $groupToCreate->setGroup(
-        $_POST['name'],
-        (int)$_POST['disabled'],
-        (int)$_POST['admin_privilege_status'],
-        $_POST['description'],
-        (int)$_POST['net_type'],
-        (int)$_POST['net_attribute_type'],
-        (int)$_POST['net_vlan_id'],
-        (int)$_POST['ip_limitation_status'],
-        (int)$_POST['hw_limitation_status'],
-        $_POST['ip_range_start'],
-        $_POST['ip_range_stop'],
-        (int)$_POST['user_auto_registration'],
-        (int)$_POST['user_require_admin_approval'],
-    );
-
-    /* Create Group */
-    $result = $groupToCreate->create();
-
-    if (is_bool($result)) {
-        //alert ok
-        $_SESSION['status_stdout'] = "Group Created Successfuly";
+    if (!$groupToCreate->database->getConnectionStatus()) {
+        $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
     } else {
-        //alert problem
-        if (strpos($result, "Duplicate entry") !== false)
-            $_SESSION['status_stderr'] = "Error: Group already exists ";
+
+        /* Post Super-Global sanification*/
+        $_POST = $groupToCreate->database->sanifyArray($_POST);
+
+        if (!$groupToCreate->ifAllElementStatusEqual(array(
+            $_POST['ip_limitation_status'],
+            $_POST['ip_range_start'],
+            $_POST['ip_range_stop']
+        ))) {
+            $_SESSION['status_stderr'] = "Error! All fields must be filled";
+            $groupToCreate->printBanner();
+        }
+
+        $_POST = $groupToCreate->emptyToNull($_POST);
+
+        if (!isset($_POST['disabled']))
+            $_POST['disabled'] = 1;
         else
-            $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;
+            $_POST['disabled'] = 0;
+        if (!isset($_POST['admin_privilege_status']))
+            $_POST['admin_privilege_status'] = 0;
+        else
+            $_POST['admin_privilege_status'] = 1;
+        if (!isset($_POST['ip_limitation_status']))
+            $_POST['ip_limitation_status'] = 0;
+        else
+            $_POST['ip_limitation_status'] = 1;
+        if (!isset($_POST['hw_limitation_status']))
+            $_POST['hw_limitation_status'] = 0;
+        else
+            $_POST['hw_limitation_status'] = 1;
+        if (!isset($_POST['user_auto_registration']))
+            $_POST['user_auto_registration'] = 0;
+        else
+            $_POST['user_auto_registration'] = 1;
+        if (!isset($_POST['user_require_admin_approval']))
+            $_POST['user_require_admin_approval'] = 0;
+        else
+            $_POST['user_require_admin_approval'] = 1;
+
+
+        /* Pick up variables from form */
+        if ($_POST['net_type'] === "LAN") {
+            $_POST['net_type'] = 13;
+            $_POST['net_attribute_type'] = 6;
+        } elseif ($_POST['net_type'] === "VPN") {
+            $_POST['net_type'] = 3;
+            $_POST['net_attribute_type'] = 1;
+        } elseif ($_POST['net_type'] === "External") {
+            $_POST['net_type'] = 0;
+            $_POST['net_attribute_type'] = 0;
+            $_POST['net_vlan_id'] = 0;
+        }
+
+        $groupToCreate->setGroup(
+            $_POST['name'],
+            (int)$_POST['disabled'],
+            (int)$_POST['admin_privilege_status'],
+            $_POST['description'],
+            (int)$_POST['net_type'],
+            (int)$_POST['net_attribute_type'],
+            (int)$_POST['net_vlan_id'],
+            (int)$_POST['ip_limitation_status'],
+            (int)$_POST['hw_limitation_status'],
+            $_POST['ip_range_start'],
+            $_POST['ip_range_stop'],
+            (int)$_POST['user_auto_registration'],
+            (int)$_POST['user_require_admin_approval'],
+        );
+
+        /* Create Group */
+        $result = $groupToCreate->create();
+
+        if (is_bool($result)) {
+            //alert ok
+            $_SESSION['status_stdout'] = "Group Created Successfuly";
+        } else {
+            //alert problem
+            if (strpos($result, "Duplicate entry") !== false)
+                $_SESSION['status_stderr'] = "Error: Group already exists ";
+            else
+                $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;
+        }
     }
 }
 
@@ -211,9 +215,9 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
                         </div>
                         <br>
                         <div class="custom-control custom-switch">
-                                <input type="checkbox" name="ip_limitation_status" class="custom-control-input" id="ipLimitationSwitch">
-                                <label class="custom-control-label" for="ipLimitationSwitch">Enable IP Limitation</label>
-                            </div>
+                            <input type="checkbox" name="ip_limitation_status" class="custom-control-input" id="ipLimitationSwitch">
+                            <label class="custom-control-label" for="ipLimitationSwitch">Enable IP Limitation</label>
+                        </div>
                         <br>
                         <h4 class="text-center">User Membership</h4>
                         <div class="row">
