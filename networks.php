@@ -15,6 +15,10 @@ if (isset($_POST['network_delete'])) {
         $_SESSION['status_stderr'] = "Error on Deletion";
     header("Refresh:0"); //Refresh page
 }
+
+    if (!$environment->controller->getConnectionStatus()) {
+        $_SESSION['status_stderr'] = "Error: Controller is NOT Online ";
+    }
 ?>
 
 <!DOCTYPE html>
