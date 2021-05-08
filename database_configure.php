@@ -12,7 +12,7 @@ if (isset($_POST['save_database_details'])) {
 
     $newConfiguration .= "
     <?php
-        " . '$environment->database_conf' . " = [
+        " . '$database_conf' . " = [
             'ip' => '" . $_POST['database_ip'] . "', 
             'port' => '" . $_POST['database_port'] . "',
             'username' => '" . $_POST['database_username'] . "',

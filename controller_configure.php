@@ -20,7 +20,7 @@ if (isset($_POST['save_controller_details'])) {
 
     $newConfiguration .= "
     <?php
-        " . '$environment->controller_conf' . " = [
+        " . '$controller_conf' . " = [
             'name' => '" . $_POST['controller_name'] . "', 
             'description' => '" . $_POST['controller_description'] . "',
             'ip' => '" . $_POST['controller_ip'] . "', 

@@ -1,10 +1,11 @@
 
     <?php
         $database_conf = [
-            'ip' => '127.0.0.1', 
+            'ip' => '192.168.100.216', 
             'port' => '8443',
-            'username' => 'root',
-            'password' => '3@fds91FK14asfjaDka',
+            'username' => 'giorgio',
+            'password' => 'lasolit@xgcDEV',
             'disabled' => ''
         ];
     ?>
+    

@@ -1,3 +1,22 @@
+<?php
+
+/**
+ * Class and Function List:
+ * Function list:
+ * Classes list:
+ */
+/* CONTROLLER CONFIGURATION PAGE*/
+
+namespace NetItWorks;
+
+require_once("vendor/autoload.php");
+
+$groupToCreate = new Group();
+
+$groupList = $groupToCreate->getGroups();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -59,27 +78,64 @@
                                     <th class="sorting" tabindex="0" aria-controls="groups-list-datatable" rowspan="1" colspan="1" aria-label="VLAN ID: activate to sort column ascending" style="width: 170px;">VLAN ID</th>
                                     <th class="sorting" tabindex="0" aria-controls="groups-list-datatable" rowspan="1" colspan="1" aria-label="Number of Users: activate to sort column ascending" style="width: 116px;">Number of Users</th>
                                     <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="edit" style="width: 73px;">Edit Group</th>
+                                    <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="edit" style="width: 73px;">Disable Group</th>
+                                    <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="edit" style="width: 73px;">Delete Group</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr role="row" class="odd">
-                                    <td class="sorting_1">admins</td>
-                                    <td>
-                                        <span class="badge badge-success">Online</span>
-                                        <span class="badge badge-success">Enabled</span>
-                                    </td>
-                                    <td>2</td>
-                                    <td>192.168.1.2 - 192.168.100.254</td>
-                                    <td>Yes</td>
-                                    <td>1</td>
-                                    <td>1</td>
-                                    <td>
-                                        <a class="btn btn-block btn-primary glow" href="group_edit.php">
-                                            <!-- Later to be transformed to button -->
-                                            <i class="fas fa-user-edit"></i>
-                                        </a>
-                                    </td>
-                                </tr>
+                                <?php for ($c = 0; $c < sizeof($groupList); $c++) { ?>
+                                    <tr role="row" class="odd">
+                                        <td class="sorting_1"><?php echo $groupList[$c]->name; ?></td>
+                                        <td>
+                                            <?php if ($groupList[$c]->status == 1)
+                                                echo '<span class="badge badge-success">Enabled</span>';
+                                            else
+                                                echo '<span class="badge badge-danger">Disabled</span>'; ?>
+
+                                            <?php if ($groupList[$c]->status == 1) //Da Sostituire con PING STATUS
+                                                echo '<span class="badge badge-success">Online</span>';
+                                            else
+                                                echo '<span class="badge badge-warning">Offline</span>'; ?>
+                                        </td>
+                                        <td>
+                                            ?
+                                        </td>
+                                        <td><?php
+                                            if ($groupList[$c]->ip_range_start != 'NULL' && $groupList[$c]->ip_range_stop != 'NULL')
+                                                echo $groupList[$c]->ip_range_start . " - " . $groupList[$c]->ip_range_stop;
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?php if ($groupList[$c]->hw_limitation_status == 1)
+                                                echo '<span class="badge badge-success">Enabled</span>';
+                                            else
+                                                echo '<span class="badge badge-danger">Disabled</span>'; ?>
+                                        </td>
+                                        <td>
+                                            <?php if ($groupList[$c]->net_vlan_id != 0)
+                                                echo $groupList[$c]->net_vlan_id; ?>
+                                        </td>
+                                        <td>
+                                            ?
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-block btn-primary glow" href="group_edit.php">
+                                                <!-- Later to be transformed to button -->
+                                                <i class="fas fa-user-edit"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-block btn-warning glow" name="action" value="deny" type="submit">
+                                                <i class="fas fa-user-times"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-block btn-danger glow" data-toggle="modal" data-target="#networkDeleteModal<?php echo $key['name']; ?>" type="button">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
                             </tbody>
                         </table>
                     </div>
