@@ -37,18 +37,16 @@
 
     </div>
 
-    <footer class="py-4 mt-auto bg-light">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between small">
-                <div class="text-muted">Copyright (©) 2021 GeorgeMesss - GNU General Public License v3.0 or later</div>
-                <div>
-                    <a href="privacy_policy.php">Privacy Policy</a>
-                    ·
-                    <a href="terms_conditions.php">Terms &amp; Conditions</a>
-                </div>
-            </div>
+    <div class="navbar fixed-bottom py-4 mt-auto bg-light">
+        <div class="text-left">
+            <a href="https://github.com/georgemesss/netitworks">Copyright (©) 2021 GeorgeMesss - GNU General Public License v3.0 or later</a>
         </div>
-    </footer>
+        <div class="text-right">
+            <a href="privacy_policy.php">Privacy Policy</a>
+            ·
+            <a href="terms_conditions.php">Terms &amp; Conditions</a>
+        </div>
+    </div>
 
 </body>
 

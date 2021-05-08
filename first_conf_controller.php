@@ -68,7 +68,7 @@ if (isset($_POST['save_controller_details'])) {
                         <div class="card">
                             <div class="card-header py-3">
                                 <div class="row justify-content-center">
-                                    <h6 class="font-weight-bold text-primary">Configure your UniFi Controller</h6>
+                                    <h6 class="font-weight-bold text-primary">Please insert your UniFi Controller Connection Details</h6>
                                 </div>
                             </div>
                         </div>
@@ -138,19 +138,16 @@ if (isset($_POST['save_controller_details'])) {
                             </div>
                             <div class="card-body">
                                 <div class="row justify-content-center mt-2">
-                                    <h4 class="text-right">UniFi Controller Settings</h4>
-                                </div>
-                                <div class="row justify-content-center mt-2">
-                                    <div class="col-md-4"><label class="labels">Controller Name</label><input name="controller_name" type="text" class="form-control" placeholder="Example Name" value=""></div>
-                                    <div class="col-md-8"><label class="labels">Controller Description</label><input name="controller_description" type="text" class="form-control" placeholder="Example Description" value=""></div>
+                                    <div class="col-md-4"><label class="labels">Name</label><input name="controller_name" type="text" class="form-control" placeholder="Example Name" value=""></div>
+                                    <div class="col-md-8"><label class="labels">Description</label><input name="controller_description" type="text" class="form-control" placeholder="Example Description" value=""></div>
                                 </div>
                                 <div class="row justify-content-center mt-3">
-                                    <div class="col-md-4"><label class="labels">Controller IP</label><input name="controller_ip" type="text" class="form-control" placeholder="192.168.1.1" value=""></div>
-                                    <div class="col-md-8"><label class="labels">Controller Port</label><input name="controller_port" type="text" class="form-control" placeholder="8443" value=""></div>
+                                    <div class="col-md-4"><label class="labels">IP</label><input name="controller_ip" type="text" class="form-control" placeholder="192.168.1.1" value=""></div>
+                                    <div class="col-md-8"><label class="labels">Port</label><input name="controller_port" type="text" class="form-control" placeholder="8443" value=""></div>
                                 </div>
                                 <div class="row justify-content-center mt-3">
-                                    <div class="col-md-4"><label class="labels">Controller Username</label><input name="controller_username" type="text" class="form-control" placeholder="admin" value=""></div>
-                                    <div class="col-md-8"><label class="labels">Controller Password</label><input name="controller_password" type="password" class="form-control" placeholder="********" value=""></div>
+                                    <div class="col-md-4"><label class="labels">Username</label><input name="controller_username" type="text" class="form-control" placeholder="admin" value=""></div>
+                                    <div class="col-md-8"><label class="labels">Password</label><input name="controller_password" type="password" class="form-control" placeholder="********" value=""></div>
                                 </div>
                                 <br>
                                 <div class="row justify-content-center">
@@ -166,8 +163,8 @@ if (isset($_POST['save_controller_details'])) {
                                     ?>
                                 </div>
                                 <div class="row justify-content-center">
-                                    <div class="mt-5 text-center"><button class="btn btn-primary group-button mr-4" data-toggle="modal" data-target="#controllerEditModal" type="button">Save Details</button></div>
-                                    <div class="mt-5 text-center"><button class="btn btn-warning group-button mr-4" data-toggle="modal" data-target="#controllerResetModal" type="button">Reset to Default</button></div>
+                                    <div class="mt-2 text-center"><button class="btn btn-primary group-button mr-4" data-toggle="modal" data-target="#controllerEditModal" type="button">Save Details</button></div>
+                                    <div class="mt-2 text-center"><button class="btn btn-warning group-button mr-4" data-toggle="modal" data-target="#controllerResetModal" type="button">Reset to Default</button></div>
                                 </div>
                             </div>
                         </div>
@@ -179,8 +176,8 @@ if (isset($_POST['save_controller_details'])) {
                         <!-- Status Section -->
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <div class="row justify-content-center mt-2">
-                                    <h6 class="m-0 font-weight-bold text-primary">Status of your UniFi Controller</h6>
+                                <div class="row justify-content-center">
+                                    <h6 class="font-weight-bold text-primary">Status of your UniFi Controller</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -193,81 +190,29 @@ if (isset($_POST['save_controller_details'])) {
                                         echo ('<span class="badge badge-danger">Offline</span>');
                                     ?>
                                 </div>
-                                <br>
-                                <div class="row justify-content-center">
-                                    <h4>Name: </h4>
-                                    <span class="badge badge-primary">
-                                        <?php
-                                        echo ($environment->controller->name);
-                                        ?>
-                                    </span>
-                                </div>
-                                <br>
-                                <div class="row justify-content-center">
-                                    <h4>Description: </h4>
-                                    <span class="badge badge-primary">
-                                        <?php
-                                        echo ($environment->controller->description);
-                                        ?>
-                                    </span>
-                                </div>
-                                <br>
-                                <div class="row justify-content-center">
-                                    <h4>Username: </h4>
-                                    <span class="badge badge-primary">
-                                        <?php
-                                        echo ($environment->controller->username);
-                                        ?>
-                                    </span>
-                                </div>
-                                <br>
-                                <div class="row justify-content-center">
-                                    <h4>Controller IP: </h4> <span class="badge badge-info">
-                                        <?php
-                                        echo ($environment->controller->ip);
-                                        ?>
-                                    </span>
-                                </div>
-                                <br>
-                                <div class="row justify-content-center">
-                                    <h4>Controller Port: </h4> <span class="badge badge-info">
-                                        <?php
-                                        echo ($environment->controller->port);
-                                        ?>
-                                    </span>
-                                </div>
-                                <br>
-                                <div class="row justify-content-center">
-                                    <?php
-                                    if ($environment->controller->disabled)
-                                        echo ('<h4>Controller Disabled: </h4> <span class="badge badge-danger">True</span>');
-                                    else
-                                        echo ('<h4>Controller Disabled: </h4> <span class="badge badge-success">False</span>');
-                                    ?>
-                                    </span>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="text-right">
-                <a href="first_conf_controller.php" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Next Step</a>
+        </div>
+
+        <div class="col-11">
+            <div class="text-right mt-2">
+                <a href="login.php" class="btn btn-primary btn-lg active float-end" role="button" aria-pressed="true">Next Step</a>
             </div>
         </div>
 
-        <footer class="py-4 mt-auto bg-light">
-            <div class="container-fluid">
-                <div class="d-flex justify-content-between small">
-                    <div class="text-muted">Copyright (©) 2021 GeorgeMesss - GNU General Public License v3.0 or later</div>
-                    <div>
-                        <a href="privacy_policy.php">Privacy Policy</a>
-                        ·
-                        <a href="terms_conditions.php">Terms &amp; Conditions</a>
-                    </div>
-                </div>
+        <div class="navbar fixed-bottom py-4 mt-auto bg-light">
+            <div class="text-left">
+                <a href="https://github.com/georgemesss/netitworks">Copyright (©) 2021 GeorgeMesss - GNU General Public License v3.0 or later</a>
             </div>
-        </footer>
+            <div class="text-right">
+                <a href="privacy_policy.php">Privacy Policy</a>
+                ·
+                <a href="terms_conditions.php">Terms &amp; Conditions</a>
+            </div>
+        </div>
 
     </body>
 

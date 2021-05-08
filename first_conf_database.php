@@ -46,7 +46,7 @@ if (isset($_POST['save_database_details'])) {
         <div class="container">
 
             <br>
-            <h1 class="text-white text-center align-middle font-italic">Welcome to NetItWorks</h1>
+            <h1 class="text-white text-center align-middle font-italic">NetItWorks <> First Setup</h1>
 
             <div class="row justify-content-center">
 
@@ -57,7 +57,7 @@ if (isset($_POST['save_database_details'])) {
                         <div class="card">
                             <div class="card-header py-3">
                                 <div class="row justify-content-center">
-                                    <h6 class="font-weight-bold text-primary">Configure your MySQL Database</h6>
+                                    <h6 class="font-weight-bold text-primary">Please insert your MariaDB Connection Details</h6>
                                 </div>
                             </div>
                         </div>
@@ -151,8 +151,8 @@ if (isset($_POST['save_database_details'])) {
                                     ?>
                                 </div>
                                 <div class="row justify-content-center">
-                                    <div class="mt-5 text-center"><button class="btn btn-primary group-button mr-4" data-toggle="modal" data-target="#databaseEditModal" type="button">Save Details</button></div>
-                                    <div class="mt-5 text-center"><button class="btn btn-warning group-button mr-4" data-toggle="modal" data-target="#databaseResetModal" type="button">Reset to Default</button></div>
+                                    <div class="mt-2 text-center"><button class="btn btn-primary group-button mr-4" data-toggle="modal" data-target="#databaseEditModal" type="button">Save Details</button></div>
+                                    <div class="mt-2 text-center"><button class="btn btn-warning group-button mr-4" data-toggle="modal" data-target="#databaseResetModal" type="button">Reset to Default</button></div>
                                 </div>
                             </div>
                         </div>
@@ -164,8 +164,8 @@ if (isset($_POST['save_database_details'])) {
                         <!-- Status Section -->
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <div class="row justify-content-center mt-2">
-                                    <h6 class="m-0 font-weight-bold text-primary">Status of your MySQL Database</h6>
+                                <div class="row justify-content-center">
+                                    <h6 class="font-weight-bold text-primary">Status of your MySQL Database</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -218,23 +218,24 @@ if (isset($_POST['save_database_details'])) {
                     </div>
                 </div>
             </div>
-            <div class="text-right">
-                <a href="first_conf_controller.php" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Next Step</a>
+        </div>
+
+        <div class="col-11">
+            <div class="text-right mt-2">
+                <a href="first_conf_group.php" class="btn btn-primary btn-lg active float-end" role="button" aria-pressed="true">Next Step</a>
             </div>
         </div>
 
-        <footer class="py-4 mt-auto bg-light">
-            <div class="container-fluid">
-                <div class="d-flex justify-content-between small">
-                    <div class="text-muted">Copyright (©) 2021 GeorgeMesss - GNU General Public License v3.0 or later</div>
-                    <div>
-                        <a href="privacy_policy.php">Privacy Policy</a>
-                        ·
-                        <a href="terms_conditions.php">Terms &amp; Conditions</a>
-                    </div>
-                </div>
+        <div class="navbar fixed-bottom py-4 mt-auto bg-light">
+            <div class="text-left">
+                <a href="https://github.com/georgemesss/netitworks">Copyright (©) 2021 GeorgeMesss - GNU General Public License v3.0 or later</a>
             </div>
-        </footer>
+            <div class="text-right">
+                <a href="privacy_policy.php">Privacy Policy</a>
+                ·
+                <a href="terms_conditions.php">Terms &amp; Conditions</a>
+            </div>
+        </div>
 
     </body>
 
