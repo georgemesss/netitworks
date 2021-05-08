@@ -98,6 +98,22 @@ class Group extends Environment
         $this->user_require_admin_approval = $user_require_admin_approval;
     }
 
+    /**
+     * Set group name
+     *
+     * @param string  $name
+     */
+    public function setName(
+        $name
+    ) {
+        $this->name = $name;
+    }
+
+    /**
+     * Set group name
+     *
+     * @param string  $name
+     */
     function create()
     {
         /* Prepare inserting query */
@@ -141,7 +157,6 @@ class Group extends Environment
         }
     }
 
-
     /**
      * Get group list
      *
@@ -172,23 +187,98 @@ class Group extends Environment
         } else {
             $groups[] = new Group();
             $c = 0;
-            while ($row = $query_result->fetch_assoc()) {
-                $groups[$c]->name = $row['name'];
-                $groups[$c]->status = $row['status'];
-                $groups[$c]->admin_privilege = $row['admin_privilege'];
-                $groups[$c]->description = $row['description'];
-                $groups[$c]->net_type = $row['net_type'];
-                $groups[$c]->net_attribute_type = $row['net_attribute_type'];
-                $groups[$c]->net_vlan_id = $row['net_vlan_id'];
-                $groups[$c]->ip_limitation_status = $row['ip_limitation_status'];
-                $groups[$c]->hw_limitation_status = $row['hw_limitation_status'];
-                $groups[$c]->ip_range_start = $row['ip_range_start'];
-                $groups[$c]->ip_range_stop = $row['ip_range_stop'];
-                $groups[$c]->user_auto_registration = $row['user_auto_registration'];
-                $groups[$c]->user_require_admin_approval = $row['user_require_admin_approval'];
-                $c++;
+            if ($query_result->num_rows != 0) {
+                while ($row = $query_result->fetch_assoc()) {
+                    $groups[$c]->name = $row['name'];
+                    $groups[$c]->status = $row['status'];
+                    $groups[$c]->admin_privilege = $row['admin_privilege'];
+                    $groups[$c]->description = $row['description'];
+                    $groups[$c]->net_type = $row['net_type'];
+                    $groups[$c]->net_attribute_type = $row['net_attribute_type'];
+                    $groups[$c]->net_vlan_id = $row['net_vlan_id'];
+                    $groups[$c]->ip_limitation_status = $row['ip_limitation_status'];
+                    $groups[$c]->hw_limitation_status = $row['hw_limitation_status'];
+                    $groups[$c]->ip_range_start = $row['ip_range_start'];
+                    $groups[$c]->ip_range_stop = $row['ip_range_stop'];
+                    $groups[$c]->user_auto_registration = $row['user_auto_registration'];
+                    $groups[$c]->user_require_admin_approval = $row['user_require_admin_approval'];
+                    $c++;
+                }
+                return $groups;
             }
-            return $groups;
+            return false;
+        }
+    }
+
+    /**
+     * Delete a group
+     *
+     */
+    function delete()
+    {
+        /* Prepare inserting query */
+        $query = "DELETE "
+            . " FROM user_group_partecipation";
+
+        $query .= " WHERE group_name = '" . $this->name . "'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false;
+        else {
+            /* Prepare inserting query */
+            $query = "DELETE "
+                . " FROM net_group";
+
+            $query .= " WHERE name = '" . $this->name . "'";
+
+            $query_result = $this->database->query($query);
+            if (!$query_result)
+                return false;
+            else
+                return true;
+        }
+    }
+
+    /**
+     * Set new group status
+     *
+     * @param string  $newStatus
+     */
+    public function changeStatus() {
+        /* Prepare inserting query */
+        $query = "SELECT " .
+            "status
+        " . " FROM net_group";
+
+        $query .= " WHERE name = '" . $this->name . "'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false; //Error
+        } else {
+
+            while ($row = $query_result->fetch_assoc()) {
+                $previousStatus = $row["status"];
+            }
+
+            if ($previousStatus == 0)
+                $newStatus = 1;
+            else
+                $newStatus = 0;
+
+            /* Prepare inserting query */
+            $query = "UPDATE net_group " .
+                "SET status ='"
+                . $newStatus . "'"
+                . " WHERE name = '" . $this->name . "'";
+
+            $query_result = $this->database->query($query);
+            if (!$query_result) {
+                return false; //Error
+            } else {
+                return true;
+            }
         }
     }
 }

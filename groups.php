@@ -11,9 +11,24 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-$groupToCreate = new Group();
+$group = new Group();
 
-$groupList = $groupToCreate->getGroups();
+if (isset($_POST['group_delete'])) {
+    $group->setName($_POST['group_delete']);
+    if ($group->delete())
+        $_SESSION['status_stdout'] = "Group Deleted";
+    else
+        $_SESSION['status_stderr'] = "Error on Deletion";
+    header("Refresh:0"); //Refresh page
+}
+
+if (isset($_POST['group_change_status'])) {
+    $group->setName($_POST['group_change_status']);
+    $group->changeStatus();
+    header("Refresh:0"); //Refresh page
+}
+
+$groupList = $group->getGroups();
 
 ?>
 
@@ -78,12 +93,12 @@ $groupList = $groupToCreate->getGroups();
                                     <th class="sorting" tabindex="0" aria-controls="groups-list-datatable" rowspan="1" colspan="1" aria-label="VLAN ID: activate to sort column ascending" style="width: 170px;">VLAN ID</th>
                                     <th class="sorting" tabindex="0" aria-controls="groups-list-datatable" rowspan="1" colspan="1" aria-label="Number of Users: activate to sort column ascending" style="width: 116px;">Number of Users</th>
                                     <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="edit" style="width: 73px;">Edit Group</th>
-                                    <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="edit" style="width: 73px;">Disable Group</th>
+                                    <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="edit" style="width: 73px;">Change Status</th>
                                     <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="edit" style="width: 73px;">Delete Group</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php for ($c = 0; $c < sizeof($groupList); $c++) { ?>
+                                <?php if (!is_bool($groupList)) for ($c = 0; $c < sizeof($groupList); $c++) { ?>
                                     <tr role="row" class="odd">
                                         <td class="sorting_1"><?php echo $groupList[$c]->name; ?></td>
                                         <td>
@@ -125,14 +140,71 @@ $groupList = $groupToCreate->getGroups();
                                             </a>
                                         </td>
                                         <td>
-                                            <button class="btn btn-block btn-warning glow" name="action" value="deny" type="submit">
-                                                <i class="fas fa-user-times"></i>
-                                            </button>
+                                            <?php
+                                            if ($groupList[$c]->status == 1)
+                                                echo '<button class="btn btn-block btn-warning glow" data-toggle="modal" data-target="#groupChangeStatusModal' . $groupList[$c]->name . '" type="button">
+                                                        <i class="fas fa-user-times"></i>
+                                                    </button>';
+                                            elseif ($groupList[$c]->status == 0)
+                                                echo '<button class="btn btn-block btn-success glow" data-toggle="modal" data-target="#groupChangeStatusModal' . $groupList[$c]->name . '" type="button">
+                                                        <i class="fas fa-user-check"></i>
+                                                    </button>';
+                                            ?>
+                                            <!-- Modal Group Delete -->
+                                            <form action="groups.php" method="post">
+                                                <div class="modal fade" id="groupChangeStatusModal<?php echo $groupList[$c]->name; ?>" tabindex="-1" role="dialog" aria-labelledby="groupChangeStatusModal<?php echo $key['name']; ?>" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="groupChangeStatusModalLabel<?php echo $key['name']; ?>">Hey! Are you sure?</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                You are Changing a Group's Status to
+                                                                <?php
+                                                                if ($groupList[$c]->status == 1)
+                                                                    echo 'DISABLED';
+                                                                elseif ($groupList[$c]->status == 0)
+                                                                    echo 'ENABLED';
+                                                                ?>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-warning" name="group_change_status" value=<?php echo $groupList[$c]->name; ?>>Change Status</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </td>
                                         <td>
-                                            <button class="btn btn-block btn-danger glow" data-toggle="modal" data-target="#networkDeleteModal<?php echo $key['name']; ?>" type="button">
+                                            <button class="btn btn-block btn-danger glow" data-toggle="modal" data-target="#groupDeleteModal<?php echo $groupList[$c]->name; ?>" type="button">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
+                                            <!-- Modal Group Delete -->
+                                            <form action="groups.php" method="post">
+                                                <div class="modal fade" id="groupDeleteModal<?php echo $groupList[$c]->name; ?>" tabindex="-1" role="dialog" aria-labelledby="groupDeleteModal<?php echo $key['name']; ?>" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="groupDeleteModalLabel<?php echo $key['name']; ?>">Hey! Are you sure?</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                You are DELETING a Group
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-danger" name="group_delete" value=<?php echo $groupList[$c]->name; ?>>Delete Group</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php } ?>
@@ -148,6 +220,10 @@ $groupList = $groupToCreate->getGroups();
             </div>
         </div>
     </div>
+
+    <?php
+    $group->printBanner();
+    ?>
 
     <?php include "./footer.html" ?>
 
