@@ -125,6 +125,10 @@ if (isset($_POST['form_network_create_btn'])) {
 
 }
 
+if (!$environment->controller->getConnectionStatus()) {
+    $_SESSION['status_stderr'] = "Error: Controller is NOT Online ";
+}
+
 ?>
 
 <?php include "./head.html" ?>
