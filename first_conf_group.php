@@ -95,7 +95,7 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
             $_SESSION['status_stdout'] = "Group Created Successfuly";
         } else {
             //alert problem
-            if (strpos($result, "Duplicate entry") !== false)
+            if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
                 $_SESSION['status_stderr'] = "Error: Group already exists ";
             else
                 $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;

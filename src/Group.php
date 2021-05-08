@@ -11,19 +11,19 @@ require_once("src/Environment.php");
 class Group extends Environment
 {
 
-    private $name;
-    private $status;
-    private $admin_privilege;
-    private $description;
-    private $net_type;
-    private $net_attribute_type;
-    private $net_vlan_id;
-    private $ip_limitation_status;
-    private $hw_limitation_status;
-    private $ip_range_start;
-    private $ip_range_stop;
-    private $user_auto_registration;
-    private $user_require_admin_approval;
+    public $name;
+    public $status;
+    public $admin_privilege;
+    public $description;
+    public $net_type;
+    public $net_attribute_type;
+    public $net_vlan_id;
+    public $ip_limitation_status;
+    public $hw_limitation_status;
+    public $ip_range_start;
+    public $ip_range_stop;
+    public $user_auto_registration;
+    public $user_require_admin_approval;
 
     /**
      * Construct an instance of the Controller class
@@ -134,10 +134,61 @@ class Group extends Environment
             . ')';
 
         $query_result = $this->database->query($query);
-        if (is_bool($query_result)) {
-            return true;
+        if (!$query_result) {
+            return false;
         } else {
             return $query_result;
+        }
+    }
+
+
+    /**
+     * Get group list
+     *
+     * @return array  $Return array of Groups
+     */
+    function getGroups()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT " .
+            "name,
+            status,
+            admin_privilege,
+            description,
+            net_type,
+            net_attribute_type,
+            net_vlan_id,
+            ip_limitation_status,
+            hw_limitation_status,
+            ip_range_start,
+            ip_range_stop,
+            user_auto_registration,
+            user_require_admin_approval
+        " . " FROM net_group";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false; //Error
+        } else {
+            $groups[] = new Group();
+            $c = 0;
+            while ($row = $query_result->fetch_assoc()) {
+                $groups[$c]->name = $row['name'];
+                $groups[$c]->status = $row['status'];
+                $groups[$c]->admin_privilege = $row['admin_privilege'];
+                $groups[$c]->description = $row['description'];
+                $groups[$c]->net_type = $row['net_type'];
+                $groups[$c]->net_attribute_type = $row['net_attribute_type'];
+                $groups[$c]->net_vlan_id = $row['net_vlan_id'];
+                $groups[$c]->ip_limitation_status = $row['ip_limitation_status'];
+                $groups[$c]->hw_limitation_status = $row['hw_limitation_status'];
+                $groups[$c]->ip_range_start = $row['ip_range_start'];
+                $groups[$c]->ip_range_stop = $row['ip_range_stop'];
+                $groups[$c]->user_auto_registration = $row['user_auto_registration'];
+                $groups[$c]->user_require_admin_approval = $row['user_require_admin_approval'];
+                $c++;
+            }
+            return $groups;
         }
     }
 }

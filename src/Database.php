@@ -14,7 +14,7 @@ class Database
     public $username;
     public $password;
     public $disabled;
-    private $connection;
+    public $connection;
 
     /**
      * Construct an instance of the Controller class
@@ -75,16 +75,16 @@ class Database
      * Query to database
      *
      * @param string  $query Query
-     * @return true|string Returns true or string of error
+     * @return mysqli|false Returns true or string of error
      *
      */
     function query($query)
     {
         $result = $this->getConnectionStatus()->query($query);
-        if($result)
-            return true;
+        if(!$result)
+            return false;
         else
-            return $this->connection->error;
-        //To change return
+            return $result;
+        //To change return $this->connection->error
     }
 }
