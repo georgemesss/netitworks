@@ -170,7 +170,9 @@ if (isset($_POST['save_database_details'])) {
             </div>
         </div>
         <div class="text-right">
-            <a href="first_conf_controller.php" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Next Step</a>
+            <button type="button" class="btn btn-primary btn-lg">
+                <h3>Next Step</h3>
+            </button>
         </div>
     </div>
 
