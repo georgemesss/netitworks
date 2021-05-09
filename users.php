@@ -1,3 +1,37 @@
+<?php
+
+/**
+ * Class and Function List:
+ * Function list:
+ * Classes list:
+ */
+/* CONTROLLER CONFIGURATION PAGE*/
+
+namespace NetItWorks;
+
+require_once("vendor/autoload.php");
+
+$user = new User();
+
+if (isset($_POST['group_delete'])) {
+    $user->setName($_POST['group_delete']);
+    if ($user->delete())
+        $_SESSION['status_stdout'] = "Group Deleted";
+    else
+        $_SESSION['status_stderr'] = "Error on Deletion";
+    header("Refresh:0"); //Refresh page
+}
+
+if (isset($_POST['group_change_status'])) {
+    $user->setName($_POST['group_change_status']);
+    $user->changeStatus();
+    header("Refresh:0"); //Refresh page
+}
+
+$groupList = $user->getGroups();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
