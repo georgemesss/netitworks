@@ -1,14 +1,16 @@
 <?php
+
 namespace NetItWorks;
+
 require_once("vendor/autoload.php");
 
-$environment = new Environment();
+$controller = new Controller();
 
 if (isset($_POST['save_controller_details'])) {
     if (isset($_POST['controller_disabled']))
-        $environment->controller_disabled = true;
+        $controller_disabled = true;
     else
-        $environment->controller_disabled = false;
+        $controller_disabled = false;
 
     $newConfiguration = "
     <?php
@@ -20,14 +22,17 @@ if (isset($_POST['save_controller_details'])) {
 
     $newConfiguration .= "
     <?php
-        " . '$controller_conf' . " = [
+        "   . 'global $controller_conf;
+        
+        '
+        . '$controller_conf' . " = [
             'name' => '" . $_POST['controller_name'] . "', 
             'description' => '" . $_POST['controller_description'] . "',
             'ip' => '" . $_POST['controller_ip'] . "', 
             'port' => '" . $_POST['controller_port'] . "',
             'username' => '" . $_POST['controller_username'] . "',
             'password' => '" . $_POST['controller_password'] . "',
-            'disabled' => '" . $environment->controller_disabled . "'
+            'disabled' => '" . $controller_disabled . "'
         ];
     ?>
     ";
@@ -166,7 +171,7 @@ include "./head.html";
                         <div class="row justify-content-center">
                             <h4>Status: </h4>
                             <?php
-                            if ($environment->controller->getConnectionStatus())
+                            if ($controller->getConnectionStatus())
                                 echo ('<span class="badge badge-success">Online</span>');
                             else
                                 echo ('<span class="badge badge-danger">Offline</span>');
@@ -177,7 +182,7 @@ include "./head.html";
                             <h4>Name: </h4>
                             <span class="badge badge-primary">
                                 <?php
-                                echo ($environment->controller->name);
+                                echo ($controller->name);
                                 ?>
                             </span>
                         </div>
@@ -186,7 +191,7 @@ include "./head.html";
                             <h4>Description: </h4>
                             <span class="badge badge-primary">
                                 <?php
-                                echo ($environment->controller->description);
+                                echo ($controller->description);
                                 ?>
                             </span>
                         </div>
@@ -195,7 +200,7 @@ include "./head.html";
                             <h4>Username: </h4>
                             <span class="badge badge-primary">
                                 <?php
-                                echo ($environment->controller->username);
+                                echo ($controller->username);
                                 ?>
                             </span>
                         </div>
@@ -203,7 +208,7 @@ include "./head.html";
                         <div class="row justify-content-center">
                             <h4>Controller IP: </h4> <span class="badge badge-info">
                                 <?php
-                                echo ($environment->controller->ip);
+                                echo ($controller->ip);
                                 ?>
                             </span>
                         </div>
@@ -211,14 +216,14 @@ include "./head.html";
                         <div class="row justify-content-center">
                             <h4>Controller Port: </h4> <span class="badge badge-info">
                                 <?php
-                                echo ($environment->controller->port);
+                                echo ($controller->port);
                                 ?>
                             </span>
                         </div>
                         <br>
                         <div class="row justify-content-center">
                             <?php
-                            if ($environment->controller->disabled)
+                            if ($controller->disabled)
                                 echo ('<h4>Controller Disabled: </h4> <span class="badge badge-danger">True</span>');
                             else
                                 echo ('<h4>Controller Disabled: </h4> <span class="badge badge-success">False</span>');

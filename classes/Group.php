@@ -2,13 +2,11 @@
 
 namespace NetItWorks;
 
-require_once("src/Environment.php");
-
 /**
  * Group Class
  *
  */
-class Group extends Environment
+class Group 
 {
 
     public $name;
@@ -25,32 +23,16 @@ class Group extends Environment
     public $user_auto_registration;
     public $user_require_admin_approval;
 
+    public $database;
+    public $controller;
+
     /**
      * Construct an instance of the Controller class
      */
-    public function __construct()
+    public function __construct($database, $controller)
     {
-        require_once dirname(__DIR__, 1) . '/vendor/autoload.php';
-        require_once dirname(__DIR__, 1) . '/config/controller_config.php';
-        require_once dirname(__DIR__, 1) . '/config/database_config.php';
-
-        $this->controller = new Controller(
-            $controller_conf['name'],
-            $controller_conf['description'],
-            $controller_conf['ip'],
-            $controller_conf['port'],
-            $controller_conf['username'],
-            $controller_conf['password'],
-            $controller_conf['disabled']
-        );
-
-        $this->database = new Database(
-            $database_conf['ip'],
-            $database_conf['port'],
-            $database_conf['username'],
-            $database_conf['password'],
-            $database_conf['disabled']
-        );
+        $this->database = $database;
+        $this->controller = $controller;
     }
 
     /**
@@ -184,7 +166,7 @@ class Group extends Environment
         if (!$query_result) {
             return false; //Error
         } else {
-            $groups[] = new Group();
+            $groups[] = new Group($this->database, $this->controller);
             $c = 0;
             if ($query_result->num_rows != 0) {
                 while ($row = $query_result->fetch_assoc()) {

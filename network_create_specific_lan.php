@@ -2,40 +2,40 @@
 namespace NetItWorks;
 require_once("vendor/autoload.php");
 
-$environment = new Environment();
+$controller = new Controller();
 
-$listNetworkArray = $environment->controller->getNetworks();
+$listNetworkArray = $controller->getNetworks();
 
 if (isset($_POST['form_network_create_btn'])) {
 
-    if (!$environment->ifAllElementStatusEqual(array(
+    if (!$ifAllElementStatusEqual(array(
         $_POST['form_network_vlan_status'],
         $_POST['form_network_vlan_custom']
     ))) {
         $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        $environment->printBanner();
+        $printBanner();
     }
-    if (!$environment->ifAllElementStatusEqual(array(
+    if (!$ifAllElementStatusEqual(array(
         $_POST['form_dhcp_status'],
         $_POST['form_dhcp_range_start'],
         $_POST['form_dhcp_range_stop']
     ))) {
         $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        $environment->printBanner();
+        $printBanner();
     }
-    if (!$environment->ifAllElementStatusEqual(array(
+    if (!$ifAllElementStatusEqual(array(
         $_POST['form_dhcp_dns_status'],
         $_POST['form_dhcp_dns_custom']
     ))) {
         $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        $environment->printBanner();
+        $printBanner();
     }
-    if (!$environment->ifAllElementStatusEqual(array(
+    if (!$ifAllElementStatusEqual(array(
         $_POST['form_dhcp_gateway_status'],
         $_POST['form_dhcp_gateway_custom']
     ))) {
         $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        $environment->printBanner();
+        $printBanner();
     }
     /* Sanitize Input Form Data */
 
@@ -107,8 +107,8 @@ if (isset($_POST['form_network_create_btn'])) {
 
     if (($_SESSION['status_stderr'])==="") {
 
-        if (!$environment->controller->createNetwork($newNetworkArray)) {
-            $error = ($environment->controller->getLastResults());
+        if (!$controller->createNetwork($newNetworkArray)) {
+            $error = ($controller->getLastResults());
             $arrayError = json_decode(json_encode($error), true);
             $_SESSION['status_stderr'] = "Oops..error '";
             $_SESSION['status_stderr'] .=  explode(".", $arrayError['meta']['msg'])[2] . "'";
@@ -125,7 +125,7 @@ if (isset($_POST['form_network_create_btn'])) {
 
 }
 
-if (!$environment->controller->getConnectionStatus()) {
+if (!$controller->getConnectionStatus()) {
     $_SESSION['status_stderr'] = "Error: Controller is NOT Online ";
 }
 
@@ -275,7 +275,7 @@ if (!$environment->controller->getConnectionStatus()) {
             </div>
 
             <?php
-            $environment->printBanner();
+            $printBanner();
             ?>
 
         </div>

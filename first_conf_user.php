@@ -1,35 +1,76 @@
 <?php
 
+/**
+ * Class and Function List:
+ * Function list:
+ * Classes list:
+ */
+/* CONTROLLER CONFIGURATION PAGE*/
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-$environment = new Environment();
+$database = new Database();
 
-if (isset($_POST['save_database_details'])) {
-    if (isset($_POST['database_disabled']))
-        $environment->database_disabled = true;
-    else
-        $environment->database_disabled = false;
+if (isset($_POST['create_user']) && isset($_POST['id'])) {
 
-    $newConfiguration .= "
-    <?php
-        " . '$environment->database_conf' . " = [
-            'ip' => '" . $_POST['database_ip'] . "', 
-            'port' => '" . $_POST['database_port'] . "',
-            'username' => '" . $_POST['database_username'] . "',
-            'password' => '" . $_POST['database_password'] . "',
-            'disabled' => '" . $environment->database_disabled . "'
-        ];
-    ?>
-    ";
+    $userToCreate = new User($database, NULL);
+    if (!$userToCreate->database->getConnectionStatus()) {
+        $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
+    } elseif ($_POST['password_1'] != $_POST['password_2']) {
+        $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
+    } else {
 
-    file_put_contents("config/database_config.php", $newConfiguration);
-    header("Refresh:0");
-} else if (isset($_POST['reset_database_details'])) {
+        /* Post Super-Global sanification*/
+        $_POST = $userToCreate->database->sanifyArray($_POST);
 
-    file_put_contents("config/database_config.php", file_get_contents('config/database_config_default.php'));
-    header("Refresh:0");
+        $_POST = emptyToNull($_POST);
+
+        if (!isset($_POST['disabled']))
+            $_POST['status'] = "active";
+        else
+            $_POST['status'] = "disabled";
+
+        if (!isset($_POST['ip_limitation_status']))
+            $_POST['ip_limitation_status'] = 0;
+        else
+            $_POST['ip_limitation_status'] = 1;
+
+        if (!isset($_POST['hw_limitation_status']))
+            $_POST['hw_limitation_status'] = 0;
+        else
+            $_POST['hw_limitation_status'] = 1;
+
+        $userToCreate->setUser(
+            $_POST['id'],
+            "authenticated",
+            $_POST['password_1'],
+            $_POST['status'],
+            $_POST['phone'],
+            $_POST['email'],
+            $_POST['ip_limitation_status'],
+            $_POST['hw_limitation_status'],
+            $_POST['ip_range_start'],
+            $_POST['ip_range_stop'],
+            $_POST['active_net_group']
+        );
+
+        /* Create User */
+        $result = $userToCreate->create();
+
+        if ($result) {
+            $result = $userToCreate->joinGroup($_POST['groups']);
+            if ($result)
+                $_SESSION['status_stdout'] = "User Created Successfuly";
+        } else {
+            //alert problem
+            if (strpos($userToCreate->connection->error, "Duplicate entry") !== false)
+                $_SESSION['status_stderr'] = "Error: User already exists ";
+            else
+                $_SESSION['status_stderr'] = "Error: " . $userToCreate->database->connection->error;
+        }
+    }
 }
 
 ?>
@@ -39,7 +80,30 @@ if (isset($_POST['save_database_details'])) {
 
 <?php include "./head.html" ?>
 
-<form action="first_conf_database.php" method="post">
+<form action="first_conf_user.php" method="post">
+
+    <!-- Modal User Create -->
+    <div class="modal fade" id="userCreateModal" tabindex="-1" role="dialog" aria-labelledby="userCreateModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userCreateModalLabel">Hey! Are you sure?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    You are creating a new User
+                    <br>
+                    This operation should be almost instantaneous
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success" name="create_user">Create User</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <body class="d-flex flex-column min-vh-100 bg-gradient-dark">
 
@@ -84,16 +148,16 @@ if (isset($_POST['save_database_details'])) {
                                     <h4 class="text-right">User Settings</h4>
                                 </div>
                                 <div class="row mt-2">
-                                    <div class="col-md-6"><label class="labels">Nickname</label><input type="text" class="form-control" placeholder="Nickname" value=""></div>
+                                    <div class="col-md-6"><label class="labels">Username</label><input type="text" name="id" class="form-control" placeholder="Username" value="" required></div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col-md-6"><label class="labels">Phone Number</label><input type="text" class="form-control" placeholder="Phone Number" value=""></div>
-                                    <div class="col-md-6"><label class="labels">Email</label><input type="email" class="form-control" placeholder="Email" value=""></div>
+                                    <div class="col-md-6"><label class="labels">Phone Number</label><input type="text" name="phone" class="form-control" placeholder="Phone Number" value=""></div>
+                                    <div class="col-md-6"><label class="labels">Email</label><input type="email" name="email" class="form-control" placeholder="Email" value=""></div>
                                 </div>
                                 <br>
-                                <div class="row mt-2">
+                                <div class="row mt-4">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" id="accountStatusSwitch">
+                                        <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch">
                                         <label class="custom-control-label" for="accountStatusSwitch">Disable Account</label>
                                     </div>
                                 </div>
@@ -115,17 +179,23 @@ if (isset($_POST['save_database_details'])) {
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h4 class="text-right">Users Password Settings</h4>
                                 </div>
-                                <div class="row mt-2">
-                                    <div class="col-md-6"><label class="labels">New Password</label><input type="password" class="form-control" placeholder="New Password" value=""></div>
-                                    <div class="col-md-6"><label class="labels">Retype New Password</label><input type="password" class="form-control" placeholder="Retype New Password" value=""></div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6"><label class="labels">Password</label><input type="password" name="password_1" class="form-control" placeholder="Password" value="" required></div>
+                                    <div class="col-md-6"><label class="labels">Retype Password</label><input type="password" name="password_2" class="form-control" placeholder="Retype Password" value="" required></div>
                                 </div>
                                 <br>
                                 <h4 class="text-left">Group Ownership</h4>
                                 <div class="row">
-                                    <select class="custom-select" multiple>
-                                        <option value="1">admins</option>
-                                        <option value="2">users</option>
-                                    </select>
+                                    <div class="col-md-12">
+                                        <select class="custom-select" name="groups[]" multiple>
+                                            <?php
+                                            $group = new Group($database, NULL);
+                                            $groupArray = $group->getGroups();
+                                            for ($c = 0; $c < sizeof($groupArray); $c++) { ?>
+                                                <option value="<? echo $groupArray[$c]->name ?>"><?php echo ($groupArray[$c]->name) ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -136,10 +206,7 @@ if (isset($_POST['save_database_details'])) {
 
         <div class="col-11">
             <div class="text-center mt-3">
-                <div class="text-right"><button class="btn btn-success group-button" data-toggle="modal" data-target="#userCreateModal" type="button">Create User</button></div>
-            </div>
-            <div class="text-right mt-2">
-                <a href="first_conf_controller.php" class="btn btn-primary btn-lg active float-end" role="button" aria-pressed="true">Next Step</a>
+                <div class="text-right"><button class="btn btn-success group-button btn-lg active float-end" data-toggle="modal" data-target="#userCreateModal" type="button">Create User & Proceed</button></div>
             </div>
         </div>
 
@@ -152,10 +219,19 @@ if (isset($_POST['save_database_details'])) {
                 ·
                 <a href="terms_conditions.php">Terms &amp; Conditions</a>
             </div>
+
+            <?php
+            printBanner();
+            if ($_SESSION['status_stdout'] == "User Created Successfuly") {
+                echo ("<script>location.href='first_conf_controller.php'</script>");
+                exit;
+            }
+            ?>
+
         </div>
 
-    </body>
-
 </form>
+
+</body>
 
 </html>

@@ -4,22 +4,22 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-$environment = new Environment();
+$database = new Database();
 
 if (isset($_POST['save_database_details'])) {
     if (isset($_POST['database_disabled']))
-        $environment->database_disabled = true;
+        $database_disabled = true;
     else
-        $environment->database_disabled = false;
+        $database_disabled = false;
 
     $newConfiguration .= "
     <?php
-        " . '$environment->database_conf' . " = [
+        " . '$database_conf' . " = [
             'ip' => '" . $_POST['database_ip'] . "', 
             'port' => '" . $_POST['database_port'] . "',
             'username' => '" . $_POST['database_username'] . "',
             'password' => '" . $_POST['database_password'] . "',
-            'disabled' => '" . $environment->database_disabled . "'
+            'disabled' => '" . $database_disabled . "'
         ];
     ?>
     ";
@@ -172,7 +172,7 @@ if (isset($_POST['save_database_details'])) {
                                 <div class="row justify-content-center">
                                     <h4>Status: </h4>
                                     <?php
-                                    if (!$environment->database->getConnectionStatus())
+                                    if (!$database->getConnectionStatus())
                                         echo ('<span class="badge badge-danger">Offline</span>');
                                     else
                                         echo ('<span class="badge badge-success">Online</span>');
@@ -183,7 +183,7 @@ if (isset($_POST['save_database_details'])) {
                                     <h4>Username: </h4>
                                     <span class="badge badge-primary">
                                         <?php
-                                        echo ($environment->database->username);
+                                        echo ($database->username);
                                         ?>
                                     </span>
                                 </div>
@@ -191,7 +191,7 @@ if (isset($_POST['save_database_details'])) {
                                 <div class="row justify-content-center">
                                     <h4>Database IP: </h4> <span class="badge badge-info">
                                         <?php
-                                        echo ($environment->database->ip);
+                                        echo ($database->ip);
                                         ?>
                                     </span>
                                 </div>
@@ -199,14 +199,14 @@ if (isset($_POST['save_database_details'])) {
                                 <div class="row justify-content-center">
                                     <h4>Database Port: </h4> <span class="badge badge-info">
                                         <?php
-                                        echo ($environment->database->port);
+                                        echo ($database->port);
                                         ?>
                                     </span>
                                 </div>
                                 <br>
                                 <div class="row justify-content-center">
                                     <?php
-                                    if ($environment->database->disabled)
+                                    if ($database->disabled)
                                         echo ('<h4>Database Disabled: </h4> <span class="badge badge-danger">True</span>');
                                     else
                                         echo ('<h4>Database Disabled: </h4> <span class="badge badge-success">False</span>');
@@ -222,7 +222,7 @@ if (isset($_POST['save_database_details'])) {
 
         <div class="col-11">
             <div class="text-right mt-2">
-                <a href="first_conf_group.php" class="btn btn-primary btn-lg active float-end" role="button" aria-pressed="true">Next Step</a>
+                <a href="first_conf_group.php" class="btn btn-primary btn-lg active float-end <?php if (!$database->getConnectionStatus()) echo "disabled";?>" role="button" aria-pressed="true">Next Step</a>
             </div>
         </div>
 

@@ -4,32 +4,30 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-$environment = new Environment();
+$controller = new Controller();
 
-if (isset($_POST['save_controller_details'])) {
+if ($controller->getConnectionStatus())
+    echo ("<script>location.href='login.php'</script>");
+
+elseif (isset($_POST['save_controller_details'])) {
     if (isset($_POST['controller_disabled']))
-        $environment->controller_disabled = true;
+        $controller_disabled = true;
     else
-        $environment->controller_disabled = false;
-
-    $newConfiguration = "
-    <?php
-        use NetItWorks\Controller;
-        " . '$parentDir' . "= dirname(__DIR__, 1);
-        require_once " . '$parentDir' . " . '/vendor/autoload.php';
-    ?>
-    ";
+        $controller_disabled = false;
 
     $newConfiguration .= "
     <?php
-        " . '$environment->controller_conf' . " = [
+        "   . 'global $controller_conf;
+        
+        '
+        . '$controller_conf' . " = [
             'name' => '" . $_POST['controller_name'] . "', 
             'description' => '" . $_POST['controller_description'] . "',
             'ip' => '" . $_POST['controller_ip'] . "', 
             'port' => '" . $_POST['controller_port'] . "',
             'username' => '" . $_POST['controller_username'] . "',
             'password' => '" . $_POST['controller_password'] . "',
-            'disabled' => '" . $environment->controller_disabled . "'
+            'disabled' => '" . $controller_disabled . "'
         ];
     ?>
     ";
@@ -37,9 +35,20 @@ if (isset($_POST['save_controller_details'])) {
     file_put_contents("config/controller_config.php", $newConfiguration);
     header("Refresh:0");
 } else if (isset($_POST['reset_controller_details'])) {
-
     file_put_contents("config/controller_config.php", file_get_contents('config/controller_config_default.php'));
-    header("Refresh:0");
+} else if (isset($_POST['skip_controller_config'])) {
+    $newConfiguration .= "
+    <?php
+        "   . 'global $netitworks_conf;
+        
+        '
+        . '$netitworks_conf' . " = [
+            'first_configuration_done' => '" . 'yes' . "'
+        ];
+    ?>
+    ";
+    file_put_contents("config/netitworks_config.php", $newConfiguration);
+    echo ("<script>location.href='login.php'</script>");
 }
 
 ?>
@@ -129,6 +138,29 @@ if (isset($_POST['save_controller_details'])) {
                             </div>
                         </div>
 
+                        <!-- Modal Controller Skip -->
+                        <div class="modal fade" id="controllerSkipModal" tabindex="-1" role="dialog" aria-labelledby="controllerSkipModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="controllerSkipModalLabel">Hey! Are you sure?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        You are SKIPPING the UniFi Contoller Configuration Procedure
+                                        <br>
+                                        You will not be able to use the UniFi management features
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-warning" name="skip_controller_config">Continue</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Configuration Section -->
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
@@ -184,7 +216,7 @@ if (isset($_POST['save_controller_details'])) {
                                 <div class="row justify-content-center">
                                     <h4>Status: </h4>
                                     <?php
-                                    if ($environment->controller->getConnectionStatus())
+                                    if ($controller->getConnectionStatus())
                                         echo ('<span class="badge badge-success">Online</span>');
                                     else
                                         echo ('<span class="badge badge-danger">Offline</span>');
@@ -198,8 +230,8 @@ if (isset($_POST['save_controller_details'])) {
         </div>
 
         <div class="col-11">
-            <div class="text-right mt-2">
-                <a href="login.php" class="btn btn-primary btn-lg active float-end" role="button" aria-pressed="true">Next Step</a>
+            <div class="text-right mt-3">
+                <button class="btn btn-warning btn-lg active float-end" data-toggle="modal" data-target="#controllerSkipModal" type="button" <?php if ($controller->getConnectionStatus()) echo "disabled"; ?> >Skip UniFi Configuration</button>
             </div>
         </div>
 

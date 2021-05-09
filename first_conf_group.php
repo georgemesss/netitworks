@@ -11,9 +11,12 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+$database = new Database();
+
 if (isset($_POST['create_group']) && isset($_POST['name'])) {
 
-    $groupToCreate = new Group();
+    $groupToCreate = new Group($database, NULL);
+
     if (!$groupToCreate->database->getConnectionStatus()) {
         $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
     } else {
@@ -21,16 +24,7 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
         /* Post Super-Global sanification*/
         $_POST = $groupToCreate->database->sanifyArray($_POST);
 
-        if (!$groupToCreate->ifAllElementStatusEqual(array(
-            $_POST['ip_limitation_status'],
-            $_POST['ip_range_start'],
-            $_POST['ip_range_stop']
-        ))) {
-            $_SESSION['status_stderr'] = "Error! All fields must be filled";
-            $groupToCreate->printBanner();
-        }
-
-        $_POST = $groupToCreate->emptyToNull($_POST);
+        $_POST = emptyToNull($_POST);
 
         if (!isset($_POST['disabled']))
             $_POST['disabled'] = 1;
@@ -90,9 +84,10 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
         /* Create Group */
         $result = $groupToCreate->create();
 
-        if (is_bool($result)) {
-            //alert ok
-            $_SESSION['status_stdout'] = "Group Created Successfuly";
+        if ($result) {
+            $result = $groupToCreate->addUsers($_POST['users']);
+            if ($result)
+                $_SESSION['status_stdout'] = "Group Created Successfuly";
         } else {
             //alert problem
             if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
@@ -143,47 +138,24 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
 
                     <div class="card o-hidden border-0 shadow-lg">
 
-                        <!-- Modal Database Info Edit -->
-                        <div class="modal fade" id="databaseEditModal" tabindex="-1" role="dialog" aria-labelledby="databaseEditModalLabel" aria-hidden="true">
+                        <!-- Modal Group Create -->
+                        <div class="modal fade" id="groupCreateModal" tabindex="-1" role="dialog" aria-labelledby="groupCreateModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="databaseEditModalLabel">Hey! Are you sure?</h5>
+                                        <h5 class="modal-title" id="groupCreateModalLabel">Hey! Are you sure?</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        You are changing the MySQL Database Details
+                                        You are creating a new Group
                                         <br>
-                                        This operation will take a couple of seconds
+                                        This operation should be almost instantaneous
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" name="save_database_details">Save changes</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Modal Database Reset -->
-                        <div class="modal fade" id="databaseResetModal" tabindex="-1" role="dialog" aria-labelledby="databaseResetModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="databaseResetModalLabel">Hey! Are you sure?</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        You are RESETTING the MySQL Database Configuration to Defaults
-                                        <br>
-                                        This operation will take a couple of seconds
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-warning" name="reset_database_details">Reset Configuration</button>
+                                        <button type="submit" class="btn btn-success" name="create_group">Create Group</button>
                                     </div>
                                 </div>
                             </div>
@@ -282,10 +254,7 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
 
         <div class="col-11">
             <div class="text-center mt-3">
-                <div class="text-right"><button class="btn btn-success group-button" data-toggle="modal" data-target="#groupCreateModal" type="button">Create Group</button></div>
-            </div>
-            <div class="text-right mt-2">
-                <a href="first_conf_user.php" class="btn btn-primary btn-lg active float-end" role="button" aria-pressed="true">Next Step</a>
+                <div class="text-right"><button class="btn btn-success group-button  btn-lg active float-end" data-toggle="modal" data-target="#groupCreateModal" type="button">Create Group & Proceed</button></div>
             </div>
         </div>
 
@@ -298,10 +267,18 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
                 ·
                 <a href="terms_conditions.php">Terms &amp; Conditions</a>
             </div>
+
+            <?php
+            printBanner();
+            if ($_SESSION['status_stdout'] == "Group Created Successfuly") {
+                echo ("<script>location.href='first_conf_user.php'</script>");
+                exit;
+            }
+            ?>
+
         </div>
-
-    </body>
-
 </form>
+
+</body>
 
 </html>

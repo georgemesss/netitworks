@@ -11,9 +11,11 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+$database = new Database();
+
 if (isset($_POST['create_user']) && isset($_POST['id'])) {
 
-    $userToCreate = new User();
+    $userToCreate = new User($database, NULL);
     if (!$userToCreate->database->getConnectionStatus()) {
         $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
     } elseif ($_POST['password_1'] != $_POST['password_2']) {
@@ -23,7 +25,7 @@ if (isset($_POST['create_user']) && isset($_POST['id'])) {
         /* Post Super-Global sanification*/
         $_POST = $userToCreate->database->sanifyArray($_POST);
 
-        $_POST = $userToCreate->emptyToNull($_POST);
+        $_POST = emptyToNull($_POST);
 
         if (!isset($_POST['disabled']))
             $_POST['status'] = "active";
@@ -60,7 +62,7 @@ if (isset($_POST['create_user']) && isset($_POST['id'])) {
         if ($result) {
             $result = $userToCreate->joinGroup($_POST['groups']);
             if ($result)
-                $_SESSION['status_stdout'] = "Group Created Successfuly";
+                $_SESSION['status_stdout'] = "User Created Successfuly";
         } else {
             //alert problem
             if (strpos($userToCreate->connection->error, "Duplicate entry") !== false)
@@ -173,7 +175,7 @@ if (isset($_POST['create_user']) && isset($_POST['id'])) {
                             <div class="col-md-12">
                                 <select class="custom-select" name="groups[]" multiple>
                                     <?php
-                                    $group = new Group();
+                                    $group = new Group($database, NULL);
                                     $groupArray = $group->getGroups();
                                     for ($c = 0; $c < sizeof($groupArray); $c++) { ?>
                                         <option value="<? echo $groupArray[$c]->name ?>"><?php echo ($groupArray[$c]->name)?></option>
@@ -191,7 +193,7 @@ if (isset($_POST['create_user']) && isset($_POST['id'])) {
             </div>
 
             <?php
-            $userToCreate->printBanner();
+            printBanner();
             ?>
 
         </div>

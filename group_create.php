@@ -11,9 +11,12 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+$database = new Database();
+
 if (isset($_POST['create_group']) && isset($_POST['name'])) {
 
-    $groupToCreate = new Group();
+    $groupToCreate = new Group($database, NULL);
+
     if (!$groupToCreate->database->getConnectionStatus()) {
         $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
     } else {
@@ -21,16 +24,16 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
         /* Post Super-Global sanification*/
         $_POST = $groupToCreate->database->sanifyArray($_POST);
 
-        if (!$groupToCreate->ifAllElementStatusEqual(array(
+        if (!ifAllElementStatusEqual(array(
             $_POST['ip_limitation_status'],
             $_POST['ip_range_start'],
             $_POST['ip_range_stop']
         ))) {
             $_SESSION['status_stderr'] = "Error! All fields must be filled";
-            $groupToCreate->printBanner();
+            printBanner();
         }
 
-        $_POST = $groupToCreate->emptyToNull($_POST);
+        $_POST = emptyToNull($_POST);
 
         if (!isset($_POST['disabled']))
             $_POST['disabled'] = 1;
@@ -224,7 +227,7 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
                         <div class="row">
                             <select class="custom-select" name="users[]" multiple>
                                 <?php
-                                $users = new User();
+                                $users = new User($database, NULL);
                                 $userArray = $users->getUsers();
                                 for ($c = 0; $c < sizeof($userArray); $c++) {
                                     $test = '<option value="' . $userArray[$c]->id . '"><' . $userArray[$c]->id . '></option>';
@@ -243,7 +246,7 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
             </div>
 
             <?php
-            $groupToCreate->printBanner();
+            printBanner();
             ?>
 
         </div>

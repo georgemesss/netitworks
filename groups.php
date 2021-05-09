@@ -11,7 +11,8 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-$group = new Group();
+$database = new Database();
+$group = new Group($database, NULL);
 
 if (isset($_POST['group_delete'])) {
     $group->setName($_POST['group_delete']);
@@ -222,7 +223,7 @@ $groupList = $group->getGroups();
     </div>
 
     <?php
-    $group->printBanner();
+    printBanner();
     ?>
 
     <?php include "./footer.html" ?>

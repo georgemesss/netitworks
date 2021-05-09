@@ -34,15 +34,15 @@ class Controller
      *                            recommended for production environments to prevent potential MitM attacks, default value (false)
      *                            disables validation of the controller certificate
      */
-    public function __construct($name, $description, $ip, $port, $username, $password, $disabled)
+    public function __construct()
     {
-        $this->name = $name;
-        $this->description = $description;
-        $this->ip = $ip;
-        $this->port = $port;
-        $this->username = $username;
-        $this->password = $password;    
-        $this->disabled=$disabled;
+        $this->name = $GLOBALS['controller_conf']['name'];
+        $this->description = $GLOBALS['controller_conf']['description'];
+        $this->ip = $GLOBALS['controller_conf']['ip'];
+        $this->port = $GLOBALS['controller_conf']['port'];
+        $this->username = $GLOBALS['controller_conf']['username'];
+        $this->password = $GLOBALS['controller_conf']['password'];
+        $this->disabled = $GLOBALS['controller_conf']['disabled'];
         $this->clientAPI = new Client($this->username, $this->password, ("https://".$this->ip.":".$this->port), null, null, null);
         $this->login();
     }

@@ -11,7 +11,7 @@
         "manager"
     ],
     "homepage":    "https://github.com/georgemesss/netitworks",
-    "license":     "",
+    "license":     "GNU GPL v3.0",
     "authors": [
         {
             "name":     "George Mess",
@@ -23,8 +23,9 @@
     },
     "autoload": {
         "psr-4": {
-            "NetItWorks\\": "src/",
+            "NetItWorks\\": "classes/",
             "UniFi_API\\" : "vendor/art-of-wifi/unifi-api-client/src/"
-        }
+        },
+        "files": ["common.php"]
     }
 }

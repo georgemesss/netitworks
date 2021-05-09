@@ -2,7 +2,8 @@
 namespace NetItWorks;
 require_once("vendor/autoload.php");
 
-$environment = new Environment();
+$controller = new Controller();
+$database = new Database();
 ?>
 
 <!DOCTYPE html>
@@ -30,7 +31,7 @@ $environment = new Environment();
                                 Database Status</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?php
-                                if (!$environment->database->getConnectionStatus())
+                                if (!$database->getConnectionStatus())
                                     echo ('<span class="badge badge-danger">Offline</span>');
                                 else
                                     echo ('<span class="badge badge-success">Online</span>');
@@ -39,14 +40,14 @@ $environment = new Environment();
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <span class="badge badge-primary">
                                     <?php
-                                    echo ($environment->database->ip);
+                                    echo ($database->ip);
                                     ?>
                                 </span>
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <span class="badge badge-primary">
                                     <?php
-                                    echo ($environment->database->port);
+                                    echo ($database->port);
                                     ?>
                                 </span>
                             </div>
@@ -68,7 +69,7 @@ $environment = new Environment();
                                 Controller Status</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?php
-                                if ($environment->controller->getConnectionStatus())
+                                if ($controller->getConnectionStatus())
                                     echo ('<span class="badge badge-success">Online</span>');
                                 else
                                     echo ('<span class="badge badge-danger">Offline</span>');
@@ -77,21 +78,21 @@ $environment = new Environment();
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <span class="badge badge-success">
                                     <?php
-                                    echo ($environment->controller->name);
+                                    echo ($controller->name);
                                     ?>
                                 </span>
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <span class="badge badge-primary">
                                     <?php
-                                    echo ($environment->controller->ip);
+                                    echo ($controller->ip);
                                     ?>
                                 </span>
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <span class="badge badge-primary">
                                     <?php
-                                    echo ($environment->controller->port);
+                                    echo ($controller->port);
                                     ?>
                                 </span>
                             </div>

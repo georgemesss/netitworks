@@ -11,7 +11,8 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-$user = new User();
+$database = new Database();
+$user = new User($database, NULL);
 
 if (isset($_POST['user_delete'])) {
     $user->setId($_POST['user_delete']);
@@ -228,7 +229,7 @@ $userList = $user->getUsers();
     <!-- /.container-fluid -->
 
     <?php
-    $user->printBanner();
+    printBanner();
     ?>
 
     <?php include "./footer.html" ?>

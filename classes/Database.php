@@ -30,16 +30,15 @@ class Database
      *                            recommended for production environments to prevent potential MitM attacks, default value (false)
      *                            disables validation of the controller certificate
      */
-    public function __construct($ip, $port, $username, $password, $disabled)
+    public function __construct()
     {
-        $this->ip = $ip;
-        $this->port = $port;
-        $this->username = $username;
-        $this->password = $password;
-        $this->disabled = $disabled;
-        $this->connection = mysqli_connect('p:' . $ip, $username, $password, "netitworks", null, null); //Up to now we won't specify the port (Doesn't work)
+        $this->ip = $GLOBALS['database_conf']['ip'];
+        $this->port = $GLOBALS['database_conf']['port'];
+        $this->username = $GLOBALS['database_conf']['username'];
+        $this->password = $GLOBALS['database_conf']['password'];
+        $this->disabled = $GLOBALS['database_conf']['disabled'];
+        $this->connection = mysqli_connect('p:' . $this->ip, $this->username, $this->password, "netitworks", null, null); //Up to now we won't specify the port (Doesn't work)
     }
-
 
     /**
      *

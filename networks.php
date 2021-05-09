@@ -4,21 +4,21 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-$environment = new Environment();
+$controller = new Controller();
 
-$networkArray = $environment->controller->getNetworks();
+$networkArray = $controller->getNetworks();
 
 if (isset($_POST['network_delete'])) {
-    if ($environment->controller->deleteNetwork($_POST['network_delete']))
+    if ($controller->deleteNetwork($_POST['network_delete']))
         $_SESSION['status_stdout'] = "Network Deleted";
     else
         $_SESSION['status_stderr'] = "Error on Deletion";
     header("Refresh:0"); //Refresh page
 }
 
-    if (!$environment->controller->getConnectionStatus()) {
-        $_SESSION['status_stderr'] = "Error: Controller is NOT Online ";
-    }
+if (!$controller->getConnectionStatus()) {
+    $_SESSION['status_stderr'] = "Error: Controller is NOT Online ";
+}
 ?>
 
 <!DOCTYPE html>
@@ -148,7 +148,7 @@ if (isset($_POST['network_delete'])) {
     </div>
 
     <?php
-    $environment->printBanner();
+    $printBanner();
     ?>
     <!-- /.container-fluid -->
 
