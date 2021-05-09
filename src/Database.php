@@ -65,9 +65,16 @@ class Database
     {
         $keys = array_keys($array);
         for ($i = 0; $i < count($keys); ++$i) {
-            $array[$keys[$i]] = $this->getConnectionStatus()->real_escape_string($array[$keys[$i]]);
+            if (!is_array($array[$keys[$i]]))
+                $array[$keys[$i]] = $this->getConnectionStatus()->real_escape_string($array[$keys[$i]]);
+            else {
+                $subkeys = array_keys($array[$keys[$i]]);
+                for ($z = 0; $z < count($subkeys); ++$z) {
+                    $array[$keys[$subkeys[$z]]] = $this->getConnectionStatus()->real_escape_string($array[$keys[$subkeys[$z]]]);
+                }
+            }
+            return $array;
         }
-        return $array;
     }
 
     /**
@@ -81,7 +88,7 @@ class Database
     function query($query)
     {
         $result = $this->getConnectionStatus()->query($query);
-        if(!$result)
+        if (!$result)
             return false;
         else
             return $result;

@@ -76,7 +76,7 @@ class Environment
     {
         $keys = array_keys($array);
         for ($i = 0; $i < count($keys); ++$i) {
-            if ($array[$keys[$i]]=="")
+            if (is_string($array[$keys[$i]]) && $array[$keys[$i]]=="")
                 $array[$keys[$i]] = 'NULL';
         }
         return $array;

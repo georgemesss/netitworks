@@ -19,13 +19,13 @@ if (isset($_POST['group_delete'])) {
         $_SESSION['status_stdout'] = "Group Deleted";
     else
         $_SESSION['status_stderr'] = "Error on Deletion";
-    header("Refresh:0"); //Refresh page
+    //header("Refresh:0"); //Refresh page
 }
 
 if (isset($_POST['group_change_status'])) {
     $group->setName($_POST['group_change_status']);
     $group->changeStatus();
-    header("Refresh:0"); //Refresh page
+    //header("Refresh:0"); //Refresh page
 }
 
 $groupList = $group->getGroups();
@@ -150,7 +150,7 @@ $groupList = $group->getGroups();
                                                         <i class="fas fa-user-check"></i>
                                                     </button>';
                                             ?>
-                                            <!-- Modal Group Delete -->
+                                            <!-- Modal Group Change Status -->
                                             <form action="groups.php" method="post">
                                                 <div class="modal fade" id="groupChangeStatusModal<?php echo $groupList[$c]->name; ?>" tabindex="-1" role="dialog" aria-labelledby="groupChangeStatusModal<?php echo $key['name']; ?>" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">

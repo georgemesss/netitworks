@@ -90,9 +90,10 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
         /* Create Group */
         $result = $groupToCreate->create();
 
-        if (is_bool($result)) {
-            //alert ok
-            $_SESSION['status_stdout'] = "Group Created Successfuly";
+        if ($result) {
+            $result = $groupToCreate->addUsers($_POST['users']);
+            if ($result)
+                $_SESSION['status_stdout'] = "Group Created Successfuly";
         } else {
             //alert problem
             if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
@@ -221,9 +222,14 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
                         <br>
                         <h4 class="text-center">User Membership</h4>
                         <div class="row">
-                            <select class="custom-select" multiple>
-                                <option value="1">admin</option>
-                                <option value="2">user</option>
+                            <select class="custom-select" name="users[]" multiple>
+                                <?php
+                                $users = new User();
+                                $userArray = $users->getUsers();
+                                for ($c = 0; $c < sizeof($userArray); $c++) {
+                                    $test = '<option value="' . $userArray[$c]->id . '"><' . $userArray[$c]->id . '></option>';
+                                    echo '<option value="' . $userArray[$c]->id . '">' . $userArray[$c]->id . '</option>';
+                                } ?>
                             </select>
                         </div>
                     </div>

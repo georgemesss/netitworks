@@ -152,9 +152,8 @@ class Group extends Environment
         $query_result = $this->database->query($query);
         if (!$query_result) {
             return false;
-        } else {
-            return $query_result;
-        }
+        } 
+        return true;
     }
 
     /**
@@ -218,34 +217,25 @@ class Group extends Environment
     {
         /* Prepare inserting query */
         $query = "DELETE "
-            . " FROM user_group_partecipation";
+            . " FROM net_group";
 
-        $query .= " WHERE group_name = '" . $this->name . "'";
+        $query .= " WHERE name = '" . $this->name . "'";
 
         $query_result = $this->database->query($query);
         if (!$query_result)
             return false;
-        else {
-            /* Prepare inserting query */
-            $query = "DELETE "
-                . " FROM net_group";
-
-            $query .= " WHERE name = '" . $this->name . "'";
-
-            $query_result = $this->database->query($query);
-            if (!$query_result)
-                return false;
-            else
-                return true;
-        }
+        else
+            return true;
     }
+
 
     /**
      * Set new group status
      *
      * @param string  $newStatus
      */
-    public function changeStatus() {
+    public function changeStatus()
+    {
         /* Prepare inserting query */
         $query = "SELECT " .
             "status
@@ -280,5 +270,33 @@ class Group extends Environment
                 return true;
             }
         }
+    }
+
+    /**
+     * Join add array of Users to group
+     *
+     * @return true|false  Returns false on error, true otherwise
+     */
+    public function addUsers($users_array)
+    {
+        foreach ($users_array as $user) {
+
+            /* Prepare inserting query */
+            $query = "INSERT INTO user_group_partecipation(
+                user_id,
+                group_name
+            )";
+
+            $query .= ' VALUES ("'
+                . $user . '", "'
+                . $this->name
+                . '")';
+
+            $query_result = $this->database->query($query);
+            if (!$query_result) {
+                return false; //Error
+            }
+        }
+        return true;
     }
 }

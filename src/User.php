@@ -97,15 +97,15 @@ class User extends Environment
      *
      * @param string  $name
      */
-    public function setName(
-        $name
+    public function setId(
+        $id
     ) {
-        $this->name = $name;
+        $this->id = $id;
     }
 
     /**
      * Create user in DB
-     * @return void|false Returns false upon error
+     * @return true|false Returns false upon error, true otherwise
      */
     function create()
     {
@@ -141,107 +141,92 @@ class User extends Environment
         $query_result = $this->database->query($query);
         if (!$query_result) {
             return false;
-        } else {
-            return $query_result;
         }
+        return true;
     }
 
     /**
-     * Get group list
+     * Get user list
      *
-     * @return array  $Return array of Groups
+     * @return array  $Return array of Users
      */
-    function getGroups()
+    function getUsers()
     {
         /* Prepare inserting query */
         $query = "SELECT " .
-            "name,
+            "id,
+            type,
+            password,
             status,
-            admin_privilege,
-            description,
-            net_type,
-            net_attribute_type,
-            net_vlan_id,
+            phone,
+            email,
             ip_limitation_status,
             hw_limitation_status,
             ip_range_start,
             ip_range_stop,
-            user_auto_registration,
-            user_require_admin_approval
-        " . " FROM net_group";
+            active_net_group
+        " . " FROM net_user";
 
-        $query_result = $this->database->query($query);
+        $query_result = $this->database->getConnectionStatus()->query($query);
         if (!$query_result) {
             return false; //Error
         } else {
-            $groups[] = new Group();
+            $users[] = new User();
             $c = 0;
             if ($query_result->num_rows != 0) {
                 while ($row = $query_result->fetch_assoc()) {
-                    $groups[$c]->name = $row['name'];
-                    $groups[$c]->status = $row['status'];
-                    $groups[$c]->admin_privilege = $row['admin_privilege'];
-                    $groups[$c]->description = $row['description'];
-                    $groups[$c]->net_type = $row['net_type'];
-                    $groups[$c]->net_attribute_type = $row['net_attribute_type'];
-                    $groups[$c]->net_vlan_id = $row['net_vlan_id'];
-                    $groups[$c]->ip_limitation_status = $row['ip_limitation_status'];
-                    $groups[$c]->hw_limitation_status = $row['hw_limitation_status'];
-                    $groups[$c]->ip_range_start = $row['ip_range_start'];
-                    $groups[$c]->ip_range_stop = $row['ip_range_stop'];
-                    $groups[$c]->user_auto_registration = $row['user_auto_registration'];
-                    $groups[$c]->user_require_admin_approval = $row['user_require_admin_approval'];
+                    $users[$c]->id = $row['id'];
+                    $users[$c]->type = $row['type'];
+                    $users[$c]->password = $row['password'];
+                    $users[$c]->status = $row['status'];
+                    $users[$c]->phone = $row['phone'];
+                    $users[$c]->email = $row['email'];
+                    $users[$c]->ip_limitation_status = $row['ip_limitation_status'];
+                    $users[$c]->hw_limitation_status = $row['hw_limitation_status'];
+                    $users[$c]->ip_range_start = $row['ip_range_start'];
+                    $users[$c]->ip_range_stop = $row['ip_range_stop'];
+                    $users[$c]->active_net_group = $row['active_net_group'];
                     $c++;
                 }
-                return $groups;
+                return $users;
             }
             return false;
         }
     }
 
     /**
-     * Delete a group
+     * Delete a user
      *
      */
     function delete()
     {
         /* Prepare inserting query */
         $query = "DELETE "
-            . " FROM user_group_partecipation";
+            . " FROM net_user";
 
-        $query .= " WHERE group_name = '" . $this->name . "'";
+        $query .= " WHERE id = '" . $this->id . "'";
 
         $query_result = $this->database->query($query);
         if (!$query_result)
             return false;
-        else {
-            /* Prepare inserting query */
-            $query = "DELETE "
-                . " FROM net_group";
-
-            $query .= " WHERE name = '" . $this->name . "'";
-
-            $query_result = $this->database->query($query);
-            if (!$query_result)
-                return false;
-            else
-                return true;
-        }
+        else
+            return true;
     }
 
+
     /**
-     * Set new group status
+     * Set new user status
      *
-     * @param string  $newStatus
+     * @return true|false  Returns false on error, true otherwise
      */
     public function changeStatus()
     {
         /* Prepare inserting query */
         $query = "SELECT " .
             "status
-        " . " FROM net_group";
+        " . " FROM net_user";
 
-        $query .= " WHERE name = '" . $this->name . "'";
+        $query .= " WHERE id = '" . $this->id . "'";
 
         $query_result = $this->database->query($query);
         if (!$query_result) {
@@ -252,16 +237,16 @@ class User extends Environment
                 $previousStatus = $row["status"];
             }
 
-            if ($previousStatus == 0)
-                $newStatus = 1;
+            if ($previousStatus == "active")
+                $newStatus = "disabled";
             else
-                $newStatus = 0;
+                $newStatus = "active";
 
             /* Prepare inserting query */
-            $query = "UPDATE net_group " .
+            $query = "UPDATE net_user " .
                 "SET status ='"
                 . $newStatus . "'"
-                . " WHERE name = '" . $this->name . "'";
+                . " WHERE id = '" . $this->id . "'";
 
             $query_result = $this->database->query($query);
             if (!$query_result) {
@@ -270,5 +255,33 @@ class User extends Environment
                 return true;
             }
         }
+    }
+
+    /**
+     * Join user to an array of groups
+     *
+     * @return true|false  Returns false on error, true otherwise
+     */
+    public function joinGroup($group_array)
+    {
+        foreach ($group_array as $group) {
+
+            /* Prepare inserting query */
+            $query = "INSERT INTO user_group_partecipation(
+                user_id,
+                group_name
+            )";
+
+            $query .= ' VALUES ("'
+                . $this->id . '", "'
+                . $group
+                . '")';
+
+            $query_result = $this->database->query($query);
+            if (!$query_result) {
+                return false; //Error
+            }
+        }
+        return true;
     }
 }
