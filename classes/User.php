@@ -3,12 +3,19 @@
 namespace NetItWorks;
 
 /**
- * User Class
+ * Netitworks User class
  *
+ * This class contains the properties and methods of a NetItWorks's user
+ *
+ * @package Netitworks
+ * @author  George Mess <4onwb@protonmail.com>
+ * @version 0.0
+ * @license This class is subject to the GNU GPLv3 license that is bundled with this package in the file LICENSE.md
  */
 class User
 {
 
+    /* Properties */
     public $id;
     public $type;
     public $password;
@@ -25,7 +32,9 @@ class User
     public $controller;
 
     /**
-     * Construct an instance of the Controller class
+     * Construct an instance of the User class
+     * @param mysqli $database Mysqli Database object
+     * @param Controller $controller Controller object 
      */
     public function __construct($database, $controller)
     {

@@ -12,7 +12,7 @@ namespace NetItWorks;
  * @version 0.0
  * @license This class is subject to the GNU GPLv3 license that is bundled with this package in the file LICENSE.md
  */
-class Group 
+class Group
 {
 
     /* Properties */
@@ -102,8 +102,7 @@ class Group
 
     /**
      * Adds current Group to Database
-     *
-     * @param string $name
+     * 
      * @return bool Returns true upon success, false otherwise
      */
     function create()
@@ -144,14 +143,14 @@ class Group
         $query_result = $this->database->query($query);
         if (!$query_result) {
             return false;
-        } 
+        }
         return true;
     }
 
     /**
-     * Gets Group array from Database
+     * Gets current Group list from Database
      *
-     * @return array|bool  $Return array of Groups, false upon error
+     * @return array|bool Returns array of Groups, false upon error
      */
     function getGroups()
     {
@@ -202,10 +201,9 @@ class Group
     }
 
     /**
-     * Deletes group to Database
+     * Deletes current Group from Database
      *
-     * @param string $name
-     * @return bool Returns true upon success, false otherwise
+     * @return bool|false Returns true upon success, false otherwise
      */
     function delete()
     {
@@ -224,9 +222,9 @@ class Group
 
 
     /**
-     * Set new group status
+     * Changes current Group Status
      *
-     * @param string  $newStatus
+     * @return bool Returns true upon success, false otherwise
      */
     public function changeStatus()
     {
@@ -267,8 +265,9 @@ class Group
     }
 
     /**
-     * Join add array of Users to group
-     *
+     * Joins Users to Group
+     * 
+     * @param array $users_array Array of Strings of Usernames
      * @return true|false  Returns false on error, true otherwise
      */
     public function addUsers($users_array)
