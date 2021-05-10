@@ -14,6 +14,7 @@ if (isset($_POST['save_database_details'])) {
 
     $newConfiguration .= "
     <?php
+    " . 'global $database_conf; ' . "
         " . '$database_conf' . " = [
             'ip' => '" . $_POST['database_ip'] . "', 
             'port' => '" . $_POST['database_port'] . "',
@@ -23,7 +24,7 @@ if (isset($_POST['save_database_details'])) {
         ];
     ?>
     ";
-
+    
     file_put_contents("config/database_config.php", $newConfiguration);
     header("Refresh:0");
 } else if (isset($_POST['reset_database_details'])) {
@@ -222,7 +223,7 @@ if (isset($_POST['save_database_details'])) {
 
         <div class="col-11">
             <div class="text-right mt-2">
-                <a href="first_conf_group.php" class="btn btn-primary btn-lg active float-end <?php if (!$database->getConnectionStatus()) echo "disabled";?>" role="button" aria-pressed="true">Next Step</a>
+                <a href="first_conf_group.php" class="btn btn-primary btn-lg active float-end <?php if (!$database->getConnectionStatus()) echo "disabled"; ?>" role="button" aria-pressed="true">Next Step</a>
             </div>
         </div>
 

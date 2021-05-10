@@ -3,12 +3,19 @@
 namespace NetItWorks;
 
 /**
- * Group Class
+ * Netitworks Group class
  *
+ * This class contains the properties and methods of a NetItWorks's group
+ *
+ * @package Netitworks
+ * @author  George Mess <4onwb@protonmail.com>
+ * @version 0.0
+ * @license This class is subject to the GNU GPLv3 license that is bundled with this package in the file LICENSE.md
  */
 class Group 
 {
 
+    /* Properties */
     public $name;
     public $status;
     public $admin_privilege;
@@ -27,7 +34,9 @@ class Group
     public $controller;
 
     /**
-     * Construct an instance of the Controller class
+     * Construct an instance of the Group class
+     * @param mysqli $database Mysqli Database object
+     * @param Controller $controller Controller object 
      */
     public function __construct($database, $controller)
     {
@@ -36,7 +45,7 @@ class Group
     }
 
     /**
-     * Set group details
+     * Sets Group properties
      *
      * @param string  $name
      * @param string  $status
@@ -81,9 +90,9 @@ class Group
     }
 
     /**
-     * Set group name
+     * Sets group name
      *
-     * @param string  $name
+     * @param string $name
      */
     public function setName(
         $name
@@ -92,9 +101,10 @@ class Group
     }
 
     /**
-     * Set group name
+     * Adds current Group to Database
      *
-     * @param string  $name
+     * @param string $name
+     * @return bool Returns true upon success, false otherwise
      */
     function create()
     {
@@ -139,9 +149,9 @@ class Group
     }
 
     /**
-     * Get group list
+     * Gets Group array from Database
      *
-     * @return array  $Return array of Groups
+     * @return array|bool  $Return array of Groups, false upon error
      */
     function getGroups()
     {
@@ -192,8 +202,10 @@ class Group
     }
 
     /**
-     * Delete a group
+     * Deletes group to Database
      *
+     * @param string $name
+     * @return bool Returns true upon success, false otherwise
      */
     function delete()
     {

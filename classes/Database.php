@@ -3,12 +3,19 @@
 namespace NetItWorks;
 
 /**
- * Controller Class
+ * Netitworks Database class
  *
+ * This class acts as a bridge towards PHP's Database Class
+ *
+ * @package Netitworks
+ * @author  George Mess <4onwb@protonmail.com>
+ * @version 0.0
+ * @license This class is subject to the GNU GPLv3 license that is bundled with this package in the file LICENSE.md
  */
 class Database
 {
 
+    /* Properties */
     public $ip;
     public $port;
     public $username;
@@ -17,18 +24,8 @@ class Database
     public $connection;
 
     /**
-     * Construct an instance of the Controller class
-     *
-     * @param string  $user       user name to use when connecting to the UniFi controller
-     * @param string  $password   password to use when connecting to the UniFi controller
-     * @param string  $baseurl    optional, base URL of the UniFi controller which *must* include an 'https://' prefix,
-     *                            a port suffix (e.g. :8443) is required for non-UniFi OS controllers,
-     *                            do not add trailing slashes, default value is 'https://127.0.0.1:8443'
-     * @param string  $site       optional, short site name to access, defaults to 'default'
-     * @param string  $version    optional, the version number of the controller
-     * @param bool    $ssl_verify optional, whether to validate the controller's SSL certificate or not, a value of true is
-     *                            recommended for production environments to prevent potential MitM attacks, default value (false)
-     *                            disables validation of the controller certificate
+     * Construct an instance of the Database class
+     * Gets config parameters from variable stored in config/configure_database.php 
      */
     public function __construct()
     {
@@ -37,26 +34,25 @@ class Database
         $this->username = $GLOBALS['database_conf']['username'];
         $this->password = $GLOBALS['database_conf']['password'];
         $this->disabled = $GLOBALS['database_conf']['disabled'];
-        $this->connection = mysqli_connect('p:' . $this->ip, $this->username, $this->password, "netitworks", null, null); //Up to now we won't specify the port (Doesn't work)
+        $this->connection = mysqli_connect('p:' . $this->ip, $this->username, $this->password, "5bi_20_21_s02464", null, null); //Up to now we won't specify the port (Doesn't work)
     }
 
     /**
-     *
-     * Returns Connection ID of Database
-     *
-     * @return mysqli|false|null $connection ID_Connessione database or false
-     *
+     * Gets Database Connection Status
+     * @return bool Returns true opon success, false otherwise
      */
     public function getConnectionStatus()
     {
-        return $this->connection;
+        if (!$this->connection)
+            return false;
+        return true;
     }
 
     /**
      *
-     * Sanification of Given Associative Array for SQL Query
+     * Perform Sanification of Given Associative Array for SQL Query
      *
-     * @param array  $data String to sanify
+     * @param array  $array Array of strings to sanify
      * @return array Returns cleared associative array of strings
      *
      */
@@ -65,11 +61,11 @@ class Database
         $keys = array_keys($array);
         for ($i = 0; $i < count($keys); ++$i) {
             if (!is_array($array[$keys[$i]]))
-                $array[$keys[$i]] = $this->getConnectionStatus()->real_escape_string($array[$keys[$i]]);
+                $array[$keys[$i]] = $this->connection->real_escape_string($array[$keys[$i]]);
             else {
                 $subkeys = array_keys($array[$keys[$i]]);
                 for ($z = 0; $z < count($subkeys); ++$z) {
-                    $array[$keys[$subkeys[$z]]] = $this->getConnectionStatus()->real_escape_string($array[$keys[$subkeys[$z]]]);
+                    $array[$keys[$subkeys[$z]]] = $this->connection->real_escape_string($array[$keys[$subkeys[$z]]]);
                 }
             }
             return $array;
@@ -78,15 +74,15 @@ class Database
 
     /**
      *
-     * Query to database
+     * Execute a query to Database
      *
-     * @param string  $query Query
-     * @return mysqli|false Returns true or string of error
+     * @param string  $query Query to execute
+     * @return mysqli|bool Returns mysqli object upon success, false otherwise
      *
      */
     function query($query)
     {
-        $result = $this->getConnectionStatus()->query($query);
+        $result = $this->connection->query($query);
         if (!$result)
             return false;
         else
