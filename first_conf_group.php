@@ -1,11 +1,14 @@
 <?php
 
 /**
- * Class and Function List:
- * Function list:
- * Classes list:
+ * -- Page Info -- 
+ * user_conf_group.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user create an instance of the object Group
+ * 
+ * This page's initial php could be identical (or almost identical) to group_create.php
  */
-/* CONTROLLER CONFIGURATION PAGE*/
 
 namespace NetItWorks;
 
@@ -13,13 +16,14 @@ require_once("vendor/autoload.php");
 
 $database = new Database();
 
-if (isset($_POST['create_group']) && isset($_POST['name'])) {
+if (!$database->getConnectionStatus()) {
+    $_SESSION['status_stderr'] = "Database not Connected";
+    echo ("<script>location.href='first_conf_database.php'</script>");
+} else {
 
-    $groupToCreate = new Group($database, NULL);
+    if (isset($_POST['create_group']) && isset($_POST['name'])) {
 
-    if (!$groupToCreate->database->getConnectionStatus()) {
-        $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
-    } else {
+        $groupToCreate = new Group($database, NULL);
 
         /* Post Super-Global sanification*/
         $_POST = $groupToCreate->database->sanifyArray($_POST);
@@ -88,6 +92,8 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
             $result = $groupToCreate->addUsers($_POST['users']);
             if ($result)
                 $_SESSION['status_stdout'] = "Group Created Successfuly";
+            else
+                $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;
         } else {
             //alert problem
             if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
