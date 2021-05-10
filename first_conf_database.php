@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * -- Page Info -- 
+ * first_conf_database.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user change the config/database_config.php configuration file
+ * 
+ * This page's initial php could be identical (or almost identical) to database_configure.php
+ */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");

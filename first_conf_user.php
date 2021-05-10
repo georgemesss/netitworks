@@ -2,7 +2,7 @@
 
 /**
  * -- Page Info -- 
- * user_conf_user.php
+ * first_conf_user.php
  * 
  * -- Page Description -- 
  * This Page will let the user create an instance of the object User
