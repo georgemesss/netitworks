@@ -33,10 +33,8 @@ if (!$database->getConnectionStatus()) {
 
             $_POST = emptyToNull($_POST);
 
-            if (!isset($_POST['disabled']))
-                $_POST['status'] = "active";
-            else
-                $_POST['status'] = "disabled";
+            /* Force group and admin privilege status to enabled */
+            $_POST['disabled'] = 0;
 
             if (!isset($_POST['ip_limitation_status']))
                 $_POST['ip_limitation_status'] = 0;
@@ -166,7 +164,7 @@ if (!$database->getConnectionStatus()) {
                                 <br>
                                 <div class="row mt-4">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch">
+                                        <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch" disabled>
                                         <label class="custom-control-label" for="accountStatusSwitch">Disable Account</label>
                                     </div>
                                 </div>

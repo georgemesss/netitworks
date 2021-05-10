@@ -1,7 +1,5 @@
-
-    <?php
+<?php
         global $database_conf;
-        
         $database_conf = [
             'ip' => '192.168.100.216', 
             'port' => '8443',
@@ -9,5 +7,5 @@
             'password' => 'lasolit@xgcDEV',
             'disabled' => ''
         ];
-    ?>
+?>
     
