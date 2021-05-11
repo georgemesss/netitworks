@@ -8,45 +8,69 @@
  * This Page will let the user create an instance of the object User
  */
 
+
+/* Include NetItWorks Classes and use Composer Autoloader */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Create new Database instance */
 $database = new Database();
 
+/* If Database is not available */
 if (!$database->getConnectionStatus()) {
+    /* Print error code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stderr'] = "Database not Connected";
+
+    /* If Database is OK */
 } else {
 
+    /* If User prresses "Create User" button and username is set */
     if (isset($_POST['create_user']) && isset($_POST['id'])) {
 
+        /* Create new User instance and link database object */
         $userToCreate = new User($database, NULL);
-        if (!$userToCreate->database->getConnectionStatus()) {
-            $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
-        } elseif ($_POST['password_1'] != $_POST['password_2']) {
-            $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
-        } else {
 
-            /* Post Super-Global sanification*/
+        /* If passwords are not equal */
+        if ($_POST['password_1'] != $_POST['password_2']) {
+            /* Print error code to session superglobal (banner will be printed down on page) */
+            $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
+        }
+
+        /* If passwords are equal */ else {
+
+            /* Perform Post Super-Global Sanification */
             $_POST = $userToCreate->database->sanifyArray($_POST);
 
+            /* Convert empty strings to 'NULL' strings */
             $_POST = emptyToNull($_POST);
 
+            /* IF disabled switch is set */
             if (!isset($_POST['disabled']))
+                /* Set user status to ACTIVE */
                 $_POST['status'] = "active";
             else
+                /* Set user status to DISABLED */
                 $_POST['status'] = "disabled";
 
+            /* IF ip limitation status switch is set */
             if (!isset($_POST['ip_limitation_status']))
+                /* Set ip limitation status to 0 */
                 $_POST['ip_limitation_status'] = 0;
             else
+                /* Set ip limitation status to 1 */
                 $_POST['ip_limitation_status'] = 1;
 
+            /* IF hardware limitation status switch is set */
             if (!isset($_POST['hw_limitation_status']))
+                /* Set hardware limitation status to 0 */
                 $_POST['hw_limitation_status'] = 0;
             else
+                /* Set hardware limitation status to 1 */
                 $_POST['hw_limitation_status'] = 1;
 
+            /* Set properties to User object  */
             $userToCreate->setUser(
                 $_POST['id'],
                 "authenticated",
@@ -61,20 +85,34 @@ if (!$database->getConnectionStatus()) {
                 $_POST['active_net_group']
             );
 
-            /* Create User */
+            /* Add new User and properties to DataBase */
             $result = $userToCreate->create();
 
+            /* IF User was added to DB without errors */
             if ($result) {
+
+                /* Join user to given group array */
                 $result = $userToCreate->joinGroup($_POST['groups']);
+
+                /* IF User was associated with given groups to DB without errors */
                 if ($result)
+                    /* Print success code to session superglobal (banner will be printed down on page) */
                     $_SESSION['status_stdout'] = "User Created Successfuly";
+
+                /* IF User-Group association in DB returned errors */
                 else
+                    /* Print error code to session superglobal (banner will be printed down on page) */
                     $_SESSION['status_stderr'] = "Error: " . $userToCreate->database->connection->error;
-            } else {
-                //alert problem
+            } else { /* IF User creation in DB returned errors */
+
+                /* IF error is known */
                 if (strpos($userToCreate->connection->error, "Duplicate entry") !== false)
+                    /* Print error code to session superglobal (banner will be printed down on page) */
                     $_SESSION['status_stderr'] = "Error: User already exists ";
+
+                /* IF error is unknown */
                 else
+                    /* Print specific error code to session superglobal (banner will be printed down on page) */
                     $_SESSION['status_stderr'] = "Error: " . $userToCreate->database->connection->error;
             }
         }
@@ -183,9 +221,16 @@ if (!$database->getConnectionStatus()) {
                             <div class="col-md-12">
                                 <select class="custom-select" name="groups[]" multiple>
                                     <?php
+                                    /* If Database is OK */
                                     if ($database->getConnectionStatus()) {
+
+                                        /* Create new User instance and link database object */
                                         $group = new Group($database, NULL);
+
+                                        /* Get full group list array from DB */
                                         $groupArray = $group->getGroups();
+
+                                        /* Parse group object array and print results*/
                                         for ($c = 0; $c < sizeof($groupArray); $c++) { ?>
                                             <option value="<?php echo $groupArray[$c]->name ?>"><?php echo ($groupArray[$c]->name) ?></option>
                                     <?php }
@@ -203,6 +248,7 @@ if (!$database->getConnectionStatus()) {
             </div>
 
             <?php
+            /* Print banner status with $_SESSION stdout/stderr strings */
             printBanner();
             ?>
 

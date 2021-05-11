@@ -2,6 +2,8 @@
 
 namespace NetItWorks;
 
+use mysqli;
+
 /**
  * Netitworks Database class
  *
@@ -29,12 +31,20 @@ class Database
      */
     public function __construct()
     {
+        set_time_limit(3);
         $this->ip = $GLOBALS['database_conf']['ip'];
         $this->port = $GLOBALS['database_conf']['port'];
         $this->username = $GLOBALS['database_conf']['username'];
         $this->password = $GLOBALS['database_conf']['password'];
         $this->disabled = $GLOBALS['database_conf']['disabled'];
-        $this->connection = mysqli_connect('p:' . $this->ip, $this->username, $this->password, "netitworks", null, null); //Up to now we won't specify the port (Doesn't work)
+        $this->connection = mysqli_connect('p:' . $this->ip, $this->username, $this->password, "5bi_20_21_s02464", null, null); //Up to now we won't specify the port (Doesn't work)
+
+        //$timeout = 30;  /* thirty seconds for timeout */
+        //$link = mysqli_init();
+        //$link->options(MYSQLI_OPT_CONNECT_TIMEOUT, $timeout) ||
+        //   die('mysqli_options croaked: ' . $link->error);
+        //$link->real_connect($server,  $usr, $passwd, $dbname) ||
+        //die('mysqli_real_connect croaked: ' . $link->error);
     }
 
     /**

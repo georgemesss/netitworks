@@ -15,9 +15,9 @@ namespace NetItWorks;
 require_once("vendor/autoload.php");
 
 $database = new Database();
-$precontroller = new Controller();
+//$precontroller = new Controller();
 
-if ($database->getConnectionStatus() && $precontroller->getConnectionStatus())
+if ($database->getConnectionStatus()) //&& $precontroller->getConnectionStatus()
     echo ("<script>location.href='login.php'</script>");
 
 elseif (isset($_POST['save_database_details'])) {
