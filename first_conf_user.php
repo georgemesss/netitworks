@@ -89,83 +89,27 @@ if (!$database->getConnectionStatus()) {
 
 <form action="first_conf_user.php" method="post">
 
-    <!-- Modal User Create -->
-    <div class="modal fade" id="userCreateModal" tabindex="-1" role="dialog" aria-labelledby="userCreateModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="userCreateModalLabel">Hey! Are you sure?</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    You are creating a new User
-                    <br>
-                    This operation should be almost instantaneous
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success" name="create_user">Create User</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <body class="d-flex flex-column min-vh-100 bg-gradient-dark">
 
-        <div class="container">
+        <!-- Background image -->
+        <div class="bg-image" style="background-image: url('media/login_background.jpg');
+            height: 100vh">
 
-            <br>
-            <h1 class="text-white text-center align-middle font-italic">NetItWorks <> First Setup</h1>
+            <div class="container">
 
-            <div class="row justify-content-center">
+                <br>
+                <h1 class="text-white text-center align-middle font-italic">NetItWorks <> First Setup</h1>
 
-                <div class="col-xl-10 col-lg-12 col-md-8">
+                <div class="row justify-content-center">
 
-                    <div class="card o-hidden border-0 shadow-lg my-3">
-                        <!-- Configuration Section -->
-                        <div class="card">
-                            <div class="card-header py-3">
-                                <div class="row justify-content-center">
-                                    <h6 class="font-weight-bold text-primary">Please insert an Administrator User</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <div class="col-xl-10 col-lg-12 col-md-8">
 
-            <!-- Outer Row -->
-            <div class="row justify-content-center">
-
-                <div class="col-xl-5 col-lg-6 col-md-4">
-
-                    <div class="card o-hidden border-0 shadow-lg">
-
-                        <!-- Configuration Section -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <div class="row justify-content-center">
-                                    <h6 class="font-weight-bold text-primary">Administrator User Creation</h6>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h4 class="text-right">User Settings</h4>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col-md-6"><label class="labels">Username</label><input type="text" name="id" class="form-control" placeholder="Username" value="" required></div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col-md-6"><label class="labels">Phone Number</label><input type="text" name="phone" class="form-control" placeholder="Phone Number" value=""></div>
-                                    <div class="col-md-6"><label class="labels">Email</label><input type="email" name="email" class="form-control" placeholder="Email" value=""></div>
-                                </div>
-                                <br>
-                                <div class="row mt-4">
-                                    <div class="custom-control custom-switch">
-                                        <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch" disabled>
-                                        <label class="custom-control-label" for="accountStatusSwitch">Disable Account</label>
+                        <div class="card o-hidden border-0 shadow-lg my-3">
+                            <!-- Configuration Section -->
+                            <div class="card">
+                                <div class="card-header py-3">
+                                    <div class="row justify-content-center">
+                                        <h6 class="font-weight-bold text-primary">Please insert an Administrator User</h6>
                                     </div>
                                 </div>
                             </div>
@@ -173,37 +117,98 @@ if (!$database->getConnectionStatus()) {
                     </div>
                 </div>
 
-                <div class="col-xl-5 col-lg-6 col-md-4">
-                    <div class="card o-hidden border-0 shadow-lg">
-                        <!-- Status Section -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <div class="row justify-content-center">
-                                    <h6 class="font-weight-bold text-primary">Administrator User Properties</h6>
+                <!-- Outer Row -->
+                <div class="row justify-content-center">
+
+                    <div class="col-xl-5 col-lg-6 col-md-4">
+
+                        <div class="card o-hidden border-0 shadow-lg">
+
+                            <!-- Modal User Create -->
+                            <div class="modal fade" id="userCreateModal" tabindex="-1" role="dialog" aria-labelledby="userCreateModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="userCreateModalLabel">Hey! Are you sure?</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            You are creating a new User
+                                            <br>
+                                            This operation should be almost instantaneous
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-success" name="create_user">Create User</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h4 class="text-right">Users Password Settings</h4>
+
+                            <!-- Configuration Section -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <div class="row justify-content-center">
+                                        <h6 class="font-weight-bold text-primary">Administrator User Creation</h6>
+                                    </div>
                                 </div>
-                                <div class="row mt-3">
-                                    <div class="col-md-6"><label class="labels">Password</label><input type="password" name="password_1" class="form-control" placeholder="Password" value="" required></div>
-                                    <div class="col-md-6"><label class="labels">Retype Password</label><input type="password" name="password_2" class="form-control" placeholder="Retype Password" value="" required></div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4 class="text-right">User Settings</h4>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6"><label class="labels">Username</label><input type="text" name="id" class="form-control" placeholder="Username" value="" required></div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6"><label class="labels">Phone Number</label><input type="text" name="phone" class="form-control" placeholder="Phone Number" value=""></div>
+                                        <div class="col-md-6"><label class="labels">Email</label><input type="email" name="email" class="form-control" placeholder="Email" value=""></div>
+                                    </div>
+                                    <br>
+                                    <div class="row mt-4">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch" disabled>
+                                            <label class="custom-control-label" for="accountStatusSwitch">Disable Account</label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <br>
-                                <h4 class="text-left">Group Ownership</h4>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <select class="custom-select" name="groups[]" multiple>
-                                            <?php
-                                            if ($database->getConnectionStatus()) {
-                                                $group = new Group($database, NULL);
-                                                $groupArray = $group->getGroups();
-                                                for ($c = 0; $c < sizeof($groupArray); $c++) { ?>
-                                                    <option value="<?php echo $groupArray[$c]->name ?>"><?php echo ($groupArray[$c]->name) ?></option>
-                                            <?php }
-                                            } ?>
-                                        </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-5 col-lg-6 col-md-4">
+                        <div class="card o-hidden border-0 shadow-lg">
+                            <!-- Status Section -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <div class="row justify-content-center">
+                                        <h6 class="font-weight-bold text-primary">Administrator User Properties</h6>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4 class="text-right">Users Password Settings</h4>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6"><label class="labels">Password</label><input type="password" name="password_1" class="form-control" placeholder="Password" value="" required></div>
+                                        <div class="col-md-6"><label class="labels">Retype Password</label><input type="password" name="password_2" class="form-control" placeholder="Retype Password" value="" required></div>
+                                    </div>
+                                    <br>
+                                    <h4 class="text-left">Group Ownership</h4>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <select class="custom-select" name="groups[]" multiple>
+                                                <?php
+                                                if ($database->getConnectionStatus()) {
+                                                    $group = new Group($database, NULL);
+                                                    $groupArray = $group->getGroups();
+                                                    for ($c = 0; $c < sizeof($groupArray); $c++) { ?>
+                                                        <option value="<?php echo $groupArray[$c]->name ?>"><?php echo ($groupArray[$c]->name) ?></option>
+                                                <?php }
+                                                } ?>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -211,36 +216,37 @@ if (!$database->getConnectionStatus()) {
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-11">
-            <div class="text-center mt-3">
-                <div class="text-right"><button class="btn btn-success group-button btn-lg active float-end" data-toggle="modal" data-target="#userCreateModal" type="button">Create User & Proceed</button></div>
-            </div>
-        </div>
-
-        <div class="navbar fixed-bottom py-4 mt-auto bg-light">
-            <div class="text-left">
-                <a href="https://github.com/georgemesss/netitworks">Copyright (©) 2021 GeorgeMesss - GNU General Public License v3.0 or later</a>
-            </div>
-            <div class="text-right">
-                <a href="privacy_policy.php">Privacy Policy</a>
-                ·
-                <a href="terms_conditions.php">Terms &amp; Conditions</a>
+            <div class="col-11">
+                <div class="text-center mt-3">
+                    <div class="text-right"><button class="btn btn-success group-button btn-lg active float-end" data-toggle="modal" data-target="#userCreateModal" type="button">Create User & Proceed</button></div>
+                </div>
             </div>
 
-            <?php
-            printBanner();
-            if ($_SESSION['status_stdout'] == "User Created Successfuly") {
-                echo ("<script>location.href='first_conf_controller.php'</script>");
-                exit;
-            }
-            ?>
+            <div class="navbar fixed-bottom py-4 mt-auto bg-light">
+                <div class="text-left">
+                    <a href="https://github.com/georgemesss/netitworks">Copyright (©) 2021 GeorgeMesss - GNU General Public License v3.0 or later</a>
+                </div>
+                <div class="text-right">
+                    <a href="privacy_policy.php">Privacy Policy</a>
+                    ·
+                    <a href="terms_conditions.php">Terms &amp; Conditions</a>
+                </div>
 
-        </div>
+                <?php
+                printBanner();
+                if ($_SESSION['status_stdout'] == "User Created Successfuly") {
+                    echo ("<script>location.href='first_conf_controller.php'</script>");
+                    exit;
+                }
+                ?>
+
+            </div>
 
 </form>
 
 </body>
+
+</div>
 
 </html>
