@@ -1,16 +1,28 @@
 <?php
 
+/**
+ * -- Page Info -- 
+ * first_conf_database.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user change the config/database_config.php configuration file
+ * 
+ * This page's initial php could be identical (or almost identical) to database_configure.php
+ */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
 $database = new Database();
+$precontroller = new Controller();
 
-if (isset($_POST['save_database_details'])) {
-    if (isset($_POST['database_disabled']))
-        $database_disabled = true;
-    else
-        $database_disabled = false;
+if ($database->getConnectionStatus() && $precontroller->getConnectionStatus())
+    echo ("<script>location.href='login.php'</script>");
+
+elseif (isset($_POST['save_database_details'])) {
+    /* Force database status to enabled */
+    $database_disabled = false;
 
     $newConfiguration .= "
     <?php
@@ -24,7 +36,7 @@ if (isset($_POST['save_database_details'])) {
         ];
     ?>
     ";
-    
+
     file_put_contents("config/database_config.php", $newConfiguration);
     header("Refresh:0");
 } else if (isset($_POST['reset_database_details'])) {
@@ -141,7 +153,7 @@ if (isset($_POST['save_database_details'])) {
                                 <br>
                                 <div class="row justify-content-center">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" id="database_disabled" name="database_disabled" value="true">
+                                        <input type="checkbox" class="custom-control-input" id="database_disabled" name="database_disabled" value="true" disabled>
                                         <label class="custom-control-label" for="database_disabled">Disable Database</label>
                                     </div>
                                 </div>

@@ -1,39 +1,44 @@
 <?php
 
 /**
- * Class and Function List:
- * Function list:
- * Classes list:
+ * -- Page Info -- 
+ * users.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user view the Users list saved in DataBase
  */
-/* CONTROLLER CONFIGURATION PAGE*/
+
 
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
 $database = new Database();
-$user = new User($database, NULL);
+if (!$database->getConnectionStatus()) {
+    $_SESSION['status_stderr'] = "Database not Connected";
+} else {
+    $user = new User($database, NULL);
 
-if (isset($_POST['user_delete'])) {
-    $user->setId($_POST['user_delete']);
-    if ($user->delete())
-        $_SESSION['status_stdout'] = "User Deleted";
-    else
-        $_SESSION['status_stderr'] = "Error on Deletion";
-    header("Refresh:0"); //Refresh page
+    if (isset($_POST['user_delete'])) {
+        $user->setId($_POST['user_delete']);
+        if ($user->delete())
+            $_SESSION['status_stdout'] = "User Deleted";
+        else
+            $_SESSION['status_stderr'] = "Error on Deletion";
+        header("Refresh:0"); //Refresh page
+    }
+
+    if (isset($_POST['user_change_status'])) {
+        $user->setId($_POST['user_change_status']);
+        if ($user->changeStatus())
+            $_SESSION['status_stdout'] = "User Status Changed";
+        else
+            $_SESSION['status_stderr'] = "Error on Changing Status";
+        header("Refresh:0"); //Refresh page
+    }
+
+    $userList = $user->getUsers();
 }
-
-if (isset($_POST['user_change_status'])) {
-    $user->setId($_POST['user_change_status']);
-    if ($user->changeStatus())
-        $_SESSION['status_stdout'] = "User Status Changed";
-    else
-        $_SESSION['status_stderr'] = "Error on Changing Status";
-    header("Refresh:0"); //Refresh page
-}
-
-$userList = $user->getUsers();
-
 ?>
 
 <!DOCTYPE html>
@@ -205,7 +210,7 @@ $userList = $user->getUsers();
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-danger" name="user_delete" value=<?php echo $userList[$c]->id; ?>>Delete Group</button>
+                                                                <button type="submit" class="btn btn-danger" name="user_delete" value=<?php echo $userList[$c]->id; ?>>Delete User</button>
                                                             </div>
                                                         </div>
                                                     </div>

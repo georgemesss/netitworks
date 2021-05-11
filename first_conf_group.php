@@ -1,11 +1,14 @@
 <?php
 
 /**
- * Class and Function List:
- * Function list:
- * Classes list:
+ * -- Page Info -- 
+ * user_conf_group.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user create an instance of the object Group
+ * 
+ * This page's initial php could be identical (or almost identical) to group_create.php
  */
-/* CONTROLLER CONFIGURATION PAGE*/
 
 namespace NetItWorks;
 
@@ -13,27 +16,24 @@ require_once("vendor/autoload.php");
 
 $database = new Database();
 
-if (isset($_POST['create_group']) && isset($_POST['name'])) {
+if (!$database->getConnectionStatus()) {
+    $_SESSION['status_stderr'] = "Database not Connected";
+    echo ("<script>location.href='first_conf_database.php'</script>");
+} else {
 
-    $groupToCreate = new Group($database, NULL);
+    if (isset($_POST['create_group']) && isset($_POST['name'])) {
 
-    if (!$groupToCreate->database->getConnectionStatus()) {
-        $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
-    } else {
+        $groupToCreate = new Group($database, NULL);
 
         /* Post Super-Global sanification*/
         $_POST = $groupToCreate->database->sanifyArray($_POST);
 
         $_POST = emptyToNull($_POST);
 
-        if (!isset($_POST['disabled']))
-            $_POST['disabled'] = 1;
-        else
-            $_POST['disabled'] = 0;
-        if (!isset($_POST['admin_privilege_status']))
-            $_POST['admin_privilege_status'] = 0;
-        else
-            $_POST['admin_privilege_status'] = 1;
+        /* Force group and admin privilege status to enabled */
+        $_POST['disabled'] = 0;
+        $_POST['admin_privilege_status'] = 1;
+
         if (!isset($_POST['ip_limitation_status']))
             $_POST['ip_limitation_status'] = 0;
         else
@@ -88,6 +88,8 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
             $result = $groupToCreate->addUsers($_POST['users']);
             if ($result)
                 $_SESSION['status_stdout'] = "Group Created Successfuly";
+            else
+                $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;
         } else {
             //alert problem
             if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
@@ -214,13 +216,13 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
                                 <br>
                                 <div class="row mt-2">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" name="admin_privilege_status" class="custom-control-input" id="adminPrivilegeSwitch">
+                                        <input type="checkbox" name="admin_privilege_status" class="custom-control-input" id="adminPrivilegeSwitch" checked disabled>
                                         <label class="custom-control-label" for="adminPrivilegeSwitch">Enable Admin Privileges</label>
                                     </div>
                                 </div>
                                 <div class="row mt-2">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch">
+                                        <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch" disabled>
                                         <label class="custom-control-label" for="accountStatusSwitch">Disable Group</label>
                                     </div>
                                 </div>

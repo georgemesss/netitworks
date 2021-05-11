@@ -84,9 +84,9 @@ class User
     }
 
     /**
-     * Set group name
+     * Set user id
      *
-     * @param string  $name
+     * @param string  $id
      */
     public function setId(
         $id
@@ -96,7 +96,7 @@ class User
 
     /**
      * Create user in DB
-     * @return true|false Returns false upon error, true otherwise
+     * @return bool Returns true on success, false otherwise
      */
     function create()
     {
@@ -139,7 +139,7 @@ class User
     /**
      * Get user list
      *
-     * @return array  $Return array of Users
+     * @return array|bool  $Return array of Users, false upon error
      */
     function getUsers()
     {
@@ -158,7 +158,7 @@ class User
             active_net_group
         " . " FROM net_user";
 
-        $query_result = $this->database->getConnectionStatus()->query($query);
+        $query_result = $this->database->query($query);
         if (!$query_result) {
             return false; //Error
         } else {
@@ -188,6 +188,7 @@ class User
     /**
      * Delete a user
      *
+     * @return bool Returns true on success, false otherwise
      */
     function delete()
     {
@@ -208,7 +209,7 @@ class User
     /**
      * Set new user status
      *
-     * @return true|false  Returns false on error, true otherwise
+     * @return bool Returns true on success, false otherwise
      */
     public function changeStatus()
     {
@@ -251,7 +252,7 @@ class User
     /**
      * Join user to an array of groups
      *
-     * @return true|false  Returns false on error, true otherwise
+     * @return bool Returns true on success, false otherwise
      */
     public function joinGroup($group_array)
     {

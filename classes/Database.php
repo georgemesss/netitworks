@@ -34,7 +34,7 @@ class Database
         $this->username = $GLOBALS['database_conf']['username'];
         $this->password = $GLOBALS['database_conf']['password'];
         $this->disabled = $GLOBALS['database_conf']['disabled'];
-        $this->connection = mysqli_connect('p:' . $this->ip, $this->username, $this->password, "5bi_20_21_s02464", null, null); //Up to now we won't specify the port (Doesn't work)
+        $this->connection = mysqli_connect('p:' . $this->ip, $this->username, $this->password, "netitworks", null, null); //Up to now we won't specify the port (Doesn't work)
     }
 
     /**
@@ -52,7 +52,7 @@ class Database
      *
      * Perform Sanification of Given Associative Array for SQL Query
      *
-     * @param array  $array Array of strings to sanify
+     * @param array  $array Array of strings to sanify -  optionally could include sub-arrays in main array
      * @return array Returns cleared associative array of strings
      *
      */

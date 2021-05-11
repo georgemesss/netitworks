@@ -1,36 +1,40 @@
 <?php
 
 /**
- * Class and Function List:
- * Function list:
- * Classes list:
+ * -- Page Info -- 
+ * groups.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user view the Group list saved in DataBase
  */
-/* CONTROLLER CONFIGURATION PAGE*/
 
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
 $database = new Database();
-$group = new Group($database, NULL);
+if (!$database->getConnectionStatus()) {
+    $_SESSION['status_stderr'] = "Database not Connected";
+} else {
+    $group = new Group($database, NULL);
 
-if (isset($_POST['group_delete'])) {
-    $group->setName($_POST['group_delete']);
-    if ($group->delete())
-        $_SESSION['status_stdout'] = "Group Deleted";
-    else
-        $_SESSION['status_stderr'] = "Error on Deletion";
-    //header("Refresh:0"); //Refresh page
+    if (isset($_POST['group_delete'])) {
+        $group->setName($_POST['group_delete']);
+        if ($group->delete())
+            $_SESSION['status_stdout'] = "Group Deleted";
+        else
+            $_SESSION['status_stderr'] = "Error on Deletion";
+        //header("Refresh:0"); //Refresh page
+    }
+
+    if (isset($_POST['group_change_status'])) {
+        $group->setName($_POST['group_change_status']);
+        $group->changeStatus();
+        //header("Refresh:0"); //Refresh page
+    }
+
+    $groupList = $group->getGroups();
 }
-
-if (isset($_POST['group_change_status'])) {
-    $group->setName($_POST['group_change_status']);
-    $group->changeStatus();
-    //header("Refresh:0"); //Refresh page
-}
-
-$groupList = $group->getGroups();
-
 ?>
 
 <!DOCTYPE html>

@@ -1,11 +1,14 @@
 <?php
 
 /**
- * Class and Function List:
- * Function list:
- * Classes list:
+ * -- Page Info -- 
+ * first_conf_user.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user create an instance of the object User
+ * 
+ * This page's initial php could be identical (or almost identical) to user_create.php
  */
-/* CONTROLLER CONFIGURATION PAGE*/
 
 namespace NetItWorks;
 
@@ -13,62 +16,66 @@ require_once("vendor/autoload.php");
 
 $database = new Database();
 
-if (isset($_POST['create_user']) && isset($_POST['id'])) {
+if (!$database->getConnectionStatus()) {
+    $_SESSION['status_stderr'] = "Database not Connected";
+} else {
 
-    $userToCreate = new User($database, NULL);
-    if (!$userToCreate->database->getConnectionStatus()) {
-        $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
-    } elseif ($_POST['password_1'] != $_POST['password_2']) {
-        $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
-    } else {
+    if (isset($_POST['create_user']) && isset($_POST['id'])) {
 
-        /* Post Super-Global sanification*/
-        $_POST = $userToCreate->database->sanifyArray($_POST);
+        $userToCreate = new User($database, NULL);
 
-        $_POST = emptyToNull($_POST);
-
-        if (!isset($_POST['disabled']))
-            $_POST['status'] = "active";
-        else
-            $_POST['status'] = "disabled";
-
-        if (!isset($_POST['ip_limitation_status']))
-            $_POST['ip_limitation_status'] = 0;
-        else
-            $_POST['ip_limitation_status'] = 1;
-
-        if (!isset($_POST['hw_limitation_status']))
-            $_POST['hw_limitation_status'] = 0;
-        else
-            $_POST['hw_limitation_status'] = 1;
-
-        $userToCreate->setUser(
-            $_POST['id'],
-            "authenticated",
-            $_POST['password_1'],
-            $_POST['status'],
-            $_POST['phone'],
-            $_POST['email'],
-            $_POST['ip_limitation_status'],
-            $_POST['hw_limitation_status'],
-            $_POST['ip_range_start'],
-            $_POST['ip_range_stop'],
-            $_POST['active_net_group']
-        );
-
-        /* Create User */
-        $result = $userToCreate->create();
-
-        if ($result) {
-            $result = $userToCreate->joinGroup($_POST['groups']);
-            if ($result)
-                $_SESSION['status_stdout'] = "User Created Successfuly";
+        if ($_POST['password_1'] != $_POST['password_2']) {
+            $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
         } else {
-            //alert problem
-            if (strpos($userToCreate->connection->error, "Duplicate entry") !== false)
-                $_SESSION['status_stderr'] = "Error: User already exists ";
+
+            /* Post Super-Global sanification*/
+            $_POST = $userToCreate->database->sanifyArray($_POST);
+
+            $_POST = emptyToNull($_POST);
+
+            /* Force group and admin privilege status to enabled */
+            $_POST['disabled'] = 0;
+
+            if (!isset($_POST['ip_limitation_status']))
+                $_POST['ip_limitation_status'] = 0;
             else
-                $_SESSION['status_stderr'] = "Error: " . $userToCreate->database->connection->error;
+                $_POST['ip_limitation_status'] = 1;
+
+            if (!isset($_POST['hw_limitation_status']))
+                $_POST['hw_limitation_status'] = 0;
+            else
+                $_POST['hw_limitation_status'] = 1;
+
+            $userToCreate->setUser(
+                $_POST['id'],
+                "authenticated",
+                $_POST['password_1'],
+                $_POST['status'],
+                $_POST['phone'],
+                $_POST['email'],
+                $_POST['ip_limitation_status'],
+                $_POST['hw_limitation_status'],
+                $_POST['ip_range_start'],
+                $_POST['ip_range_stop'],
+                $_POST['active_net_group']
+            );
+
+            /* Create User */
+            $result = $userToCreate->create();
+
+            if ($result) {
+                $result = $userToCreate->joinGroup($_POST['groups']);
+                if ($result)
+                    $_SESSION['status_stdout'] = "User Created Successfuly";
+                else
+                    $_SESSION['status_stderr'] = "Error: " . $userToCreate->database->connection->error;
+            } else {
+                //alert problem
+                if (strpos($userToCreate->connection->error, "Duplicate entry") !== false)
+                    $_SESSION['status_stderr'] = "Error: User already exists ";
+                else
+                    $_SESSION['status_stderr'] = "Error: " . $userToCreate->database->connection->error;
+            }
         }
     }
 }
@@ -157,7 +164,7 @@ if (isset($_POST['create_user']) && isset($_POST['id'])) {
                                 <br>
                                 <div class="row mt-4">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch">
+                                        <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch" disabled>
                                         <label class="custom-control-label" for="accountStatusSwitch">Disable Account</label>
                                     </div>
                                 </div>
@@ -189,11 +196,13 @@ if (isset($_POST['create_user']) && isset($_POST['id'])) {
                                     <div class="col-md-12">
                                         <select class="custom-select" name="groups[]" multiple>
                                             <?php
-                                            $group = new Group($database, NULL);
-                                            $groupArray = $group->getGroups();
-                                            for ($c = 0; $c < sizeof($groupArray); $c++) { ?>
-                                                <option value="<? echo $groupArray[$c]->name ?>"><?php echo ($groupArray[$c]->name) ?></option>
-                                            <?php } ?>
+                                            if ($database->getConnectionStatus()) {
+                                                $group = new Group($database, NULL);
+                                                $groupArray = $group->getGroups();
+                                                for ($c = 0; $c < sizeof($groupArray); $c++) { ?>
+                                                    <option value="<?php echo $groupArray[$c]->name ?>"><?php echo ($groupArray[$c]->name) ?></option>
+                                            <?php }
+                                            } ?>
                                         </select>
                                     </div>
                                 </div>

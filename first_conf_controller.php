@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * -- Page Info -- 
+ * first_conf_controller.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user change the config/controller_config.php configuration file
+ * 
+ * This page's initial php could be identical (or almost identical) to controller_configure.php
+ */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
@@ -10,10 +20,9 @@ if ($controller->getConnectionStatus())
     echo ("<script>location.href='login.php'</script>");
 
 elseif (isset($_POST['save_controller_details'])) {
-    if (isset($_POST['controller_disabled']))
-        $controller_disabled = true;
-    else
-        $controller_disabled = false;
+
+    /* Force controller status to enabled */
+    $controller_disabled = false;
 
     $newConfiguration .= "
     <?php
@@ -36,6 +45,7 @@ elseif (isset($_POST['save_controller_details'])) {
     header("Refresh:0");
 } else if (isset($_POST['reset_controller_details'])) {
     file_put_contents("config/controller_config.php", file_get_contents('config/controller_config_default.php'));
+    header("Refresh:0");
 } else if (isset($_POST['skip_controller_config'])) {
     $newConfiguration .= "
     <?php
@@ -184,7 +194,7 @@ elseif (isset($_POST['save_controller_details'])) {
                                 <br>
                                 <div class="row justify-content-center">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" id="controller_disabled" name="controller_disabled" value="true">
+                                        <input type="checkbox" class="custom-control-input" id="controller_disabled" name="controller_disabled" value="true" disabled>
                                         <label class="custom-control-label" for="controller_disabled">Disable Controller</label>
                                     </div>
                                 </div>
@@ -231,7 +241,7 @@ elseif (isset($_POST['save_controller_details'])) {
 
         <div class="col-11">
             <div class="text-right mt-3">
-                <button class="btn btn-warning btn-lg active float-end" data-toggle="modal" data-target="#controllerSkipModal" type="button" <?php if ($controller->getConnectionStatus()) echo "disabled"; ?> >Skip UniFi Configuration</button>
+                <button class="btn btn-warning btn-lg active float-end" data-toggle="modal" data-target="#controllerSkipModal" type="button" <?php if ($controller->getConnectionStatus()) echo "disabled"; ?>>Skip UniFi Configuration</button>
             </div>
         </div>
 

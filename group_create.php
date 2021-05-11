@@ -1,11 +1,12 @@
 <?php
 
 /**
- * Class and Function List:
- * Function list:
- * Classes list:
+ * -- Page Info -- 
+ * group_create.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user create an instance of the object Group
  */
-/* CONTROLLER CONFIGURATION PAGE*/
 
 namespace NetItWorks;
 
@@ -13,100 +14,104 @@ require_once("vendor/autoload.php");
 
 $database = new Database();
 
-if (isset($_POST['create_group']) && isset($_POST['name'])) {
+if (!$database->getConnectionStatus()) {
+    $_SESSION['status_stderr'] = "Database not Connected";
+} else {
 
-    $groupToCreate = new Group($database, NULL);
+    if (isset($_POST['create_group']) && isset($_POST['name'])) {
 
-    if (!$groupToCreate->database->getConnectionStatus()) {
-        $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
-    } else {
+        $groupToCreate = new Group($database, NULL);
 
-        /* Post Super-Global sanification*/
-        $_POST = $groupToCreate->database->sanifyArray($_POST);
-
-        if (!ifAllElementStatusEqual(array(
-            $_POST['ip_limitation_status'],
-            $_POST['ip_range_start'],
-            $_POST['ip_range_stop']
-        ))) {
-            $_SESSION['status_stderr'] = "Error! All fields must be filled";
-            printBanner();
-        }
-
-        $_POST = emptyToNull($_POST);
-
-        if (!isset($_POST['disabled']))
-            $_POST['disabled'] = 1;
-        else
-            $_POST['disabled'] = 0;
-        if (!isset($_POST['admin_privilege_status']))
-            $_POST['admin_privilege_status'] = 0;
-        else
-            $_POST['admin_privilege_status'] = 1;
-        if (!isset($_POST['ip_limitation_status']))
-            $_POST['ip_limitation_status'] = 0;
-        else
-            $_POST['ip_limitation_status'] = 1;
-        if (!isset($_POST['hw_limitation_status']))
-            $_POST['hw_limitation_status'] = 0;
-        else
-            $_POST['hw_limitation_status'] = 1;
-        if (!isset($_POST['user_auto_registration']))
-            $_POST['user_auto_registration'] = 0;
-        else
-            $_POST['user_auto_registration'] = 1;
-        if (!isset($_POST['user_require_admin_approval']))
-            $_POST['user_require_admin_approval'] = 0;
-        else
-            $_POST['user_require_admin_approval'] = 1;
-
-
-        /* Pick up variables from form */
-        if ($_POST['net_type'] === "LAN") {
-            $_POST['net_type'] = 13;
-            $_POST['net_attribute_type'] = 6;
-        } elseif ($_POST['net_type'] === "VPN") {
-            $_POST['net_type'] = 3;
-            $_POST['net_attribute_type'] = 1;
-        } elseif ($_POST['net_type'] === "External") {
-            $_POST['net_type'] = 0;
-            $_POST['net_attribute_type'] = 0;
-            $_POST['net_vlan_id'] = 0;
-        }
-
-        $groupToCreate->setGroup(
-            $_POST['name'],
-            (int)$_POST['disabled'],
-            (int)$_POST['admin_privilege_status'],
-            $_POST['description'],
-            (int)$_POST['net_type'],
-            (int)$_POST['net_attribute_type'],
-            (int)$_POST['net_vlan_id'],
-            (int)$_POST['ip_limitation_status'],
-            (int)$_POST['hw_limitation_status'],
-            $_POST['ip_range_start'],
-            $_POST['ip_range_stop'],
-            (int)$_POST['user_auto_registration'],
-            (int)$_POST['user_require_admin_approval'],
-        );
-
-        /* Create Group */
-        $result = $groupToCreate->create();
-
-        if ($result) {
-            $result = $groupToCreate->addUsers($_POST['users']);
-            if ($result)
-                $_SESSION['status_stdout'] = "Group Created Successfuly";
+        if (!$groupToCreate->database->getConnectionStatus()) {
+            $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
         } else {
-            //alert problem
-            if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
-                $_SESSION['status_stderr'] = "Error: Group already exists ";
+
+            /* Post Super-Global sanification*/
+            $_POST = $groupToCreate->database->sanifyArray($_POST);
+
+            if (!ifAllElementStatusEqual(array(
+                $_POST['ip_limitation_status'],
+                $_POST['ip_range_start'],
+                $_POST['ip_range_stop']
+            ))) {
+                $_SESSION['status_stderr'] = "Error! All fields must be filled";
+                printBanner();
+            }
+
+            $_POST = emptyToNull($_POST);
+
+            if (!isset($_POST['disabled']))
+                $_POST['disabled'] = 1;
             else
-                $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;
+                $_POST['disabled'] = 0;
+            if (!isset($_POST['admin_privilege_status']))
+                $_POST['admin_privilege_status'] = 0;
+            else
+                $_POST['admin_privilege_status'] = 1;
+            if (!isset($_POST['ip_limitation_status']))
+                $_POST['ip_limitation_status'] = 0;
+            else
+                $_POST['ip_limitation_status'] = 1;
+            if (!isset($_POST['hw_limitation_status']))
+                $_POST['hw_limitation_status'] = 0;
+            else
+                $_POST['hw_limitation_status'] = 1;
+            if (!isset($_POST['user_auto_registration']))
+                $_POST['user_auto_registration'] = 0;
+            else
+                $_POST['user_auto_registration'] = 1;
+            if (!isset($_POST['user_require_admin_approval']))
+                $_POST['user_require_admin_approval'] = 0;
+            else
+                $_POST['user_require_admin_approval'] = 1;
+
+
+            /* Pick up variables from form */
+            if ($_POST['net_type'] === "LAN") {
+                $_POST['net_type'] = 13;
+                $_POST['net_attribute_type'] = 6;
+            } elseif ($_POST['net_type'] === "VPN") {
+                $_POST['net_type'] = 3;
+                $_POST['net_attribute_type'] = 1;
+            } elseif ($_POST['net_type'] === "External") {
+                $_POST['net_type'] = 0;
+                $_POST['net_attribute_type'] = 0;
+                $_POST['net_vlan_id'] = 0;
+            }
+
+            $groupToCreate->setGroup(
+                $_POST['name'],
+                (int)$_POST['disabled'],
+                (int)$_POST['admin_privilege_status'],
+                $_POST['description'],
+                (int)$_POST['net_type'],
+                (int)$_POST['net_attribute_type'],
+                (int)$_POST['net_vlan_id'],
+                (int)$_POST['ip_limitation_status'],
+                (int)$_POST['hw_limitation_status'],
+                $_POST['ip_range_start'],
+                $_POST['ip_range_stop'],
+                (int)$_POST['user_auto_registration'],
+                (int)$_POST['user_require_admin_approval'],
+            );
+
+            /* Create Group */
+            $result = $groupToCreate->create();
+
+            if ($result) {
+                $result = $groupToCreate->addUsers($_POST['users']);
+                if ($result)
+                    $_SESSION['status_stdout'] = "Group Created Successfuly";
+            } else {
+                //alert problem
+                if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
+                    $_SESSION['status_stderr'] = "Error: Group already exists ";
+                else
+                    $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;
+            }
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -227,12 +232,15 @@ if (isset($_POST['create_group']) && isset($_POST['name'])) {
                         <div class="row">
                             <select class="custom-select" name="users[]" multiple>
                                 <?php
-                                $users = new User($database, NULL);
-                                $userArray = $users->getUsers();
-                                for ($c = 0; $c < sizeof($userArray); $c++) {
-                                    $test = '<option value="' . $userArray[$c]->id . '"><' . $userArray[$c]->id . '></option>';
-                                    echo '<option value="' . $userArray[$c]->id . '">' . $userArray[$c]->id . '</option>';
-                                } ?>
+                                if ($database->getConnectionStatus()) {
+                                    $users = new User($database, NULL);
+                                    $userArray = $users->getUsers();
+                                    for ($c = 0; $c < sizeof($userArray); $c++) {
+                                        $test = '<option value="' . $userArray[$c]->id . '"><' . $userArray[$c]->id . '></option>';
+                                        echo '<option value="' . $userArray[$c]->id . '">' . $userArray[$c]->id . '</option>';
+                                    }
+                                }
+                                ?>
                             </select>
                         </div>
                     </div>
