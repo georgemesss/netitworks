@@ -7,24 +7,43 @@
  * -- Page Description -- 
  * This Page will let the user change the config/controller_config.php configuration file
  * 
- * This page's initial php could be identical (or almost identical) to controller_configure.php
+ * This page's initial php will be almost identical to controller_configure.php
  */
 
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Create new Controller instance */
 $controller = new Controller();
 
-if ($controller->getConnectionStatus())
-    echo ("<script>location.href='login.php'</script>");
+/* If Controller is available and online */
+if ($controller->getConnectionStatus()) {
 
-elseif (isset($_POST['save_controller_details'])) {
+    /* Update NetItWorks Configuration */
+    $new_netitworks_conf = "
+<?php
+    "   . 'global $netitworks_conf;
+    
+    '
+        . '$netitworks_conf' . " = [
+        'first_configuration_done' => '" . 'yes' . "', 
+        'controller_configuration_done' => '" . 'yes' . "'
+    ];
+?>
+";
+    /* And push to NetItWorks Configuration File */
+    file_put_contents("config/netitworks_config.php", $new_netitworks_conf);
+}
+
+/* If User presses "Save Controller Details" button*/
+if (isset($_POST['save_controller_details'])) {
 
     /* Force controller status to enabled */
     $controller_disabled = false;
 
-    $newConfiguration .= "
+    /* Update Controller Configuration */
+    $new_controller_conf = "
     <?php
         "   . 'global $controller_conf;
         
@@ -41,23 +60,78 @@ elseif (isset($_POST['save_controller_details'])) {
     ?>
     ";
 
-    file_put_contents("config/controller_config.php", $newConfiguration);
-    header("Refresh:0");
-} else if (isset($_POST['reset_controller_details'])) {
+    /* And push to Controller Configuration File */
+    file_put_contents("config/controller_config.php", $new_controller_conf);
+
+    /* Then Update NetItWorks Configuration */
+    $new_netitworks_conf = "
+    <?php
+        "   . 'global $netitworks_conf;
+        
+        '
+        . '$netitworks_conf' . " = [
+            'first_configuration_done' => '" . 'yes' . "', 
+            'controller_configuration_done' => '" . 'no' . "'
+        ];
+    ?>
+    ";
+
+    /* And push to NetItWorks Configuration File */
+    file_put_contents("config/netitworks_config.php", $new_netitworks_conf);
+    header("Refresh:0"); //Refresh Page
+
+}
+
+/* If User presses "Reset Controller Details" button*/ elseif (isset($_POST['reset_controller_details'])) {
+
+    /* Copy Default Config File to Controller Configuration File */
     file_put_contents("config/controller_config.php", file_get_contents('config/controller_config_default.php'));
-    header("Refresh:0");
-} else if (isset($_POST['skip_controller_config'])) {
+
+    /* Then Update NetItWorks Configuration */
+    $new_netitworks_conf = "
+    <?php
+        "   . 'global $netitworks_conf;
+        
+        '
+        . '$netitworks_conf' . " = [
+            'first_configuration_done' => '" . 'yes' . "', 
+            'controller_configuration_done' => '" . 'no' . "'
+        ];
+    ?>
+    ";
+
+    /* And push to NetItWorks Configuration File */
+    file_put_contents("config/netitworks_config.php", $new_netitworks_conf);
+    header("Refresh:0"); //Refresh Page
+}
+
+/* 
+This Conditions below are unique of this first configuration operation 
+*/
+
+/* If Controller is available and online */ elseif ($controller->getConnectionStatus())
+    /* Redirect to login page */
+    echo ("<script>location.href='login.php'</script>");
+
+/* If User presses "Skip Controller Config" button*/
+else if (isset($_POST['skip_controller_config'])) {
+
+    /* Then Update NetItWorks Configuration */
     $newConfiguration .= "
     <?php
         "   . 'global $netitworks_conf;
         
         '
         . '$netitworks_conf' . " = [
-            'first_configuration_done' => '" . 'yes' . "'
+            'first_configuration_done' => '" . 'yes' . "', 
+            'controller_configuration_done' => '" . 'no' . "'
         ];
     ?>
     ";
+
+    /* And push to NetItWorks Configuration File */
     file_put_contents("config/netitworks_config.php", $newConfiguration);
+    /* And Redirect to login page */
     echo ("<script>location.href='login.php'</script>");
 }
 

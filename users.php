@@ -66,6 +66,10 @@ if (!$database->getConnectionStatus()) {
 
     /* Fetch User List from DB */
     $userList = $user->getUsers();
+    /* IF Group List Fetching in DB returned errors */
+    if (!$userList && !is_null($userlist))
+        /* Print error code to session superglobal (banner will be printed down on page) */
+        $_SESSION['status_stderr'] = "Error on User Fetching";
 }
 ?>
 

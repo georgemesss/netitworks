@@ -181,7 +181,6 @@ class User
                 }
                 return $users;
             }
-            return false;
         }
     }
 

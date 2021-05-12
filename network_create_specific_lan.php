@@ -1,132 +1,156 @@
 <?php
+
+/**
+ * -- Page Info -- 
+ * network_create_specific_lan.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user create a Specfic Lan in UniFi Controller
+ */
+
+/* Include NetItWorks Classes and use Composer Autoloader */
+
 namespace NetItWorks;
+
 require_once("vendor/autoload.php");
 
-$controller = new Controller();
+if ($GLOBALS['netitworks_conf']['controller_configuration_done'] == 'yes')
+    $conf_done = true;
+else
+    $conf_done = false;
 
-$listNetworkArray = $controller->getNetworks();
+if (!$conf_done)
+    /* Print error code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stderr'] = "Controller not Configured";
 
-if (isset($_POST['form_network_create_btn'])) {
+else {
 
-    if (!$ifAllElementStatusEqual(array(
-        $_POST['form_network_vlan_status'],
-        $_POST['form_network_vlan_custom']
-    ))) {
-        $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        $printBanner();
+    $controller = new Controller();
+
+    $listNetworkArray = $controller->getNetworks();
+
+    if (isset($_POST['form_network_create_btn'])) {
+
+        if (!$ifAllElementStatusEqual(array(
+            $_POST['form_network_vlan_status'],
+            $_POST['form_network_vlan_custom']
+        ))) {
+            $_SESSION['status_stderr'] = "Error! All fields must be filled";
+            $printBanner();
+        }
+        if (!$ifAllElementStatusEqual(array(
+            $_POST['form_dhcp_status'],
+            $_POST['form_dhcp_range_start'],
+            $_POST['form_dhcp_range_stop']
+        ))) {
+            $_SESSION['status_stderr'] = "Error! All fields must be filled";
+            $printBanner();
+        }
+        if (!$ifAllElementStatusEqual(array(
+            $_POST['form_dhcp_dns_status'],
+            $_POST['form_dhcp_dns_custom']
+        ))) {
+            $_SESSION['status_stderr'] = "Error! All fields must be filled";
+            $printBanner();
+        }
+        if (!$ifAllElementStatusEqual(array(
+            $_POST['form_dhcp_gateway_status'],
+            $_POST['form_dhcp_gateway_custom']
+        ))) {
+            $_SESSION['status_stderr'] = "Error! All fields must be filled";
+            $printBanner();
+        }
+        /* Sanitize Input Form Data */
+
+        if (isset($_POST['form_network_disabled_guest']))
+            $form_network_disabled_guest = 'guest';
+        else
+            $form_network_disabled_guest = 'corporate';
+
+        if (isset($_POST['form_network_disabled']))
+            $form_network_disabled = false;
+        else
+            $form_network_disabled = true;
+
+        if (!isset($_POST['form_network_vlan_status']))
+            $form_network_vlan_status = false;
+        else
+            $form_network_vlan_status = true;
+
+        if (!isset($_POST['form_dhcp_status']))
+            $form_dhcp_status = false;
+        else
+            $form_dhcp_status = true;
+
+        if (!isset($_POST['form_dhcp_dns_status']))
+            $form_dhcp_dns_status = false;
+        else
+            $form_dhcp_dns_status = true;
+
+        if (!isset($_POST['form_dhcp_gateway_status']))
+            $form_dhcp_gateway_status = false;
+        else
+            $form_dhcp_gateway_status = true;
+
+        $newNetworkArray = array(
+            'purpose' => $form_network_disabled_guest,
+            'networkgroup' => 'LAN',
+            'dhcpd_enabled' => $form_dhcp_status,
+            'dhcpd_leasetime' => (int)filter_var($_POST['form_dhcp_leaseTime'], FILTER_SANITIZE_STRING),
+            'dhcpd_dns_enabled' => $form_dhcp_dns_status,
+            'dhcpd_gateway_enabled' => $form_dhcp_gateway_status,
+            'dhcpd_time_offset_enabled' => false,
+            'ipv6_interface_type' => 'none',
+            'ipv6_pd_start' => '::10',
+            'ipv6_pd_stop' => '::7d8',
+            'gateway_type' => 'default',
+            'nat_outbound_ip_addresses' => array(),
+            'name' => filter_var($_POST['form_network_name'], FILTER_SANITIZE_STRING),
+            'vlan' => filter_var($_POST['form_network_vlan_custom'], FILTER_SANITIZE_STRING),
+            'ip_subnet' =>  filter_var($_POST['form_network_gateway'], FILTER_SANITIZE_STRING) . "/" . explode("/", filter_var($_POST['form_network_subnet'], FILTER_SANITIZE_STRING))[1],
+            'dhcpd_start' => filter_var($_POST['form_dhcp_range_start'], FILTER_SANITIZE_STRING),
+            'dhcpd_stop' => filter_var($_POST['form_dhcp_range_stop'], FILTER_SANITIZE_STRING),
+            'enabled' => $form_network_disabled,
+            'is_nat' => true,
+            'dhcp_relay_enabled' => false,
+            'vlan_enabled' => $form_network_vlan_status,
+            'site_id' => '607860571f12ba100fb6773a'
+        );
+
+        if ($form_network_vlan_status)
+            $newNetworkArray['vlan'] = filter_var($_POST['form_network_vlan_custom'], FILTER_SANITIZE_STRING);
+
+        if ($form_dhcp_dns_status) {
+            $newNetworkArray['dhcpd_dns_1'] = filter_var($_POST['form_dhcp_range_stop'], FILTER_SANITIZE_STRING);
+            $newNetworkArray['dhcpd_dns_2'] = filter_var($_POST['form_dhcp_range_stop'], FILTER_SANITIZE_STRING);
+        }
+
+        if ($form_dhcp_gateway_status)
+            $newNetworkArray['dhcpd_gateway'] = filter_var($_POST['form_dhcp_gateway_custom'], FILTER_SANITIZE_STRING);
+
+        if (($_SESSION['status_stderr']) === "") {
+
+            if (!$controller->createNetwork($newNetworkArray)) {
+                $error = ($controller->getLastResults());
+                $arrayError = json_decode(json_encode($error), true);
+                $_SESSION['status_stderr'] = "Oops..error '";
+                $_SESSION['status_stderr'] .=  explode(".", $arrayError['meta']['msg'])[2] . "'";
+                if (isset($arrayError['meta']['validationError']['field'])) {
+                    $_SESSION['status_stderr'] .= " on '";
+                    $_SESSION['status_stderr'] .= $arrayError['meta']['validationError']['field'] . "'";
+                }
+            } else
+                $_SESSION['status_stdout'] = "Network Created";
+        }
+
+        //$_POST['form_network_domainName'];
+        //$_POST['form_network_networks_denied'];
+
     }
-    if (!$ifAllElementStatusEqual(array(
-        $_POST['form_dhcp_status'],
-        $_POST['form_dhcp_range_start'],
-        $_POST['form_dhcp_range_stop']
-    ))) {
-        $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        $printBanner();
+
+    if (!$controller->getConnectionStatus()) {
+        $_SESSION['status_stderr'] = "Error: Controller is NOT Online ";
     }
-    if (!$ifAllElementStatusEqual(array(
-        $_POST['form_dhcp_dns_status'],
-        $_POST['form_dhcp_dns_custom']
-    ))) {
-        $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        $printBanner();
-    }
-    if (!$ifAllElementStatusEqual(array(
-        $_POST['form_dhcp_gateway_status'],
-        $_POST['form_dhcp_gateway_custom']
-    ))) {
-        $_SESSION['status_stderr'] = "Error! All fields must be filled";
-        $printBanner();
-    }
-    /* Sanitize Input Form Data */
-
-    if (isset($_POST['form_network_disabled_guest']))
-        $form_network_disabled_guest = 'guest';
-    else
-        $form_network_disabled_guest = 'corporate';
-
-    if (isset($_POST['form_network_disabled']))
-        $form_network_disabled = false;
-    else
-        $form_network_disabled = true;
-
-    if (!isset($_POST['form_network_vlan_status']))
-        $form_network_vlan_status = false;
-    else
-        $form_network_vlan_status = true;
-
-    if (!isset($_POST['form_dhcp_status']))
-        $form_dhcp_status = false;
-    else
-        $form_dhcp_status = true;
-
-    if (!isset($_POST['form_dhcp_dns_status']))
-        $form_dhcp_dns_status = false;
-    else
-        $form_dhcp_dns_status = true;
-
-    if (!isset($_POST['form_dhcp_gateway_status']))
-        $form_dhcp_gateway_status = false;
-    else
-        $form_dhcp_gateway_status = true;
-
-    $newNetworkArray = array(
-        'purpose' => $form_network_disabled_guest,
-        'networkgroup' => 'LAN',
-        'dhcpd_enabled' => $form_dhcp_status,
-        'dhcpd_leasetime' => (int)filter_var($_POST['form_dhcp_leaseTime'], FILTER_SANITIZE_STRING),
-        'dhcpd_dns_enabled' => $form_dhcp_dns_status,
-        'dhcpd_gateway_enabled' => $form_dhcp_gateway_status,
-        'dhcpd_time_offset_enabled' => false,
-        'ipv6_interface_type' => 'none',
-        'ipv6_pd_start' => '::10',
-        'ipv6_pd_stop' => '::7d8',
-        'gateway_type' => 'default',
-        'nat_outbound_ip_addresses' => array(),
-        'name' => filter_var($_POST['form_network_name'], FILTER_SANITIZE_STRING),
-        'vlan' => filter_var($_POST['form_network_vlan_custom'], FILTER_SANITIZE_STRING),
-        'ip_subnet' =>  filter_var($_POST['form_network_gateway'], FILTER_SANITIZE_STRING) . "/" . explode("/", filter_var($_POST['form_network_subnet'], FILTER_SANITIZE_STRING))[1],
-        'dhcpd_start' => filter_var($_POST['form_dhcp_range_start'], FILTER_SANITIZE_STRING),
-        'dhcpd_stop' => filter_var($_POST['form_dhcp_range_stop'], FILTER_SANITIZE_STRING),
-        'enabled' => $form_network_disabled,
-        'is_nat' => true,
-        'dhcp_relay_enabled' => false,
-        'vlan_enabled' => $form_network_vlan_status,
-        'site_id' => '607860571f12ba100fb6773a'
-    );
-
-    if ($form_network_vlan_status)
-        $newNetworkArray['vlan'] = filter_var($_POST['form_network_vlan_custom'], FILTER_SANITIZE_STRING);
-
-    if ($form_dhcp_dns_status) {
-        $newNetworkArray['dhcpd_dns_1'] = filter_var($_POST['form_dhcp_range_stop'], FILTER_SANITIZE_STRING);
-        $newNetworkArray['dhcpd_dns_2'] = filter_var($_POST['form_dhcp_range_stop'], FILTER_SANITIZE_STRING);
-    }
-
-    if ($form_dhcp_gateway_status)
-        $newNetworkArray['dhcpd_gateway'] = filter_var($_POST['form_dhcp_gateway_custom'], FILTER_SANITIZE_STRING);
-
-    if (($_SESSION['status_stderr'])==="") {
-
-        if (!$controller->createNetwork($newNetworkArray)) {
-            $error = ($controller->getLastResults());
-            $arrayError = json_decode(json_encode($error), true);
-            $_SESSION['status_stderr'] = "Oops..error '";
-            $_SESSION['status_stderr'] .=  explode(".", $arrayError['meta']['msg'])[2] . "'";
-            if (isset($arrayError['meta']['validationError']['field'])) {
-                $_SESSION['status_stderr'] .= " on '";
-                $_SESSION['status_stderr'] .= $arrayError['meta']['validationError']['field'] . "'";
-            }
-        } else
-            $_SESSION['status_stdout'] = "Network Created";
-    }
-
-    //$_POST['form_network_domainName'];
-    //$_POST['form_network_networks_denied'];
-
-}
-
-if (!$controller->getConnectionStatus()) {
-    $_SESSION['status_stderr'] = "Error: Controller is NOT Online ";
 }
 
 ?>
@@ -275,7 +299,8 @@ if (!$controller->getConnectionStatus()) {
             </div>
 
             <?php
-            $printBanner();
+            /* Print banner status with $_SESSION stdout/stderr strings */
+            printBanner();
             ?>
 
         </div>

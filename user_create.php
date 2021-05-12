@@ -230,10 +230,17 @@ if (!$database->getConnectionStatus()) {
                                         /* Get full group list array from DB */
                                         $groupArray = $group->getGroups();
 
-                                        /* Parse group object array and print results*/
-                                        for ($c = 0; $c < sizeof($groupArray); $c++) { ?>
-                                            <option value="<?php echo $groupArray[$c]->name ?>"><?php echo ($groupArray[$c]->name) ?></option>
+                                        /* If User Fetch List retured errors */
+                                        if (!$groupArray)
+                                            /* Print error code to session superglobal (banner will be printed down on page) */
+                                            $_SESSION['status_stderr'] = "Error on List User Fetching";
+
+                                        else {
+                                            /* Parse group object array and print results*/
+                                            for ($c = 0; $c < sizeof($groupArray); $c++) { ?>
+                                                <option value="<?php echo $groupArray[$c]->name ?>"><?php echo ($groupArray[$c]->name) ?></option>
                                     <?php }
+                                        }
                                     } ?>
                                 </select>
                             </div>

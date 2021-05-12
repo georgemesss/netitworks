@@ -67,7 +67,7 @@ if (!$database->getConnectionStatus()) {
     $groupList = $group->getGroups();
 
     /* IF Group List Fetching in DB returned errors */
-    if (!$groupList)
+    if (!$groupList && !is_null($groupList))
         /* Print error code to session superglobal (banner will be printed down on page) */
         $_SESSION['status_stderr'] = "Error on Group Fetching";
 }

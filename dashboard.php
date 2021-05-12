@@ -1,11 +1,35 @@
 <?php
 
+/**
+ * -- Page Info -- 
+ * dashboard.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the user view the NetITworks Dashboard
+ */
+
+/* Include NetItWorks Classes and use Composer Autoloader */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-$controller = new Controller();
 $database = new Database();
+
+if ($GLOBALS['netitworks_conf']['controller_configuration_done'] == 'yes')
+    $controller_conf_done = true;
+else
+    $controller_conf_done = false;
+
+if (!$controller_conf_done)
+    /* Print error code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stderr'] = "Controller not Configured";
+
+else {
+
+$controller = new Controller();
+
+}
 ?>
 
 <!DOCTYPE html>
@@ -18,11 +42,13 @@ $database = new Database();
     <?php include "./header.html" ?>
 
     <div class="container-fluid">
-        
+
         <!-- Page Heading -->
         <h1 class="h3 mb-4 text-gray-800">NetItWorks Dashboard</h1>
 
         <div class="row">
+
+
 
             <div class="col-2 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2 bg-info">
@@ -61,6 +87,8 @@ $database = new Database();
                     </div>
                 </div>
             </div>
+
+            <?php if ($controller_conf_done) { ?>
 
             <div class="col-2">
                 <div class="card border-left-primary shadow h-100 py-2 bg-info">
@@ -107,6 +135,8 @@ $database = new Database();
                 </div>
             </div>
 
+            <?php } ?>
+
             <div class="col-2">
                 <div class="card border-left-primary shadow h-100 py-2 bg-info">
                     <div class="card-body">
@@ -137,6 +167,11 @@ $database = new Database();
 
 
         </div>
+
+        <?php
+        /* Print banner status with $_SESSION stdout/stderr strings */
+        printBanner();
+        ?>
 
     </div>
 

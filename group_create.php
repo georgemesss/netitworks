@@ -279,10 +279,17 @@ if (!$database->getConnectionStatus()) {
                                     /* Get full user list array from DB */
                                     $userArray = $users->getUsers();
 
-                                    /* Parse user object array and print results*/
-                                    for ($c = 0; $c < sizeof($userArray); $c++) {
-                                        $test = '<option value="' . $userArray[$c]->id . '"><' . $userArray[$c]->id . '></option>';
-                                        echo '<option value="' . $userArray[$c]->id . '">' . $userArray[$c]->id . '</option>';
+                                    /* If User Fetch List retured errors */
+                                    if (!$userArray)
+                                        /* Print error code to session superglobal (banner will be printed down on page) */
+                                        $_SESSION['status_stderr'] = "Error on List User Fetching";
+
+                                    else {
+                                        /* Parse user object array and print results*/
+                                        for ($c = 0; $c < sizeof($userArray); $c++) {
+                                            $test = '<option value="' . $userArray[$c]->id . '"><' . $userArray[$c]->id . '></option>';
+                                            echo '<option value="' . $userArray[$c]->id . '">' . $userArray[$c]->id . '</option>';
+                                        }
                                     }
                                 }
                                 ?>

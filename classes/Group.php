@@ -196,7 +196,6 @@ class Group
                 }
                 return $groups;
             }
-            return false;
         }
     }
 
