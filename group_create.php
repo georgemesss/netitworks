@@ -280,7 +280,7 @@ if (!$database->getConnectionStatus()) {
                                     $userArray = $users->getUsers();
 
                                     /* If User Fetch List retured errors */
-                                    if (!$userArray)
+                                    if (is_bool($userArray))
                                         /* Print error code to session superglobal (banner will be printed down on page) */
                                         $_SESSION['status_stderr'] = "Error on List User Fetching";
 

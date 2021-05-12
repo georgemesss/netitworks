@@ -231,7 +231,7 @@ if (!$database->getConnectionStatus()) {
                                         $groupArray = $group->getGroups();
 
                                         /* If User Fetch List retured errors */
-                                        if (!$groupArray)
+                                        if (is_bool($groupArray))
                                             /* Print error code to session superglobal (banner will be printed down on page) */
                                             $_SESSION['status_stderr'] = "Error on List User Fetching";
 

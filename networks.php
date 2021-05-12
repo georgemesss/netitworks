@@ -14,31 +14,56 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Gets config parameters from variable stored in config/configure_controller.php  */
 if ($GLOBALS['netitworks_conf']['controller_configuration_done'] == 'yes')
+    /* If controller configuration is completed  */
     $conf_done = true;
 else
+    /* If controller configuration not completed  */
     $conf_done = false;
 
+/* If controller configuration not completed  */
 if (!$conf_done)
     /* Print error code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stderr'] = "Controller not Configured";
 
+/* If controller configuration is completed */
 else {
 
+    /* Create new Controller instance */
     $controller = new Controller();
 
-    $networkArray = $controller->getNetworks();
-
-    if (isset($_POST['network_delete'])) {
-        if ($controller->deleteNetwork($_POST['network_delete']))
-            $_SESSION['status_stdout'] = "Network Deleted";
-        else
-            $_SESSION['status_stderr'] = "Error on Deletion";
-        header("Refresh:0"); //Refresh page
+    /* If Controller is not available */
+    if (!$controller->getConnectionStatus()) {
+        /* Print error code to session superglobal (banner will be printed down on page) */
+        $_SESSION['status_stderr'] = "Error: Controller is NOT Online ";
     }
 
-    if (!$controller->getConnectionStatus()) {
-        $_SESSION['status_stderr'] = "Error: Controller is NOT Online ";
+    /* If Controller is ONLINE */ else {
+
+        /* Get network list in json format from controller */
+        $networkArray = $controller->getNetworks();
+
+        /* If User presses "Delete Network" button*/
+        if (isset($_POST['network_delete'])) {
+            /* IF Network was deleted from controller without errors */
+            if ($controller->deleteNetwork($_POST['network_delete']))
+                /* Print success code to session superglobal (banner will be printed down on page) */
+                $_SESSION['status_stdout'] = "Network Deleted";
+
+            /* IF Network deletion in controller returned errors */
+            else
+                /* Print error code to session superglobal (banner will be printed down on page) */
+                $_SESSION['status_stderr'] = "Error on Deletion";
+
+            header("Refresh:0"); //Refresh page
+        }
+
+        /* If Controller is not available */
+        if (!$controller->getConnectionStatus()) {
+            /* Print error code to session superglobal (banner will be printed down on page) */
+            $_SESSION['status_stderr'] = "Error: Controller is NOT Online ";
+        }
     }
 }
 
@@ -94,7 +119,7 @@ else {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if ($conf_done) {
+                                <?php if ($conf_done && $controller->getConnectionStatus()) {
                                     foreach ($networkArray as $key) { ?>
                                         <tr role="row" class="odd">
                                             <td class="sorting_1">
