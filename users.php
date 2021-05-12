@@ -8,35 +8,63 @@
  * This Page will let the user view the Users list saved in DataBase
  */
 
+/* Include NetItWorks Classes and use Composer Autoloader */
 
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Create new Database instance */
 $database = new Database();
+/* If Database is not available */
 if (!$database->getConnectionStatus()) {
+    /* Print error code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stderr'] = "Database not Connected";
-} else {
+}
+
+/* If Database is OK */ else {
+
+    /* Create new User instance and link database object */
     $user = new User($database, NULL);
 
+    /* If User presses "Delete User" button */
     if (isset($_POST['user_delete'])) {
+
+        /* Set id attribute to User object  */
         $user->setId($_POST['user_delete']);
+
+        /* IF User was deleted from DB without errors */
         if ($user->delete())
+            /* Print success code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stdout'] = "User Deleted";
+
+        /* IF User deletion in DB returned errors */
         else
+            /* Print error code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stderr'] = "Error on Deletion";
-        header("Refresh:0"); //Refresh page
+
+        //header("Refresh:0"); //Refresh page
     }
 
+    /* If User presses "Change Status" button */
     if (isset($_POST['user_change_status'])) {
+        /* Set id attribute to User object  */
         $user->setId($_POST['user_change_status']);
+
+        /* IF User Status was changed from DB without errors */
         if ($user->changeStatus())
+            /* Print success code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stdout'] = "User Status Changed";
+
+        /* IF Status Changement in DB returned errors */
         else
+            /* Print error code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stderr'] = "Error on Changing Status";
-        header("Refresh:0"); //Refresh page
+
+        //header("Refresh:0"); //Refresh page
     }
 
+    /* Fetch User List from DB */
     $userList = $user->getUsers();
 }
 ?>
@@ -160,8 +188,7 @@ if (!$database->getConnectionStatus()) {
                                                     /* If we are at the end of the array */
                                                     if (sizeof($groupArray) == ($z + 1)) {
                                                         echo $groupArray[$z]->group_name;
-                                                    } 
-                                                    else {
+                                                    } else {
                                                         echo $groupArray[$z]->group_name . ", ";
                                                     }
                                                     ?>
@@ -259,6 +286,7 @@ if (!$database->getConnectionStatus()) {
     <!-- /.container-fluid -->
 
     <?php
+    /* Print banner status with $_SESSION stdout/stderr strings */
     printBanner();
     ?>
 

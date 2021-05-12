@@ -33,7 +33,7 @@ if (!$database->getConnectionStatus()) {
         /* Set name attribute to Group object  */
         $group->setName($_POST['group_delete']);
 
-        /* IF Group was deletion from DB without errors */
+        /* IF Group was deleted from DB without errors */
         if ($group->delete())
             /* Print success code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stdout'] = "Group Deleted";
@@ -63,6 +63,7 @@ if (!$database->getConnectionStatus()) {
         //header("Refresh:0"); //Refresh page
     }
 
+    /* Fetch Group List from DB */
     $groupList = $group->getGroups();
 
     /* IF Group List Fetching in DB returned errors */
