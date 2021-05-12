@@ -263,7 +263,7 @@ class User
                 user_id,
                 group_name
             )";
-
+            
             $query .= ' VALUES ("'
                 . $this->id . '", "'
                 . $group
@@ -275,5 +275,34 @@ class User
             }
         }
         return true;
+    }
+
+    /**
+     * Gets current Group list from Database
+     *
+     * @return array|bool Returns array of Groups, false upon error
+     */
+    public function getGroups()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT group_name FROM user_group_partecipation";
+
+        $query .= " WHERE user_id = '" . $this->id . "'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false; //Error
+        } else {
+            $groups[] = new Group($this->database, $this->controller);
+            $c = 0;
+            if ($query_result->num_rows != 0) {
+                while ($row = $query_result->fetch_assoc()) {
+                    $groups[$c]->group_name = $row['group_name'];
+                    $c++;
+                }
+                return $groups;
+            }
+            return false;
+        }
     }
 }

@@ -292,4 +292,25 @@ class Group
         }
         return true;
     }
+
+    /**
+     * Get number of users associated with given group from Database
+     *
+     * @return array|bool Returns number of users associated with group, false upon error
+     */
+    public function getNumberUsers()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT user_id FROM user_group_partecipation";
+
+        $query .= " WHERE group_name = '" . $this->name . "'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false; //Error
+        } else {
+            return (int) $query_result->num_rows;
+        }
+        return false;
+    }
 }

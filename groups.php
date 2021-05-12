@@ -136,7 +136,16 @@ if (!$database->getConnectionStatus()) {
                                                 echo $groupList[$c]->net_vlan_id; ?>
                                         </td>
                                         <td>
-                                            ?
+                                            <?php
+                                            /* If Database is OK */
+                                            if ($database->getConnectionStatus()) {
+                                                /* Set main group object id to grouplist name */
+                                                $group->setName($groupList[$c]->name);
+
+                                                /* Get number of users associated with given group */
+                                                echo ($numberUsers = $group->getNumberUsers());
+                                            }
+                                            ?>
                                         </td>
                                         <td>
                                             <a class="btn btn-block btn-primary glow" href="group_edit.php">

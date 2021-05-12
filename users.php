@@ -143,7 +143,32 @@ if (!$database->getConnectionStatus()) {
                                             else
                                                 echo '<span class="badge badge-danger">Disabled</span>'; ?>
                                         </td>
-                                        <td>admins</td>
+                                        <td>
+                                            <?php
+                                            /* If Database is OK */
+                                            if ($database->getConnectionStatus()) {
+
+                                                /* Set main user object id to userlist id */
+                                                $user->setId($userList[$c]->id);
+
+                                                /* Get group array associated with given user */
+                                                $groupArray = $user->getGroups();
+
+                                                /* Parse group object array and print results*/
+                                                for ($z = 0; $z < sizeof($groupArray); $z++) { ?>
+                                                    <?php
+                                                    /* If we are at the end of the array */
+                                                    if (sizeof($groupArray) == ($z + 1)) {
+                                                        echo $groupArray[$z]->group_name;
+                                                    } 
+                                                    else {
+                                                        echo $groupArray[$z]->group_name . ", ";
+                                                    }
+                                                    ?>
+                                            <?php }
+                                            }
+                                            ?>
+                                        </td>
                                         <td>
                                             <a class="btn btn-block btn-primary glow" href="group_edit.php">
                                                 <!-- Later to be transformed to button -->
