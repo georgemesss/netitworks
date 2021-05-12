@@ -184,10 +184,11 @@ if (!$database->getConnectionStatus()) {
                                             ?>
                                         </td>
                                         <td>
-                                            <a class="btn btn-block btn-primary glow" href="group_edit.php">
-                                                <!-- Later to be transformed to button -->
-                                                <i class="fas fa-user-edit"></i>
-                                            </a>
+                                            <form action="group_edit.php" method="post">
+                                                <button class="btn btn-block btn-primary glow" type="submit" name="name" value=<?php echo $groupList[$c]->name; ?>>
+                                                    <i class="fas fa-user-edit"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                         <td>
                                             <?php

@@ -85,7 +85,7 @@ if (!$database->getConnectionStatus()) {
         $result = $groupToCreate->create();
 
         if ($result) {
-            $result = $groupToCreate->addUsers($_POST['users']);
+            $result = $groupToCreate->associateUser($_POST['users']);
             if ($result)
                 $_SESSION['status_stdout'] = "Group Created Successfuly";
             else

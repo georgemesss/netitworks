@@ -90,6 +90,58 @@ class Group
     }
 
     /**
+     * Get full group attributes from DB and assign is to current group
+     *
+     * @return bool Returns true upon success, false upon error
+     */
+    function setGroup_fromName()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT " .
+            "name,
+            status,
+            admin_privilege,
+            description,
+            net_type,
+            net_attribute_type,
+            net_vlan_id,
+            ip_limitation_status,
+            hw_limitation_status,
+            ip_range_start,
+            ip_range_stop,
+            user_auto_registration,
+            user_require_admin_approval
+        " . " FROM net_group";
+
+        $query .= " WHERE name = '" . $this->name . "'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false; //Error
+        } else {
+            if ($query_result->num_rows == 1) {
+                while ($row = $query_result->fetch_assoc()) {
+                    $this->name = $row['name'];
+                    $this->status = $row['status'];
+                    $this->admin_privilege = $row['admin_privilege'];
+                    $this->description = $row['description'];
+                    $this->net_type = $row['net_type'];
+                    $this->net_attribute_type = $row['net_attribute_type'];
+                    $this->net_vlan_id = $row['net_vlan_id'];
+                    $this->ip_limitation_status = $row['ip_limitation_status'];
+                    $this->hw_limitation_status = $row['hw_limitation_status'];
+                    $this->ip_range_start = $row['ip_range_start'];
+                    $this->ip_range_stop = $row['ip_range_stop'];
+                    $this->user_auto_registration = $row['user_auto_registration'];
+                    $this->user_require_admin_approval = $row['user_require_admin_approval'];
+                }
+            } else
+                return false;
+            return true;
+        }
+    }
+
+    /**
      * Sets group name
      *
      * @param string $name
@@ -139,6 +191,40 @@ class Group
             . $this->user_auto_registration . ', '
             . $this->user_require_admin_approval
             . ')';
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Update current Group to Database
+     * 
+     * @return bool Returns true upon success, false otherwise
+     */
+    function update()
+    {
+        /* Prepare inserting query */
+        $query = "UPDATE net_group ";
+
+        $query .= " SET
+            name = '" . $this->name . "' , " . "
+            status = " . $this->status . " , " . "
+            admin_privilege = " . $this->admin_privilege . " , " . "
+            description = '" . $this->description . "' , " . "
+            net_type = " . $this->net_type . " , " . "
+            net_attribute_type = " . $this->net_attribute_type . " , " . "
+            net_vlan_id = " . $this->net_vlan_id . " , " . "
+            ip_limitation_status = " . $this->ip_limitation_status . " , " . "
+            hw_limitation_status = " . $this->hw_limitation_status . " , " . "
+            ip_range_start = '" . $this->ip_range_start . "' , " . "
+            ip_range_stop = '" . $this->ip_range_stop . "' , " . "
+            user_auto_registration = " . $this->user_auto_registration . " , " . "
+            user_require_admin_approval = " . $this->user_require_admin_approval;
+
+        $query .= " WHERE name = '" . $this->name . "'";
 
         $query_result = $this->database->query($query);
         if (!$query_result) {
@@ -267,9 +353,9 @@ class Group
      * Joins Users to Group
      * 
      * @param array $users_array Array of Strings of Usernames
-     * @return true|false  Returns false on error, true otherwise
+     * @return boolean  Returns false on error, true otherwise
      */
-    public function addUsers($users_array)
+    public function associateUser($users_array)
     {
         foreach ($users_array as $user) {
 
@@ -290,6 +376,48 @@ class Group
             }
         }
         return true;
+    }
+
+    /**
+     * De-Associate ALL Users from Group
+     * 
+     * @return boolean  Returns false on error, true otherwise
+     */
+    public function deAssociateAllUsers()
+    {
+        /* Prepare inserting query */
+        $query = "DELETE FROM user_group_partecipation";
+
+        $query .= " WHERE group_name = '" . $this->name . "'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false; //Error
+        }
+        return true;
+    }
+
+    /**
+     * Checks if given user id is associated with currect group  
+     * 
+     * @param string $user_id User ID
+     * @return boolean  Returns true if associated, false otherwise
+     */
+    public function ifUserAssociated($user_id)
+    {
+        /* Prepare inserting query */
+        $query = "SELECT user_id FROM user_group_partecipation";
+
+        $query .= " WHERE user_id = '" . $user_id . "'";
+
+        $query_result = $this->database->query($query);
+
+        if (!$query_result) {
+            return false; //Error
+        } elseif ($query_result->num_rows == 1)
+            return true;
+
+        return false;
     }
 
     /**

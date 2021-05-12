@@ -106,7 +106,7 @@ if (isset($_POST['save_controller_details'])) {
 }
 
 /* 
-This Conditions below are unique of this first configuration operation 
+These Conditions below are unique of this first configuration operation 
 */
 
 /* If Controller is available and online */ elseif ($controller->getConnectionStatus())

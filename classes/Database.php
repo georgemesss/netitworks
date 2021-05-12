@@ -68,18 +68,14 @@ class Database
      */
     function sanifyArray($array)
     {
-        $keys = array_keys($array);
-        for ($i = 0; $i < count($keys); ++$i) {
-            if (!is_array($array[$keys[$i]]))
-                $array[$keys[$i]] = $this->connection->real_escape_string($array[$keys[$i]]);
-            else {
-                $subkeys = array_keys($array[$keys[$i]]);
-                for ($z = 0; $z < count($subkeys); ++$z) {
-                    $array[$keys[$subkeys[$z]]] = $this->connection->real_escape_string($array[$keys[$subkeys[$z]]]);
-                }
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $this->sanifyArray($value);
+            } else {
+                $array[$key] = $this->connection->real_escape_string($value);
             }
-            return $array;
         }
+        return $array;
     }
 
     /**

@@ -133,7 +133,7 @@ if (!$database->getConnectionStatus()) {
         /* IF Group was added to DB without errors */
         if ($result) {
             /* Join users array to group */
-            $result = $groupToCreate->addUsers($_POST['users']);
+            $result = $groupToCreate->associateUser($_POST['users']);
 
             /* IF Group was associated with given users to DB without errors */
             if ($result)
@@ -287,7 +287,6 @@ if (!$database->getConnectionStatus()) {
                                     else {
                                         /* Parse user object array and print results*/
                                         for ($c = 0; $c < sizeof($userArray); $c++) {
-                                            $test = '<option value="' . $userArray[$c]->id . '"><' . $userArray[$c]->id . '></option>';
                                             echo '<option value="' . $userArray[$c]->id . '">' . $userArray[$c]->id . '</option>';
                                         }
                                     }
