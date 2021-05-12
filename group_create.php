@@ -8,107 +8,145 @@
  * This Page will let the user create an instance of the object Group
  */
 
+
+/* Include NetItWorks Classes and use Composer Autoloader */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Create new Database instance */
 $database = new Database();
 
+/* If Database is not available */
 if (!$database->getConnectionStatus()) {
+    /* Print error code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stderr'] = "Database not Connected";
+
+    /* If Database is OK */
 } else {
 
+    /* If User presses "Create Group" button and group name is set */
     if (isset($_POST['create_group']) && isset($_POST['name'])) {
 
+        /* Create new Group instance and link database object */
         $groupToCreate = new Group($database, NULL);
 
-        if (!$groupToCreate->database->getConnectionStatus()) {
-            $_SESSION['status_stderr'] = "Error: Database is NOT Online ";
-        } else {
+        /* Post Super-Global sanification*/
+        $_POST = $groupToCreate->database->sanifyArray($_POST);
 
-            /* Post Super-Global sanification*/
-            $_POST = $groupToCreate->database->sanifyArray($_POST);
+        /* Perform Post Super-Global Sanification */
+        if (!ifAllElementStatusEqual(array(
+            $_POST['ip_limitation_status'],
+            $_POST['ip_range_start'],
+            $_POST['ip_range_stop']
+        ))) {
+            $_SESSION['status_stderr'] = "Error! All fields must be filled";
+            printBanner();
+        }
 
-            if (!ifAllElementStatusEqual(array(
-                $_POST['ip_limitation_status'],
-                $_POST['ip_range_start'],
-                $_POST['ip_range_stop']
-            ))) {
-                $_SESSION['status_stderr'] = "Error! All fields must be filled";
-                printBanner();
-            }
+        /* Convert empty strings to 'NULL' strings */
+        $_POST = emptyToNull($_POST);
 
-            $_POST = emptyToNull($_POST);
+        /* IF disabled switch is set */
+        if (!isset($_POST['disabled']))
+            /* Set user status to ACTIVE */
+            $_POST['disabled'] = 1;
+        else
+            /* Set user status to DISABLED */
+            $_POST['disabled'] = 0;
 
-            if (!isset($_POST['disabled']))
-                $_POST['disabled'] = 1;
+        /* IF admin privilege status switch is set */
+        if (!isset($_POST['admin_privilege_status']))
+            /* Set admin privilege status to 0 */
+            $_POST['admin_privilege_status'] = 0;
+        else
+            /* Set admin privilege status to 1 */
+            $_POST['admin_privilege_status'] = 1;
+
+        /* IF ip limitation status switch is set */
+        if (!isset($_POST['ip_limitation_status']))
+            /* Set ip limitation status to 0 */
+            $_POST['ip_limitation_status'] = 0;
+        else
+            /* Set ip limitation status to 1 */
+            $_POST['ip_limitation_status'] = 1;
+
+        /* IF hardware limitation status switch is set */
+        if (!isset($_POST['hw_limitation_status']))
+            /* Set hardware limitation status to 0 */
+            $_POST['hw_limitation_status'] = 0;
+        else
+            /* Set hardware limitation status to 1 */
+            $_POST['hw_limitation_status'] = 1;
+
+        /* IF user auto registration status switch is set */
+        if (!isset($_POST['user_auto_registration']))
+            /* Set user auto registration status to 0 */
+            $_POST['user_auto_registration'] = 0;
+        else
+            /* Set user auto registration status to 1 */
+            $_POST['user_auto_registration'] = 1;
+
+        /* IF require admin approval status switch is set */
+        if (!isset($_POST['user_require_admin_approval']))
+            /* Set require admin approval status to 1 */
+            $_POST['user_require_admin_approval'] = 0;
+        else
+            /* Set require admin approval status to 1 */
+            $_POST['user_require_admin_approval'] = 1;
+
+
+        /* Pick up net_* variables from form */
+        if ($_POST['net_type'] === "LAN") {
+            $_POST['net_type'] = 13;
+            $_POST['net_attribute_type'] = 6;
+        } elseif ($_POST['net_type'] === "VPN") {
+            $_POST['net_type'] = 3;
+            $_POST['net_attribute_type'] = 1;
+        } elseif ($_POST['net_type'] === "External") {
+            $_POST['net_type'] = 0;
+            $_POST['net_attribute_type'] = 0;
+            $_POST['net_vlan_id'] = 0;
+        }
+
+        /* Set properties to Group object  */
+        $groupToCreate->setGroup(
+            $_POST['name'],
+            (int)$_POST['disabled'],
+            (int)$_POST['admin_privilege_status'],
+            $_POST['description'],
+            (int)$_POST['net_type'],
+            (int)$_POST['net_attribute_type'],
+            (int)$_POST['net_vlan_id'],
+            (int)$_POST['ip_limitation_status'],
+            (int)$_POST['hw_limitation_status'],
+            $_POST['ip_range_start'],
+            $_POST['ip_range_stop'],
+            (int)$_POST['user_auto_registration'],
+            (int)$_POST['user_require_admin_approval'],
+        );
+
+        /* Add new Group and properties to DataBase */
+        $result = $groupToCreate->create();
+
+        /* IF Group was added to DB without errors */
+        if ($result) {
+            /* Join users array to group */
+            $result = $groupToCreate->addUsers($_POST['users']);
+
+            /* IF Group was associated with given users to DB without errors */
+            if ($result)
+                $_SESSION['status_stdout'] = "Group Created Successfuly";
+        } /* IF User creation in DB returned errors */ else {
+
+            /* IF error is known */
+            if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
+                $_SESSION['status_stderr'] = "Error: Group already exists ";
+
+            /* IF error is unknown */
             else
-                $_POST['disabled'] = 0;
-            if (!isset($_POST['admin_privilege_status']))
-                $_POST['admin_privilege_status'] = 0;
-            else
-                $_POST['admin_privilege_status'] = 1;
-            if (!isset($_POST['ip_limitation_status']))
-                $_POST['ip_limitation_status'] = 0;
-            else
-                $_POST['ip_limitation_status'] = 1;
-            if (!isset($_POST['hw_limitation_status']))
-                $_POST['hw_limitation_status'] = 0;
-            else
-                $_POST['hw_limitation_status'] = 1;
-            if (!isset($_POST['user_auto_registration']))
-                $_POST['user_auto_registration'] = 0;
-            else
-                $_POST['user_auto_registration'] = 1;
-            if (!isset($_POST['user_require_admin_approval']))
-                $_POST['user_require_admin_approval'] = 0;
-            else
-                $_POST['user_require_admin_approval'] = 1;
-
-
-            /* Pick up variables from form */
-            if ($_POST['net_type'] === "LAN") {
-                $_POST['net_type'] = 13;
-                $_POST['net_attribute_type'] = 6;
-            } elseif ($_POST['net_type'] === "VPN") {
-                $_POST['net_type'] = 3;
-                $_POST['net_attribute_type'] = 1;
-            } elseif ($_POST['net_type'] === "External") {
-                $_POST['net_type'] = 0;
-                $_POST['net_attribute_type'] = 0;
-                $_POST['net_vlan_id'] = 0;
-            }
-
-            $groupToCreate->setGroup(
-                $_POST['name'],
-                (int)$_POST['disabled'],
-                (int)$_POST['admin_privilege_status'],
-                $_POST['description'],
-                (int)$_POST['net_type'],
-                (int)$_POST['net_attribute_type'],
-                (int)$_POST['net_vlan_id'],
-                (int)$_POST['ip_limitation_status'],
-                (int)$_POST['hw_limitation_status'],
-                $_POST['ip_range_start'],
-                $_POST['ip_range_stop'],
-                (int)$_POST['user_auto_registration'],
-                (int)$_POST['user_require_admin_approval'],
-            );
-
-            /* Create Group */
-            $result = $groupToCreate->create();
-
-            if ($result) {
-                $result = $groupToCreate->addUsers($_POST['users']);
-                if ($result)
-                    $_SESSION['status_stdout'] = "Group Created Successfuly";
-            } else {
-                //alert problem
-                if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
-                    $_SESSION['status_stderr'] = "Error: Group already exists ";
-                else
-                    $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;
-            }
+                $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;
         }
     }
 }
@@ -232,9 +270,16 @@ if (!$database->getConnectionStatus()) {
                         <div class="row">
                             <select class="custom-select" name="users[]" multiple>
                                 <?php
+                                /* If Database is OK */
                                 if ($database->getConnectionStatus()) {
+
+                                    /* Create new User instance and link database object */
                                     $users = new User($database, NULL);
+
+                                    /* Get full user list array from DB */
                                     $userArray = $users->getUsers();
+
+                                    /* Parse user object array and print results*/
                                     for ($c = 0; $c < sizeof($userArray); $c++) {
                                         $test = '<option value="' . $userArray[$c]->id . '"><' . $userArray[$c]->id . '></option>';
                                         echo '<option value="' . $userArray[$c]->id . '">' . $userArray[$c]->id . '</option>';
@@ -254,6 +299,7 @@ if (!$database->getConnectionStatus()) {
             </div>
 
             <?php
+            /* Print banner status with $_SESSION stdout/stderr strings */
             printBanner();
             ?>
 

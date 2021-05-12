@@ -26,7 +26,7 @@ if (!$database->getConnectionStatus()) {
     /* If Database is OK */
 } else {
 
-    /* If User prresses "Create User" button and username is set */
+    /* If User presses "Create User" button and username is set */
     if (isset($_POST['create_user']) && isset($_POST['id'])) {
 
         /* Create new User instance and link database object */
@@ -224,7 +224,7 @@ if (!$database->getConnectionStatus()) {
                                     /* If Database is OK */
                                     if ($database->getConnectionStatus()) {
 
-                                        /* Create new User instance and link database object */
+                                        /* Create new Group instance and link database object */
                                         $group = new Group($database, NULL);
 
                                         /* Get full group list array from DB */
