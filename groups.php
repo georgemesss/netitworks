@@ -8,32 +8,67 @@
  * This Page will let the user view the Group list saved in DataBase
  */
 
+/* Include NetItWorks Classes and use Composer Autoloader */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Create new Database instance */
 $database = new Database();
+
+/* If Database is not available */
 if (!$database->getConnectionStatus()) {
+    /* Print error code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stderr'] = "Database not Connected";
-} else {
+}
+/* If Database is OK */ else {
+
+    /* Create new Group instance and link database object */
     $group = new Group($database, NULL);
 
+    /* If User presses "Delete Group" button */
     if (isset($_POST['group_delete'])) {
+
+        /* Set name attribute to Group object  */
         $group->setName($_POST['group_delete']);
+
+        /* IF Group was deletion from DB without errors */
         if ($group->delete())
+            /* Print success code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stdout'] = "Group Deleted";
+
+        /* IF Group deletion in DB returned errors */
         else
+            /* Print error code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stderr'] = "Error on Deletion";
         //header("Refresh:0"); //Refresh page
     }
 
+    /* If User presses "Change Status" button */
     if (isset($_POST['group_change_status'])) {
+        /* Set name attribute to Group object  */
         $group->setName($_POST['group_change_status']);
-        $group->changeStatus();
+
+        /* IF Group Status was changed from DB without errors */
+        if ($group->changeStatus())
+            /* Print success code to session superglobal (banner will be printed down on page) */
+            $_SESSION['status_stdout'] = "Status Changed";
+
+        /* IF Status Changement in DB returned errors */
+        else
+            /* Print error code to session superglobal (banner will be printed down on page) */
+            $_SESSION['status_stderr'] = "Error on Status Changement";
+
         //header("Refresh:0"); //Refresh page
     }
 
     $groupList = $group->getGroups();
+
+    /* IF Group List Fetching in DB returned errors */
+    if (!$groupList)
+        /* Print error code to session superglobal (banner will be printed down on page) */
+        $_SESSION['status_stderr'] = "Error on Group Fetching";
 }
 ?>
 
@@ -236,6 +271,7 @@ if (!$database->getConnectionStatus()) {
     </div>
 
     <?php
+    /* Print banner status with $_SESSION stdout/stderr strings */
     printBanner();
     ?>
 
