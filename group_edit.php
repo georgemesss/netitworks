@@ -22,6 +22,7 @@ if (!$database->getConnectionStatus()) {
     /* Print error code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stderr'] = "Database not Connected";
 }
+
 /* If Database is OK */ else {
 
     /* Create new Group instance and link database object */
@@ -44,133 +45,133 @@ if (!$database->getConnectionStatus()) {
         /* If User presses "Save Settings" button*/
         if (isset($_POST['save_settings'])) {
 
-            /* 
-            These Conditions BELOW are EQUAL TO group_create.php 
-            */
-
-            /* Post Super-Global sanification*/
-            $_POST = $group->database->sanifyArray($_POST);
-
-            /* Perform Post Super-Global Sanification */
+            /* Check IP Ranges are set if IP Limitation Enabled */
             if (!ifAllElementStatusEqual(array(
                 $_POST['ip_limitation_status'],
                 $_POST['ip_range_start'],
                 $_POST['ip_range_stop']
             ))) {
-                $_SESSION['status_stderr'] = "Error! All fields must be filled";
-                printBanner();
-            }
+                $_SESSION['status_stderr'] = "Error! You must fill ranges if IP limitation Enabled";
+            } else {
 
-            /* Convert empty strings to 'NULL' strings */
-            $_POST = emptyToNull($_POST);
+                /* 
+            These Conditions BELOW are EQUAL TO group_create.php 
+            */
 
-            /* IF disabled switch is set */
-            if (!isset($_POST['disabled']))
-                /* Set user status to ACTIVE */
-                $_POST['disabled'] = 1;
-            else
-                /* Set user status to DISABLED */
-                $_POST['disabled'] = 0;
+                /* Post Super-Global sanification*/
+                $_POST = $group->database->sanifyArray($_POST);
 
-            /* IF admin privilege status switch is set */
-            if (!isset($_POST['admin_privilege_status']))
-                /* Set admin privilege status to 0 */
-                $_POST['admin_privilege_status'] = 0;
-            else
-                /* Set admin privilege status to 1 */
-                $_POST['admin_privilege_status'] = 1;
+                /* Convert empty strings to 'NULL' strings */
+                $_POST = emptyToNull($_POST);
 
-            /* IF ip limitation status switch is set */
-            if (!isset($_POST['ip_limitation_status']))
-                /* Set ip limitation status to 0 */
-                $_POST['ip_limitation_status'] = 0;
-            else
-                /* Set ip limitation status to 1 */
-                $_POST['ip_limitation_status'] = 1;
+                /* IF disabled switch is set */
+                if (!isset($_POST['disabled']))
+                    /* Set user status to ACTIVE */
+                    $_POST['disabled'] = 1;
+                else
+                    /* Set user status to DISABLED */
+                    $_POST['disabled'] = 0;
 
-            /* IF hardware limitation status switch is set */
-            if (!isset($_POST['hw_limitation_status']))
-                /* Set hardware limitation status to 0 */
-                $_POST['hw_limitation_status'] = 0;
-            else
-                /* Set hardware limitation status to 1 */
-                $_POST['hw_limitation_status'] = 1;
+                /* IF admin privilege status switch is set */
+                if (!isset($_POST['admin_privilege_status']))
+                    /* Set admin privilege status to 0 */
+                    $_POST['admin_privilege_status'] = 0;
+                else
+                    /* Set admin privilege status to 1 */
+                    $_POST['admin_privilege_status'] = 1;
 
-            /* IF user auto registration status switch is set */
-            if (!isset($_POST['user_auto_registration']))
-                /* Set user auto registration status to 0 */
-                $_POST['user_auto_registration'] = 0;
-            else
-                /* Set user auto registration status to 1 */
-                $_POST['user_auto_registration'] = 1;
+                /* IF ip limitation status switch is set */
+                if (!isset($_POST['ip_limitation_status']))
+                    /* Set ip limitation status to 0 */
+                    $_POST['ip_limitation_status'] = 0;
+                else
+                    /* Set ip limitation status to 1 */
+                    $_POST['ip_limitation_status'] = 1;
 
-            /* IF require admin approval status switch is set */
-            if (!isset($_POST['user_require_admin_approval']))
-                /* Set require admin approval status to 1 */
-                $_POST['user_require_admin_approval'] = 0;
-            else
-                /* Set require admin approval status to 1 */
-                $_POST['user_require_admin_approval'] = 1;
+                /* IF hardware limitation status switch is set */
+                if (!isset($_POST['hw_limitation_status']))
+                    /* Set hardware limitation status to 0 */
+                    $_POST['hw_limitation_status'] = 0;
+                else
+                    /* Set hardware limitation status to 1 */
+                    $_POST['hw_limitation_status'] = 1;
+
+                /* IF user auto registration status switch is set */
+                if (!isset($_POST['user_auto_registration']))
+                    /* Set user auto registration status to 0 */
+                    $_POST['user_auto_registration'] = 0;
+                else
+                    /* Set user auto registration status to 1 */
+                    $_POST['user_auto_registration'] = 1;
+
+                /* IF require admin approval status switch is set */
+                if (!isset($_POST['user_require_admin_approval']))
+                    /* Set require admin approval status to 1 */
+                    $_POST['user_require_admin_approval'] = 0;
+                else
+                    /* Set require admin approval status to 1 */
+                    $_POST['user_require_admin_approval'] = 1;
 
 
-            /* Pick up net_* variables from form */
-            if ($_POST['net_type'] === "LAN") {
-                $_POST['net_type'] = 13;
-                $_POST['net_attribute_type'] = 6;
-            } elseif ($_POST['net_type'] === "VPN") {
-                $_POST['net_type'] = 3;
-                $_POST['net_attribute_type'] = 1;
-            } elseif ($_POST['net_type'] === "External") {
-                $_POST['net_type'] = 0;
-                $_POST['net_attribute_type'] = 0;
-                $_POST['net_vlan_id'] = 0;
-            }
+                /* Pick up net_* variables from form */
+                if ($_POST['net_type'] === "LAN") {
+                    $_POST['net_type'] = 13;
+                    $_POST['net_attribute_type'] = 6;
+                } elseif ($_POST['net_type'] === "VPN") {
+                    $_POST['net_type'] = 3;
+                    $_POST['net_attribute_type'] = 1;
+                } elseif ($_POST['net_type'] === "External") {
+                    $_POST['net_type'] = 0;
+                    $_POST['net_attribute_type'] = 0;
+                    $_POST['net_vlan_id'] = 0;
+                }
 
-            /* Set properties to Group object  */
-            $group->setGroup(
-                $_POST['name'],
-                (int)$_POST['disabled'],
-                (int)$_POST['admin_privilege_status'],
-                $_POST['description'],
-                (int)$_POST['net_type'],
-                (int)$_POST['net_attribute_type'],
-                (int)$_POST['net_vlan_id'],
-                (int)$_POST['ip_limitation_status'],
-                (int)$_POST['hw_limitation_status'],
-                $_POST['ip_range_start'],
-                $_POST['ip_range_stop'],
-                (int)$_POST['user_auto_registration'],
-                (int)$_POST['user_require_admin_approval'],
-            );
+                /* Set properties to Group object  */
+                $group->setGroup(
+                    $_POST['name'],
+                    (int)$_POST['disabled'],
+                    (int)$_POST['admin_privilege_status'],
+                    $_POST['description'],
+                    (int)$_POST['net_type'],
+                    (int)$_POST['net_attribute_type'],
+                    (int)$_POST['net_vlan_id'],
+                    (int)$_POST['ip_limitation_status'],
+                    (int)$_POST['hw_limitation_status'],
+                    $_POST['ip_range_start'],
+                    $_POST['ip_range_stop'],
+                    (int)$_POST['user_auto_registration'],
+                    (int)$_POST['user_require_admin_approval'],
+                );
 
-            /* 
+                /* 
             These Conditions BELOW are UNIQUE of this group edit page 
             */
 
-            /* Update Group properties to DataBase */
-            $result = $group->update();
+                /* Update Group properties to DataBase */
+                $result = $group->update();
 
-            /* IF Group was updated to DB without errors */
-            if ($result) {
-                /* Join users array to group */
+                /* IF Group was updated to DB without errors */
+                if ($result) {
+                    /* Join users array to group */
 
-                $resultDeAssociation = $group->deAssociateAllUsers();
-                $resultAssociation = $group->associateUser($_POST['users']);
+                    $resultDeAssociation = $group->deAssociateAllUsers();
+                    $resultAssociation = $group->associateUsers($_POST['users']);
 
-                /* IF Group was associated with given users to DB without errors */
-                if ($resultDeAssociation && $resultAssociation)
-                    $_SESSION['status_stdout'] = "Group Updated Successfuly";
-                else
-                    $_SESSION['status_stderr'] = "Error: " . $group->database->connection->error;
-            } /* IF User creation in DB returned errors */ else {
+                    /* IF Group was associated with given users to DB without errors */
+                    if ($resultDeAssociation && $resultAssociation)
+                        $_SESSION['status_stdout'] = "Group Updated Successfuly";
+                    else
+                        $_SESSION['status_stderr'] = "Error: " . $group->database->connection->error;
+                } /* IF User creation in DB returned errors */ else {
 
-                /* IF error is known */
-                if (strpos($group->connection->error, "Duplicate entry") !== false)
-                    $_SESSION['status_stderr'] = "Error: Group already exists ";
+                    /* IF error is known */
+                    if (strpos($group->connection->error, "Duplicate entry") !== false)
+                        $_SESSION['status_stderr'] = "Error: Group already exists ";
 
-                /* IF error is unknown */
-                else
-                    $_SESSION['status_stderr'] = "Error: " . $group->database->connection->error;
+                    /* IF error is unknown */
+                    else
+                        $_SESSION['status_stderr'] = "Error: " . $group->database->connection->error;
+                }
             }
         }
 
@@ -200,6 +201,9 @@ if (!$database->getConnectionStatus()) {
 
             /* IF MAC Address is not empty */
             if (!empty($_POST['limited_mac_address'])) {
+
+                /* Replace : with - in mac address */
+                $_POST['limited_mac_address'] = str_replace(":", "-", $_POST['limited_mac_address']);
 
                 /* IF Device was added to DB without errors */
                 if ($group->addHwLimitedDevice($_POST['limited_mac_address'])) {
@@ -255,13 +259,13 @@ if (!$database->getConnectionStatus()) {
                     <div class="col-md-4 border-right">
                         <div class="p-3 py-5">
                             <div class="row">
-                                <h5>Group Name: </h5>
+                                <h7>Group Name: </h7>
                                 <span class="badge badge-primary">
                                     <?php echo $group->name; ?></span>
                             </div>
                             <br>
                             <div class="row">
-                                <h5>Status: </h5>
+                                <h7>Status: </h7>
                                 <?php if ($group->status == 1)
                                     echo '<span class="badge badge-success">Enabled</span>';
                                 else
@@ -269,11 +273,15 @@ if (!$database->getConnectionStatus()) {
                             </div>
                             <br>
                             <div class="row">
-                                <h5>Active Connections: </h5> <span class="badge badge-success">?</span>
+                                <h7>Active Connections: </h7> <span class="badge badge-success"><?php echo $group->countActiveConnections(); ?></span>
                             </div>
                             <br>
                             <div class="row">
-                                <h5>IP Address Range: </h5>
+                                <h7>Connected Devices (Total History): </h7> <span class="badge badge-success"><?php echo $group->countConnectedDevices(); ?></span>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <h7>IP Address Range: </h7>
                                 <span class="badge badge-info">
                                     <?php
                                     if ($group->ip_range_start != 'NULL' && $group->ip_range_stop != 'NULL')
@@ -282,13 +290,13 @@ if (!$database->getConnectionStatus()) {
                             </div>
                             <br>
                             <div class="row">
-                                <h5>VLAN ID: </h5> <span class="badge badge-danger">
+                                <h7>VLAN ID: </h7> <span class="badge badge-danger">
                                     <?php if ($group->net_vlan_id != 0)
                                         echo $group->net_vlan_id; ?></span>
                             </div>
                             <br>
                             <div class="row">
-                                <h5>Number of Users: </h5> <span class="badge badge-info">
+                                <h7>Number of Users: </h7> <span class="badge badge-info">
                                     <?php
                                     /* Set main group object id to grouplist name */
                                     $group->setName($group->name);
@@ -299,7 +307,7 @@ if (!$database->getConnectionStatus()) {
                             </div>
                             <br>
                             <div class="row">
-                                <h5>Hw Limitation Status: </h5>
+                                <h7>Hw Limitation Status: </h7>
                                 <?php if ($group->hw_limitation_status == 1)
                                     echo '<span class="badge badge-success">Enabled</span>';
                                 else
@@ -307,7 +315,7 @@ if (!$database->getConnectionStatus()) {
                             </div>
                             <br>
                             <div class="row">
-                                <h5>IP Limitation Status: </h5>
+                                <h7>IP Limitation Status: </h7>
                                 <?php if ($group->ip_limitation_status == 1)
                                     echo '<span class="badge badge-success">Enabled</span>';
                                 else
@@ -315,7 +323,7 @@ if (!$database->getConnectionStatus()) {
                             </div>
                             <br>
                             <br>
-                            <h5 class="text-center">User Membership</h5>
+                            <h7 class="text-center">User Membership</h7>
                             <select class="custom-select" name="users[]" multiple>
                                 <?php
                                 /* If Database is OK */
@@ -375,10 +383,10 @@ if (!$database->getConnectionStatus()) {
                             </div>
                             <div class="row mt-3">
                                 <div class="col-md-6"><label class="labels">IP Range Start</label>
-                                    <input type="text" name="ip_range_start" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" value="<?php if ($group->ip_range_start != 'NULL') echo $group->ip_range_start ?>">
+                                    <input type="text" name="ip_range_start" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="IP Range Start" value="<?php if ($group->ip_range_start != 'NULL') echo $group->ip_range_start ?>">
                                 </div>
                                 <div class="col-md-6"><label class="labels">IP Range End</label>
-                                    <input type="text" name="ip_range_stop" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" value="<?php if ($group->ip_range_stop != 'NULL')  echo $group->ip_range_stop ?>">
+                                    <input type="text" name="ip_range_stop" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="IP Range End" value="<?php if ($group->ip_range_stop != 'NULL')  echo $group->ip_range_stop ?>">
                                 </div>
                             </div>
                             <br>
@@ -427,7 +435,7 @@ if (!$database->getConnectionStatus()) {
                         <h4 class="text-center">Physical Address Limitation</h4>
                         <br>
                         <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="hwaddressSwitch" <?php if ($group->hw_limitation_status == 1) echo 'checked' ?>>
+                            <input type="checkbox" name="hw_limitation_status" class="custom-control-input" id="hwaddressSwitch" <?php if ($group->hw_limitation_status == 1) echo 'checked' ?>>
                             <label class="custom-control-label" for="hwaddressSwitch">Hardware Group Address Limitation</label>
                         </div>
                         <br>
@@ -436,7 +444,7 @@ if (!$database->getConnectionStatus()) {
                                 <label class="labels">MAC Address</label>
                                 <input type="text" name="limited_mac_address" class="form-control" minlength="7" maxlength="17" size="17" pattern="^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$" placeholder="00:1B:44:11:3A:B7">
                                 <br>
-                                <label class="labels">IP Address [Optional]</label>
+                                <label class="labels">Static IP [Optional]</label>
                                 <input type="text" name="limited_ip" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="192.168.1.2">
                             </div>
                             <div class="col-md-6">
@@ -467,13 +475,13 @@ if (!$database->getConnectionStatus()) {
                                                             </td>
                                                             <td>
                                                                 <?php $deviceToDelete =  str_replace(':', '', $group->limitedDevices[$c]['mac_address']) ?>
-                                                                <div class="mt-5 text-center"><button class="btn btn-danger group-button btn-sm" data-toggle="modal" data-target="#groupDeleteLimitedDevice<?php echo $deviceToDelete; ?>" type="button">Delete Device</button></div>
+                                                                <div class="mt-5 text-center"><button class="btn btn-danger group-button btn-sm" data-toggle="modal" data-target="#groupDeleteLimitedDevice<?php echo $deviceToDelete; ?>" type="button">Delete</button></div>
                                                                 <!-- Modal Group Delete -->
                                                                 <div class="modal fade" id="groupDeleteLimitedDevice<?php echo $deviceToDelete; ?>" tabindex="-1" role="dialog" aria-labelledby="groupDeleteLimitedDeviceLabel<?php $deviceToDelete; ?>" aria-hidden="true">
                                                                     <div class="modal-dialog" role="document">
                                                                         <div class="modal-content">
                                                                             <div class="modal-header">
-                                                                                <h5 class="modal-title" id="groupDeleteLimitedDeviceLabel<?php echo $deviceToDelete; ?>">Hey! Are you sure?</h5>
+                                                                                <h7 class="modal-title" id="groupDeleteLimitedDeviceLabel<?php echo $deviceToDelete; ?>">Hey! Are you sure?</h7>
                                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                     <span aria-hidden="true">&times;</span>
                                                                                 </button>
@@ -505,7 +513,7 @@ if (!$database->getConnectionStatus()) {
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="groupDeleteModalLabel">Hey! Are you sure you want to DELETE the group?</h5>
+                                    <h7 class="modal-title" id="groupDeleteModalLabel">Hey! Are you sure you want to DELETE the group?</h7>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -524,7 +532,7 @@ if (!$database->getConnectionStatus()) {
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="groupSaveSettingsModalLabel">Hey! Are you sure?</h5>
+                                    <h7 class="modal-title" id="groupSaveSettingsModalLabel">Hey! Are you sure?</h7>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -545,7 +553,7 @@ if (!$database->getConnectionStatus()) {
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="groupAddLimitedDeviceLabel">Hey! Are you sure?</h5>
+                                    <h7 class="modal-title" id="groupAddLimitedDeviceLabel">Hey! Are you sure?</h7>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>

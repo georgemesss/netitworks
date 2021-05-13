@@ -154,7 +154,7 @@ if (!$database->getConnectionStatus()) {
                                                 echo '<span class="badge badge-warning">Offline</span>'; ?>
                                         </td>
                                         <td>
-                                            ?
+                                            <?php echo $group->countActiveConnections(); ?>
                                         </td>
                                         <td><?php
                                             if ($groupList[$c]->ip_range_start != 'NULL' && $groupList[$c]->ip_range_stop != 'NULL')
@@ -203,11 +203,11 @@ if (!$database->getConnectionStatus()) {
                                             ?>
                                             <!-- Modal Group Change Status -->
                                             <form action="groups.php" method="post">
-                                                <div class="modal fade" id="groupChangeStatusModal<?php echo $groupList[$c]->name; ?>" tabindex="-1" role="dialog" aria-labelledby="groupChangeStatusModal<?php echo $key['name']; ?>" aria-hidden="true">
+                                                <div class="modal fade" id="groupChangeStatusModal<?php echo $groupList[$c]->name; ?>" tabindex="-1" role="dialog" aria-labelledby="groupChangeStatusModal<?php echo $groupList[$c]->name; ?>" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="groupChangeStatusModalLabel<?php echo $key['name']; ?>">Hey! Are you sure?</h5>
+                                                                <h5 class="modal-title" id="groupChangeStatusModalLabel<?php echo $groupList[$c]->name; ?>">Hey! Are you sure?</h5>
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
@@ -236,11 +236,11 @@ if (!$database->getConnectionStatus()) {
                                             </button>
                                             <!-- Modal Group Delete -->
                                             <form action="groups.php" method="post">
-                                                <div class="modal fade" id="groupDeleteModal<?php echo $groupList[$c]->name; ?>" tabindex="-1" role="dialog" aria-labelledby="groupDeleteModal<?php echo $key['name']; ?>" aria-hidden="true">
+                                                <div class="modal fade" id="groupDeleteModal<?php echo $groupList[$c]->name; ?>" tabindex="-1" role="dialog" aria-labelledby="groupDeleteModal<?php echo $groupList[$c]->name; ?>" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="groupDeleteModalLabel<?php echo $key['name']; ?>">Hey! Are you sure?</h5>
+                                                                <h5 class="modal-title" id="groupDeleteModalLabel<?php echo $groupList[$c]->name; ?>">Hey! Are you sure?</h5>
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>

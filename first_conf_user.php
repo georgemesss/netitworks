@@ -64,7 +64,7 @@ if (!$database->getConnectionStatus()) {
             $result = $userToCreate->create();
 
             if ($result) {
-                $result = $userToCreate->joinGroup($_POST['groups']);
+                $result = $userToCreate->joinGroups($_POST['groups']);
                 if ($result)
                     $_SESSION['status_stdout'] = "User Created Successfuly";
                 else

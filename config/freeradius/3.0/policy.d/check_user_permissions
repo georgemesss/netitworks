@@ -1,0 +1,115 @@
+#
+#   -- NetITWorks Policy --
+#
+#   This policy checks that the device is permitted
+#   According to User & Group Associations
+#   And according to User & Group Harware Limitations 
+# 	
+#
+check_user_permissions {
+    
+    #IF LAN Type Request
+    if(1){
+
+        # IF User is associated with AT LEAST ONE Enabled LAN TYPE Group
+        # and EITHER group hw limitation is disabled OR mac address is accepted from group
+        if("%{sql:SELECT COUNT(user_id) FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name LEFT JOIN net_user ON user_group_partecipation.group_name = net_user.id LEFT JOIN group_hw_limitation ON group_hw_limitation.group_name = net_group.name WHERE net_group.status=1 AND net_group.net_type=13 AND( group_hw_limitation.mac_address='%{Calling-Station-Id}' OR net_group.hw_limitation_status=0)}" > 0){
+
+            # IF User is ACTIVE
+            # and EITHER user hw limitation is disabled OR mac address is accepted from user
+            if("%{sql: SELECT COUNT(id) FROM net_user LEFT JOIN user_hw_limitation ON user_hw_limitation.user_id = net_user.id WHERE net_user.id = '%{User-Name}' AND net_user.status='active' AND( user_hw_limitation.mac_address='%{Calling-Station-Id}' OR net_user.hw_limitation_status=0)}" > 0){
+
+                update reply {
+                    #Select Tunnel-Type attribute for First LAN Enabled Group Available
+                    Tunnel-Type = "%{sql:SELECT net_type FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name WHERE user_id = '%{User-Name}' AND net_group.net_type = '13' AND net_group.status = 1 LIMIT 1}"
+                                
+                    #Select Medium-Type attribute for First LAN Enabled Group Available
+                    Tunnel-Medium-Type = "%{sql:SELECT net_attribute_type FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name WHERE user_id = '%{User-Name}' AND net_group.net_type = '13' AND net_group.status = 1 LIMIT 1}"
+                                
+                    #Select VLAN attribute for First LAN Enabled Group Available 
+                    Tunnel-Private-Group-Id = "%{sql:SELECT net_vlan_id FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name WHERE user_id = '%{User-Name}' AND net_group.net_type = '13' AND net_group.status = 1 LIMIT 1}"
+                }
+            }
+            else{
+                #Reject authorization 
+                reject
+            }
+        }
+        else{
+            #Reject authorization 
+            reject
+        }
+    }
+
+    #IF VPN Type Request
+    elsif(0){
+
+        # IF User is associated with AT LEAST ONE Enabled VPN TYPE Group
+        # and EITHER group hw limitation is disabled OR mac address is accepted from group
+        if("%{sql:SELECT COUNT(user_id) FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name LEFT JOIN net_user ON user_group_partecipation.group_name = net_user.id LEFT JOIN group_hw_limitation ON group_hw_limitation.group_name = net_group.name WHERE net_group.status=1 AND net_group.net_type=3 AND( group_hw_limitation.mac_address='%{Calling-Station-Id}' OR net_group.hw_limitation_status=0)}" > 0){
+
+            # IF User is ACTIVE
+            # and EITHER user hw limitation is disabled OR mac address is accepted from user
+            if("%{sql: SELECT COUNT(id) FROM net_user LEFT JOIN user_hw_limitation ON user_hw_limitation.user_id = net_user.id WHERE net_user.id = '%{User-Name}' AND net_user.status='active' AND( user_hw_limitation.mac_address='%{Calling-Station-Id}' OR net_user.hw_limitation_status=0)}" > 0){
+
+                update control {
+
+                    #Select Tunnel-Type attribute for First LAN Enabled Group Available
+                    Tunnel-Type = "%{sql:SELECT net_type FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name WHERE user_id = '%{User-Name}' AND net_group.net_type = '3' AND net_group.status = 1 LIMIT 1}"
+                                
+                    #Select Medium-Type attribute for First LAN Enabled Group Available
+                    Tunnel-Medium-Type = "%{sql:SELECT net_attribute_type FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name WHERE user_id = '%{User-Name}' AND net_group.net_type = '3' AND net_group.status = 1 LIMIT 1}"
+                                
+                    #Select VLAN attribute for First LAN Enabled Group Available 
+                    Tunnel-Private-Group-Id = "%{sql:SELECT net_vlan_id FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name WHERE user_id = '%{User-Name}' AND net_group.net_type = '3' AND net_group.status = 1 LIMIT 1}"
+                }
+            }
+            else{
+                #Reject authorization 
+                reject
+            }
+        }
+        else{
+            #Reject authorization 
+            reject
+        }
+    }
+
+    #IF External Login Type Request
+    elsif(0){
+
+        # IF User is associated with AT LEAST ONE Enabled External Login Group
+        # and EITHER group hw limitation is disabled OR mac address is accepted from group
+        if("%{sql:SELECT COUNT(user_id) FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name LEFT JOIN net_user ON user_group_partecipation.group_name = net_user.id LEFT JOIN group_hw_limitation ON group_hw_limitation.group_name = net_group.name WHERE net_group.status=1 AND net_group.net_type=0 AND( group_hw_limitation.mac_address='%{Calling-Station-Id}' OR net_group.hw_limitation_status=0)}" > 0){
+
+            # IF User is ACTIVE
+            # and EITHER user hw limitation is disabled OR mac address is accepted from user
+            if("%{sql: SELECT COUNT(id) FROM net_user LEFT JOIN user_hw_limitation ON user_hw_limitation.user_id = net_user.id WHERE net_user.id = '%{User-Name}' AND net_user.status='active' AND( user_hw_limitation.mac_address='%{Calling-Station-Id}' OR net_user.hw_limitation_status=0)}" > 0){
+
+                update reply {
+                    #Select Tunnel-Type attribute for First LAN Enabled Group Available
+                    Tunnel-Type = "%{sql:SELECT net_type FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name WHERE user_id = '%{User-Name}' AND net_group.net_type = '0' AND net_group.status = 1 LIMIT 1}"
+                                
+                    #Select Medium-Type attribute for First LAN Enabled Group Available
+                    Tunnel-Medium-Type = "%{sql:SELECT net_attribute_type FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name WHERE user_id = '%{User-Name}' AND net_group.net_type = '0' AND net_group.status = 1 LIMIT 1}"
+                                
+                    #Select VLAN attribute for First LAN Enabled Group Available 
+                    Tunnel-Private-Group-Id = "%{sql:SELECT net_vlan_id FROM user_group_partecipation INNER JOIN net_group ON user_group_partecipation.group_name = net_group.name WHERE user_id = '%{User-Name}' AND net_group.net_type = '0' AND net_group.status = 1 LIMIT 1}"
+                }
+            }
+            else{
+                #Reject authorization 
+                reject
+            }
+        }
+        else{
+            #Reject authorization 
+            reject
+        }
+    }
+
+    else{
+        #Reject authorization 
+        reject
+    }
+}

@@ -92,7 +92,7 @@ if (!$database->getConnectionStatus()) {
             if ($result) {
 
                 /* Join user to given group array */
-                $result = $userToCreate->joinGroup($_POST['groups']);
+                $result = $userToCreate->joinGroups($_POST['groups']);
 
                 /* IF User was associated with given groups to DB without errors */
                 if ($result)

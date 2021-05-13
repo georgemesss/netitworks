@@ -356,7 +356,7 @@ class Group
      * @param array $users_array Array of Strings of Usernames
      * @return boolean  Returns false on error, true otherwise
      */
-    public function associateUser($users_array)
+    public function associateUsers($users_array)
     {
         foreach ($users_array as $user) {
 
@@ -410,6 +410,8 @@ class Group
         $query = "SELECT user_id FROM user_group_partecipation";
 
         $query .= " WHERE user_id = '" . $user_id . "'";
+
+        $query .= " AND group_name = '" . $this->name . "'";
 
         $query_result = $this->database->query($query);
 
@@ -484,7 +486,7 @@ class Group
     public function addHwLimitedDevice($mac_address)
     {
         /* Prepare inserting query */
-        $query = "INSERT INTO registered_device (
+        $query = "INSERT IGNORE INTO registered_device (
             mac_address,
             time_added
         )";
@@ -527,7 +529,7 @@ class Group
     public function deleteHwLimitedDevice($mac_address)
     {
         /* Prepare inserting query */
-        $query = "DELETE FROM group_hw_limitation";
+        $query = "DELETE FROM registered_device";
 
         $query .= " WHERE mac_address = '" . $mac_address . "'";
 
@@ -536,5 +538,64 @@ class Group
             return false; //Error
 
         return true;
+    }
+
+    /**
+     * Returns number of Radius active connections for current group 
+     *
+     * @return int|bool Returns number of active connections , false upon error
+     */
+    public function countActiveConnections()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT count(net_user.id) from net_user
+        INNER JOIN user_group_partecipation
+        on net_user.id = user_group_partecipation.user_id
+        LEFT JOIN client_session_log
+        on net_user.id = client_session_log.user_name";
+
+        $query .= " WHERE group_name = '" . $this->name . "'";
+        $query .= " AND session_termination_cause = '' ";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+        else {
+            if ($query_result->num_rows != 0) {
+                while ($row = $query_result->fetch_assoc())
+                    $counter = $row["count(net_user.id)"];
+            }
+            return $counter;
+        }
+        return false;
+    }
+
+    /**
+     * Returns number of Radius clients that have been connecting with current group 
+     *
+     * @return int|bool Returns number of devices , false upon error
+     */
+    public function countConnectedDevices()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT count(net_user.id) from net_user
+        INNER JOIN user_group_partecipation
+        on net_user.id = user_group_partecipation.user_id
+        LEFT JOIN client_session_log
+        on net_user.id = client_session_log.user_name";
+
+        $query .= " WHERE group_name = '" . $this->name . "'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+        else {
+            if ($query_result->num_rows != 0) {
+                while ($row = $query_result->fetch_assoc())
+                    $counter = $row["count(net_user.id)"];
+            }
+            return $counter;
+        }
+        return false;
     }
 }

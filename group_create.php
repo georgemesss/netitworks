@@ -42,111 +42,111 @@ if (!$database->getConnectionStatus()) {
             $_POST['ip_range_stop']
         ))) {
             $_SESSION['status_stderr'] = "Error! All fields must be filled";
-            printBanner();
-        }
+        } else {
 
-        /* Convert empty strings to 'NULL' strings */
-        $_POST = emptyToNull($_POST);
+            /* Convert empty strings to 'NULL' strings */
+            $_POST = emptyToNull($_POST);
 
-        /* IF disabled switch is set */
-        if (!isset($_POST['disabled']))
-            /* Set user status to ACTIVE */
-            $_POST['disabled'] = 1;
-        else
-            /* Set user status to DISABLED */
-            $_POST['disabled'] = 0;
-
-        /* IF admin privilege status switch is set */
-        if (!isset($_POST['admin_privilege_status']))
-            /* Set admin privilege status to 0 */
-            $_POST['admin_privilege_status'] = 0;
-        else
-            /* Set admin privilege status to 1 */
-            $_POST['admin_privilege_status'] = 1;
-
-        /* IF ip limitation status switch is set */
-        if (!isset($_POST['ip_limitation_status']))
-            /* Set ip limitation status to 0 */
-            $_POST['ip_limitation_status'] = 0;
-        else
-            /* Set ip limitation status to 1 */
-            $_POST['ip_limitation_status'] = 1;
-
-        /* IF hardware limitation status switch is set */
-        if (!isset($_POST['hw_limitation_status']))
-            /* Set hardware limitation status to 0 */
-            $_POST['hw_limitation_status'] = 0;
-        else
-            /* Set hardware limitation status to 1 */
-            $_POST['hw_limitation_status'] = 1;
-
-        /* IF user auto registration status switch is set */
-        if (!isset($_POST['user_auto_registration']))
-            /* Set user auto registration status to 0 */
-            $_POST['user_auto_registration'] = 0;
-        else
-            /* Set user auto registration status to 1 */
-            $_POST['user_auto_registration'] = 1;
-
-        /* IF require admin approval status switch is set */
-        if (!isset($_POST['user_require_admin_approval']))
-            /* Set require admin approval status to 1 */
-            $_POST['user_require_admin_approval'] = 0;
-        else
-            /* Set require admin approval status to 1 */
-            $_POST['user_require_admin_approval'] = 1;
-
-
-        /* Pick up net_* variables from form */
-        if ($_POST['net_type'] === "LAN") {
-            $_POST['net_type'] = 13;
-            $_POST['net_attribute_type'] = 6;
-        } elseif ($_POST['net_type'] === "VPN") {
-            $_POST['net_type'] = 3;
-            $_POST['net_attribute_type'] = 1;
-        } elseif ($_POST['net_type'] === "External") {
-            $_POST['net_type'] = 0;
-            $_POST['net_attribute_type'] = 0;
-            $_POST['net_vlan_id'] = 0;
-        }
-
-        /* Set properties to Group object  */
-        $groupToCreate->setGroup(
-            $_POST['name'],
-            (int)$_POST['disabled'],
-            (int)$_POST['admin_privilege_status'],
-            $_POST['description'],
-            (int)$_POST['net_type'],
-            (int)$_POST['net_attribute_type'],
-            (int)$_POST['net_vlan_id'],
-            (int)$_POST['ip_limitation_status'],
-            (int)$_POST['hw_limitation_status'],
-            $_POST['ip_range_start'],
-            $_POST['ip_range_stop'],
-            (int)$_POST['user_auto_registration'],
-            (int)$_POST['user_require_admin_approval'],
-        );
-
-        /* Add new Group and properties to DataBase */
-        $result = $groupToCreate->create();
-
-        /* IF Group was added to DB without errors */
-        if ($result) {
-            /* Join users array to group */
-            $result = $groupToCreate->associateUser($_POST['users']);
-
-            /* IF Group was associated with given users to DB without errors */
-            if ($result)
-                $_SESSION['status_stdout'] = "Group Created Successfuly";
-        } /* IF User creation in DB returned errors */ else {
-
-            /* IF error is known */
-            if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
-                $_SESSION['status_stderr'] = "Error: Group already exists ";
-
-            /* IF error is unknown */
+            /* IF disabled switch is set */
+            if (!isset($_POST['disabled']))
+                /* Set user status to ACTIVE */
+                $_POST['disabled'] = 1;
             else
-                $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;
+                /* Set user status to DISABLED */
+                $_POST['disabled'] = 0;
+
+            /* IF admin privilege status switch is set */
+            if (!isset($_POST['admin_privilege_status']))
+                /* Set admin privilege status to 0 */
+                $_POST['admin_privilege_status'] = 0;
+            else
+                /* Set admin privilege status to 1 */
+                $_POST['admin_privilege_status'] = 1;
+
+            /* IF ip limitation status switch is set */
+            if (!isset($_POST['ip_limitation_status']))
+                /* Set ip limitation status to 0 */
+                $_POST['ip_limitation_status'] = 0;
+            else
+                /* Set ip limitation status to 1 */
+                $_POST['ip_limitation_status'] = 1;
+
+            /* IF hardware limitation status switch is set */
+            if (!isset($_POST['hw_limitation_status']))
+                /* Set hardware limitation status to 0 */
+                $_POST['hw_limitation_status'] = 0;
+            else
+                /* Set hardware limitation status to 1 */
+                $_POST['hw_limitation_status'] = 1;
+
+            /* IF user auto registration status switch is set */
+            if (!isset($_POST['user_auto_registration']))
+                /* Set user auto registration status to 0 */
+                $_POST['user_auto_registration'] = 0;
+            else
+                /* Set user auto registration status to 1 */
+                $_POST['user_auto_registration'] = 1;
+
+            /* IF require admin approval status switch is set */
+            if (!isset($_POST['user_require_admin_approval']))
+                /* Set require admin approval status to 1 */
+                $_POST['user_require_admin_approval'] = 0;
+            else
+                /* Set require admin approval status to 1 */
+                $_POST['user_require_admin_approval'] = 1;
+
+
+            /* Pick up net_* variables from form */
+            if ($_POST['net_type'] === "LAN") {
+                $_POST['net_type'] = 13;
+                $_POST['net_attribute_type'] = 6;
+            } elseif ($_POST['net_type'] === "VPN") {
+                $_POST['net_type'] = 3;
+                $_POST['net_attribute_type'] = 1;
+            } elseif ($_POST['net_type'] === "External") {
+                $_POST['net_type'] = 0;
+                $_POST['net_attribute_type'] = 0;
+                $_POST['net_vlan_id'] = 0;
+            }
+
+            /* Set properties to Group object  */
+            $groupToCreate->setGroup(
+                $_POST['name'],
+                (int)$_POST['disabled'],
+                (int)$_POST['admin_privilege_status'],
+                $_POST['description'],
+                (int)$_POST['net_type'],
+                (int)$_POST['net_attribute_type'],
+                (int)$_POST['net_vlan_id'],
+                (int)$_POST['ip_limitation_status'],
+                (int)$_POST['hw_limitation_status'],
+                $_POST['ip_range_start'],
+                $_POST['ip_range_stop'],
+                (int)$_POST['user_auto_registration'],
+                (int)$_POST['user_require_admin_approval'],
+            );
+
+            /* Add new Group and properties to DataBase */
+            $result = $groupToCreate->create();
+
+            /* IF Group was added to DB without errors */
+            if ($result) {
+                /* Join users array to group */
+                $result = $groupToCreate->associateUsers($_POST['users']);
+
+                /* IF Group was associated with given users to DB without errors */
+                if ($result)
+                    $_SESSION['status_stdout'] = "Group Created Successfuly";
+            } /* IF User creation in DB returned errors */ else {
+
+                /* IF error is known */
+                if (strpos($groupToCreate->connection->error, "Duplicate entry") !== false)
+                    $_SESSION['status_stderr'] = "Error: Group already exists ";
+
+                /* IF error is unknown */
+                else
+                    $_SESSION['status_stderr'] = "Error: " . $groupToCreate->database->connection->error;
+            }
         }
     }
 }

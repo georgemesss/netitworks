@@ -163,7 +163,7 @@ if (!$database->getConnectionStatus()) {
                                             else
                                                 echo '<span class="badge badge-warning">Offline</span>'; ?>
                                         </td>
-                                        <td>2</td>
+                                        <td><?php echo $userList[$c]->countActiveConnections(); ?></td>
                                         <td><?php
                                             if ($userList[$c]->ip_range_start != 'NULL' && $userList[$c]->ip_range_stop != 'NULL')
                                                 echo $userList[$c]->ip_range_start . " - " . $userList[$c]->ip_range_stop;
@@ -191,9 +191,9 @@ if (!$database->getConnectionStatus()) {
                                                     <?php
                                                     /* If we are at the end of the array */
                                                     if (sizeof($groupArray) == ($z + 1)) {
-                                                        echo $groupArray[$z]->group_name;
+                                                        echo $groupArray[$z]->name;
                                                     } else {
-                                                        echo $groupArray[$z]->group_name . ", ";
+                                                        echo $groupArray[$z]->name . ", ";
                                                     }
                                                     ?>
                                             <?php }
@@ -201,10 +201,11 @@ if (!$database->getConnectionStatus()) {
                                             ?>
                                         </td>
                                         <td>
-                                            <a class="btn btn-block btn-primary glow" href="group_edit.php">
-                                                <!-- Later to be transformed to button -->
-                                                <i class="fas fa-user-edit"></i>
-                                            </a>
+                                            <form action="user_edit.php" method="post">
+                                                <button class="btn btn-block btn-primary glow" type="submit" name="id" value=<?php echo $userList[$c]->id; ?>>
+                                                    <i class="fas fa-user-edit"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                         <td>
                                             <?php
