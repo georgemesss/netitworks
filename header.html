@@ -27,7 +27,7 @@
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            User & Group Management
+            RADIUS Management
         </div>
 
         <!-- Nav Item - Users Collapse Menu -->
@@ -42,7 +42,6 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">User Management:</h6>
                     <a class="collapse-item" href="users.php">List Users</a>
-                    <a class="collapse-item" href="users_log.php">Access Log</a>
                     <a class="collapse-item" href="user_create.php">Create User</a>
                     <a class="collapse-item" href="user_hw_create.php">Create Hardware User</a>
                 </div>
@@ -66,27 +65,19 @@
             </div>
         </li>
 
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Self-Registered Management
-        </div>
-
-        <!-- Nav Item - Self-Registered Users Collapse Menu -->
+        <!-- Nav Item - Radius Log Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGuestManagement"
-                aria-expanded="true" aria-controls="collapseGuestManagement">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRadiusManagement"
+                aria-expanded="true" aria-controls="collapseRadiusManagement">
                 <i class="fas fa-fw fa-cog"></i>
-                <span>Self-Registered Users</span>
+                <span>Radius Management</span>
             </a>
-            <div id="collapseGuestManagement" class="collapse" aria-labelledby="collapseGuestManagement"
+            <div id="collapseRadiusManagement" class="collapse" aria-labelledby="collapseRadiusManagement"
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Self-Registered Users:</h6>
-                    <a class="collapse-item" href="self_registered_configure.php">Configure Registration</a>
-                    <a class="collapse-item" href="self_registered_pending_approval.php">Pending Approval</a>
+                    <h6 class="collapse-header">Radius Management:</h6>
+                    <a class="collapse-item" href="radius_access_log.php">Access Log</a>
+                    <a class="collapse-item" href="radius_session_log.php">Active Session Log</a>
                 </div>
             </div>
         </li>
@@ -98,6 +89,23 @@
         <div class="sidebar-heading">
             UniFi Management
         </div>
+
+        <!-- Nav Item - Self-Registered Users Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGuestManagement"
+                aria-expanded="true" aria-controls="collapseGuestManagement">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Manage Guests</span>
+            </a>
+            <div id="collapseGuestManagement" class="collapse" aria-labelledby="collapseGuestManagement"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Self-Registered Users:</h6>
+                    <a class="collapse-item" href="self_registered_configure.php">Configure Registration</a>
+                    <a class="collapse-item" href="self_registered_pending_approval.php">Pending Approval</a>
+                </div>
+            </div>
+        </li>
 
         <!-- Nav Item - Manage Networks Collapse Menu -->
         <li class="nav-item">
@@ -115,25 +123,11 @@
                     <a class="collapse-item" href="network_create_default_lan.php">Create Default LAN</a>
                     <a class="collapse-item" href="network_create_specific_lan.php">Create Specific LAN</a>
                     <a class="collapse-item" href="network_create_vpn.php">Create VPN</a>
+                    <a class="collapse-item" href="network_create_vpn.php">Manage Clients</a>
                 </div>
             </div>
         </li>
 
-        <!-- Nav Item - Manage Clients Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseClientManagement"
-                aria-expanded="true" aria-controls="collapseClientManagement">
-                <i class="fas fa-fw fa-cog"></i>
-                <span>Clients</span>
-            </a>
-            <div id="collapseClientManagement" class="collapse" aria-labelledby="collapseClientManagementLabel"
-                data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Manage Clients:</h6>
-                    <a class="collapse-item" href="#">List Clients</a>
-                </div>
-            </div>
-        </li>
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -147,25 +141,15 @@
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatabaseManagement"
                 aria-expanded="true" aria-controls="collapseDatabaseManagement">
                 <i class="fas fa-fw fa-cog"></i>
-                <span>Database</span>
+                <span>NetITworks Settings</span>
             </a>
             <div id="collapseDatabaseManagement" class="collapse" aria-labelledby="collapseDatabaseManagementLabel"
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Database Management:</h6>
                     <a class="collapse-item" href="database_configure.php">Configure Database</a>
-                </div>
-            </div>
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseControllerManagement"
-                aria-expanded="true" aria-controls="collapseControllerManagement">
-                <i class="fas fa-fw fa-cog"></i>
-                <span>Controller</span>
-            </a>
-            <div id="collapseControllerManagement" class="collapse" aria-labelledby="collapseControllerManagementLabel"
-                data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Controller Management:</h6>
                     <a class="collapse-item" href="controller_configure.php">Configure Controller</a>
+                    <a class="collapse-item" href="radius_configure.php">Configure Radius</a>
                 </div>
             </div>
         </li>
