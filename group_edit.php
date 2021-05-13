@@ -192,6 +192,39 @@ if (!$database->getConnectionStatus()) {
                 $_SESSION['status_stderr'] = "Error on Deletion";
             //header("Refresh:0"); //Refresh page
         }
+
+        /* If User presses "Add Device" button */
+        if (isset($_POST['add_limited_device'])) {
+            /* Set name attribute to Group object  */
+            $group->setName($_POST['name']);
+
+            /* IF MAC Address is not empty */
+            if (!empty($_POST['limited_mac_address'])) {
+
+                /* IF Device was added to DB without errors */
+                if ($group->addHwLimitedDevice($_POST['limited_mac_address'])) {
+                    /* Print success code to session superglobal (banner will be printed down on page) */
+                    $_SESSION['status_stdout'] = "Device Added";
+                } else
+                    /* Print error code to session superglobal (banner will be printed down on page) */
+                    $_SESSION['status_stderr'] = "Error on Adding Device";
+            }
+
+            /* IF MAC Address was not inserted */ else
+                /* Print error code to session superglobal (banner will be printed down on page) */
+                $_SESSION['status_stderr'] = "MAC Address cannot be empty";
+        }
+
+        /* If User presses "Delete Device" button */
+        if (isset($_POST['delete_limited_device'])) {
+            /* IF Device was deleted from DB without errors */
+            if ($group->deleteHwLimitedDevice($_POST['delete_limited_device'])) {
+                /* Print success code to session superglobal (banner will be printed down on page) */
+                $_SESSION['status_stdout'] = "Device Deleted";
+            } else
+                /* Print error code to session superglobal (banner will be printed down on page) */
+                $_SESSION['status_stderr'] = "Error on Deleting Device";
+        }
     }
 
     /* If name post global attribute is NOT set */ else {
@@ -328,7 +361,7 @@ if (!$database->getConnectionStatus()) {
                                 <div class="col-md-6"><label class="labels">Group Name</label><input type="text" name="name" class="form-control" placeholder="<?php echo $group->name ?>" value="<?php echo $group->name ?>" readonly></div>
                             </div>
                             <div class="row mt-3">
-                                <div class="col-md-12"><label class="labels">Description</label><input type="text" name="description" class="form-control" value="<?php echo $group->description ?>"></div>
+                                <div class="col-md-12"><label class="labels">Description</label><input type="text" name="description" class="form-control" value="<?php if ($group->description != 'NULL') echo $group->description ?>"></div>
                             </div>
                             <div class="row mt-3">
                                 <div class="col-md-6"><label class="labels">Access Type</label>
@@ -401,51 +434,68 @@ if (!$database->getConnectionStatus()) {
                         <div class="row">
                             <div class="col-md-6">
                                 <label class="labels">MAC Address</label>
-                                <input type="text" class="form-control" minlength="7" maxlength="15" size="15" pattern="^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$" placeholder="00:1B:44:11:3A:B7">
+                                <input type="text" name="limited_mac_address" class="form-control" minlength="7" maxlength="17" size="17" pattern="^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$" placeholder="00:1B:44:11:3A:B7">
                                 <br>
                                 <label class="labels">IP Address [Optional]</label>
-                                <input type="text" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="192.168.1.2">
+                                <input type="text" name="limited_ip" class="form-control" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="192.168.1.2">
                             </div>
                             <div class="col-md-6">
-                                <div class="mt-5 text-center"><button type="button" class="btn btn-primary">Add Device</button></div>
+                                <div class="mt-5 text-center"><button class="btn btn-primary group-button" data-toggle="modal" data-target="#groupAddLimitedDevice" type="button">Add Device</button></div>
                             </div>
                             <div class="p-4 py-2 mt-3">
                                 <h4>Limited Devices</h4>
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Mac Address</th>
-                                            <th scope="col">IP</th>
-                                            <th scope="col">VLAN ID</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>AA:AA:AA:AA:AA:AA</td>
-                                            <td>192.168.1.2</td>
-                                            <td>1</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="p-4 py-2">
-                                <h4>Active Devices</h4>
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Mac Address</th>
-                                            <th scope="col">IP</th>
-                                            <th scope="col">VLAN ID</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>AA:AA:AA:AA:AA:AA</td>
-                                            <td>192.168.1.2</td>
-                                            <td>1</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive table-bordered table-striped text-center">
+                                    <div id="groups-list-datatable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                                        <div class="row">
+                                            <table id="users-list-datatable" class="table dataTable no-footer table-bordered table-striped" role="grid" aria-describedby="users-list-datatable_info">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th class="sorting" tabindex="0" aria-controls="groups-list-datatable" rowspan="1" colspan="1" aria-label="Group: activate to sort column ascending" style="width: 100px;">MAC Address</th>
+                                                        <th class="sorting" tabindex="0" aria-controls="groups-list-datatable" rowspan="1" colspan="1" aria-label="Group: activate to sort column ascending" style="width: 100px;">Active / Assigned IP</th>
+                                                        <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="edit" style="width: 80px;">Delete Device</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    if (!is_bool($group->setHwLimitedDevices()))
+                                                        for ($c = 0; $c < sizeof($group->limitedDevices); $c++) {
+                                                    ?>
+                                                        <tr role="row" class="odd">
+                                                            <td class="sorting_1"><?php echo $group->limitedDevices[$c]['mac_address']; ?></td>
+                                                            <td>
+                                                                <?php echo $group->limitedDevices[$c]['client_ip']; ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php $deviceToDelete =  str_replace(':', '', $group->limitedDevices[$c]['mac_address']) ?>
+                                                                <div class="mt-5 text-center"><button class="btn btn-danger group-button btn-sm" data-toggle="modal" data-target="#groupDeleteLimitedDevice<?php echo $deviceToDelete; ?>" type="button">Delete Device</button></div>
+                                                                <!-- Modal Group Delete -->
+                                                                <div class="modal fade" id="groupDeleteLimitedDevice<?php echo $deviceToDelete; ?>" tabindex="-1" role="dialog" aria-labelledby="groupDeleteLimitedDeviceLabel<?php $deviceToDelete; ?>" aria-hidden="true">
+                                                                    <div class="modal-dialog" role="document">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title" id="groupDeleteLimitedDeviceLabel<?php echo $deviceToDelete; ?>">Hey! Are you sure?</h5>
+                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                    <span aria-hidden="true">&times;</span>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                You are DELETING a Device
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                                <button type="submit" class="btn btn-danger" name="delete_limited_device" value=<?php echo $group->limitedDevices[$c]['mac_address']; ?>>Delete Device</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    <?php } ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -485,6 +535,27 @@ if (!$database->getConnectionStatus()) {
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-success" name="save_settings">Save settings</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal group Add Device -->
+                    <div class="modal fade" id="groupAddLimitedDevice" tabindex="-1" role="dialog" aria-labelledby="groupAddLimitedDeviceLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="groupAddLimitedDeviceLabel">Hey! Are you sure?</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    You are ADDING a limited device to the Group
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" name="add_limited_device">Add Device</button>
                                 </div>
                             </div>
                         </div>

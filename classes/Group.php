@@ -29,6 +29,7 @@ class Group
     public $ip_range_stop;
     public $user_auto_registration;
     public $user_require_admin_approval;
+    public $limitedDevices;
 
     public $database;
     public $controller;
@@ -439,5 +440,101 @@ class Group
             return (int) $query_result->num_rows;
         }
         return false;
+    }
+
+    /**
+     * Get Hardware Limited Devices from DB and assign them to current group
+     *
+     * @return void|bool Retruns false upon error
+     */
+    public function setHwLimitedDevices()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT group_hw_limitation.mac_address, client_ip from group_hw_limitation
+        LEFT JOIN client_session_log
+        on group_hw_limitation.mac_address = client_session_log.mac_address";
+
+        $query .= " WHERE group_name = '" . $this->name . "'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false; //Error
+        } else {
+            $c = 0;
+            if ($query_result->num_rows != 0) {
+                while ($row = $query_result->fetch_assoc()) {
+                    $this->limitedDevices[$c]['mac_address'] = $row['mac_address'];
+                    if (empty($row['client_ip']))
+                        $this->limitedDevices[$c]['client_ip'] = 'N/A';
+                    else
+                        $this->limitedDevices[$c]['client_ip'] = $row['client_ip'];
+                    $c++;
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Add Hardware Limited Device to DB for current group
+     *
+     * @return bool Returns true upon success, false otherwise
+     */
+    public function addHwLimitedDevice($mac_address)
+    {
+        /* Prepare inserting query */
+        $query = "INSERT INTO registered_device (
+            mac_address,
+            time_added
+        )";
+
+        $query .= ' VALUES ("'
+            . $mac_address . '", "'
+            . date('Y-m-d H:i:s')
+            . '")';
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+
+        else {
+
+            /* Prepare inserting query */
+            $query = "INSERT INTO group_hw_limitation (
+                group_name,
+                mac_address
+            )";
+
+            $query .= ' VALUES ("'
+                . $this->name . '", "'
+                . $mac_address
+                . '")';
+
+            $query_result = $this->database->query($query);
+            if (!$query_result)
+                return false; //Error
+            else
+                return true;
+        }
+    }
+
+    /**
+     * Delete Hardware Limited Device from DB
+     *
+     * @return bool Returns true upon success, false otherwise
+     */
+    public function deleteHwLimitedDevice($mac_address)
+    {
+        /* Prepare inserting query */
+        $query = "DELETE FROM group_hw_limitation";
+
+        $query .= " WHERE mac_address = '" . $mac_address . "'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+
+        return true;
     }
 }
