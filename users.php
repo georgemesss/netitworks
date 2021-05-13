@@ -163,7 +163,12 @@ if (!$database->getConnectionStatus()) {
                                             else
                                                 echo '<span class="badge badge-warning">Offline</span>'; ?>
                                         </td>
-                                        <td><?php echo $userList[$c]->countActiveConnections(); ?></td>
+                                        <td>
+                                            <?php
+                                            $user->setId($userList[$c]->id);
+                                            echo $user->countActiveConnections();
+                                            ?>
+                                        </td>
                                         <td><?php
                                             if ($userList[$c]->ip_range_start != 'NULL' && $userList[$c]->ip_range_stop != 'NULL')
                                                 echo $userList[$c]->ip_range_start . " - " . $userList[$c]->ip_range_stop;
