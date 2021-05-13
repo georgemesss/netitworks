@@ -1,3 +1,22 @@
+<?php
+
+namespace NetItWorks;
+
+require_once("vendor/autoload.php");
+
+$permit_user_self_registration = false;
+$require_sms_verification = false;
+
+if ($GLOBALS['netitworks_conf']['permit_user_self_registration'] == 'yes')
+    $permit_user_self_registration = true;
+if ($GLOBALS['netitworks_conf']['require_sms_verification'] == 'yes')
+    $require_sms_verification = true;
+
+if (isset($_GET["id"]) && isset($_GET["ap"]))
+    echo ("<script>location.href='user_register.php'</script>");
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,14 +49,14 @@
                                         </div>
                                         <form class="user">
                                             <div class="form-group">
-                                                <input type="email" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address...">
+                                                <input type="text" name="username" class="form-control form-control-user" aria-describedby="emailHelp" placeholder="Username">
                                             </div>
                                             <div class="form-group">
-                                                <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
+                                                <input type="password" name="password" class="form-control form-control-user" placeholder="Password">
                                             </div>
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox small">
-                                                    <input type="checkbox" class="custom-control-input" id="customCheck">
+                                                    <input type="checkbox" name="remember_user" class="custom-control-input">
                                                     <label class="custom-control-label" for="customCheck">Remember
                                                         Me</label>
                                                 </div>
@@ -48,8 +67,13 @@
                                         </form>
                                         <hr>
                                         <div class="text-center">
-                                            <a class="small" href="profile_reset_password.php">Forgot Password?</a>
+                                            <a class="small" href="user_reset.php">Reset Password</a>
                                         </div>
+                                        <?php if ($permit_user_self_registration) { ?>
+                                            <div class="text-center">
+                                                <a class="small" href="user_register.php">Register</a>
+                                            </div>
+                                        <?php } ?>
                                     </div>
                                 </div>
                             </div>

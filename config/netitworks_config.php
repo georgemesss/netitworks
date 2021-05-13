@@ -4,6 +4,9 @@
     
     $netitworks_conf = [
         'first_configuration_done' => 'yes', 
-        'controller_configuration_done' => 'yes'
+        'controller_configuration_done' => 'yes',
+        'permit_user_self_registration' => 'yes',
+        'require_sms_verification' => 'yes',
+        'guest_group' => 'guests'
     ];
 ?>

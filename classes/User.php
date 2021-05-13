@@ -290,9 +290,10 @@ class User
     /**
      * Set new user status
      *
+     * @param string [OPTIONAL] Status to set
      * @return bool Returns true on success, false otherwise
      */
-    public function changeStatus()
+    public function changeStatus($condition)
     {
         /* Prepare inserting query */
         $query = "SELECT " .
@@ -310,10 +311,15 @@ class User
                 $previousStatus = $row["status"];
             }
 
-            if ($previousStatus == "active")
-                $newStatus = "disabled";
-            else
-                $newStatus = "active";
+            if (!isset($condition)) {
+                if ($previousStatus == "active")
+                    $newStatus = "disabled";
+                else
+                    $newStatus = "active";
+            }
+            else{
+                $newStatus = $condition;
+            }
 
             /* Prepare inserting query */
             $query = "UPDATE net_user " .

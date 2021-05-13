@@ -27,10 +27,10 @@ if (!$database->getConnectionStatus()) {
 } else {
 
     /* If User presses "Create User" button and username is set */
-    if (isset($_POST['create_user']) && isset($_POST['id'])) {
+    if (isset($_POST['create_user']) && !empty($_POST['id'])) {
 
         /* Create new User instance and link database object */
-        $userToCreate = new User($database, NULL);
+        $user = new User($database, NULL);
 
         /* If passwords are not equal */
         if ($_POST['password_1'] != $_POST['password_2']) {
@@ -41,7 +41,7 @@ if (!$database->getConnectionStatus()) {
         /* If passwords are equal */ else {
 
             /* Perform Post Super-Global Sanification */
-            $_POST = $userToCreate->database->sanifyArray($_POST);
+            $_POST = $user->database->sanifyArray($_POST);
 
             /* Convert empty strings to 'NULL' strings */
             $_POST = emptyToNull($_POST);
@@ -71,7 +71,7 @@ if (!$database->getConnectionStatus()) {
                 $_POST['hw_limitation_status'] = 1;
 
             /* Set properties to User object  */
-            $userToCreate->setUser(
+            $user->setUser(
                 $_POST['id'],
                 "authenticated",
                 $_POST['password_1'],
@@ -86,13 +86,13 @@ if (!$database->getConnectionStatus()) {
             );
 
             /* Add new User and properties to DataBase */
-            $result = $userToCreate->create();
+            $result = $user->create();
 
             /* IF User was added to DB without errors */
             if ($result) {
 
                 /* Join user to given group array */
-                $result = $userToCreate->joinGroups($_POST['groups']);
+                $result = $user->joinGroups($_POST['groups']);
 
                 /* IF User was associated with given groups to DB without errors */
                 if ($result)
@@ -102,18 +102,18 @@ if (!$database->getConnectionStatus()) {
                 /* IF User-Group association in DB returned errors */
                 else
                     /* Print error code to session superglobal (banner will be printed down on page) */
-                    $_SESSION['status_stderr'] = "Error: " . $userToCreate->database->connection->error;
+                    $_SESSION['status_stderr'] = "Error: " . $user->database->connection->error;
             } else { /* IF User creation in DB returned errors */
 
                 /* IF error is known */
-                if (strpos($userToCreate->connection->error, "Duplicate entry") !== false)
+                if (strpos($user->connection->error, "Duplicate entry") !== false)
                     /* Print error code to session superglobal (banner will be printed down on page) */
                     $_SESSION['status_stderr'] = "Error: User already exists ";
 
                 /* IF error is unknown */
                 else
                     /* Print specific error code to session superglobal (banner will be printed down on page) */
-                    $_SESSION['status_stderr'] = "Error: " . $userToCreate->database->connection->error;
+                    $_SESSION['status_stderr'] = "Error: " . $user->database->connection->error;
             }
         }
     }

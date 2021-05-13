@@ -55,4 +55,10 @@
     <!-- Toastr alert scripts -->
     <script src="node_modules/toastr/toastr.js"></script>
 
+    <script>
+        if ( window.history.replaceState ) {
+            window.history.replaceState( null, null, window.location.href );
+        }
+    </script>
+
 </head>
