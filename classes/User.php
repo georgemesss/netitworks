@@ -196,6 +196,17 @@ class User
     }
 
     /**
+     * Verify that given password is equal to current user
+     * @return bool Returns true on success, false otherwise
+     */
+    function verifyPassword($password)
+    {
+        if ($this->password === $password)
+            return true;
+        return false;
+    }
+
+    /**
      * Checks if given group name is associated with currect user  
      * 
      * @param string $group_name Group Name

@@ -120,16 +120,9 @@ else {
                     /* If sms verification is required */
                     if ($require_sms_verification)
                         header('Refresh: 1.5; user_confirm.php'); //Redirect user to confirm page
-                    else {
-                        if (!$require_admin_approval) {
-                            /* Set User status to active in DataBase */
-                            $user->changeStatus('active');
-                            /* Print success code to session superglobal (banner will be printed down on page) */
-                            $_SESSION['status_stdout'] = "Thank you!";
-                            header('Refresh: 1.5; login.php'); //Redirect user to login page
-                        }
+                    else
                         header('Refresh: 1.5; login.php'); //Redirect user to login page
-                    }
+
                     /* IF User-Group association in DB returned errors */
                     if (!$result)
                         /* Print specific error code to session superglobal (banner will be printed down on page) */
