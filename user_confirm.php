@@ -2,7 +2,7 @@
 
 /**
  * -- Page Info -- 
- * user_register.php
+ * user_confirm.php
  * 
  * -- Page Description -- 
  * This Page will let the guest user register himself

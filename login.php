@@ -1,20 +1,43 @@
 <?php
 
+/**
+ * -- Page Info -- 
+ * login.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the login to NetItWorks
+ */
+
+
+/* Include NetItWorks Classes and use Composer Autoloader */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-
-$require_sms_verification = false;
+/* Set config default variables */
 $guest_group = null;
-$permitSelfRegister = false;
+$permit_user_self_registration = true;
 
+/* Gets config parameters from variable stored in config/netitworks_config.php */
 $guest_group = $GLOBALS['netitworks_conf']['guest_group'];
-$permitSelfRegister = $GLOBALS['netitworks_conf']['permit_user_self_registration'];
+$permit_user_self_registration = $GLOBALS['netitworks_conf']['permit_user_self_registration'];
 
-if ((!$permitSelfRegister | $permitSelfRegister != 'yes') && !empty($guest_group))
-    $permitSelfRegister = true;
+/* Create new Database instance */
+$database = new Database();
 
+/* Create new Group instance and link database object */
+$group = new Group($database, null);
+$group->setName($guest_group);
+
+/* Get all group attributes from DB sarching for group name */
+$group->setGroup_fromName();
+
+/* If user is NOT permitted to register himself */
+if (!$permit_user_self_registration | $permit_user_self_registration != 'yes' | (empty($guest_group) | !isset($group->status)))
+    $permit_user_self_registration = false;
+
+/* If request includes _GET variables given from UniFi controller */
 if (isset($_GET["id"]) && isset($_GET["ap"]))
     echo ("<script>location.href='user_register.php'</script>");
 
@@ -72,7 +95,7 @@ if (isset($_GET["id"]) && isset($_GET["ap"]))
                                         <div class="text-center">
                                             <a class="small" href="user_reset.php">Reset Password</a>
                                         </div>
-                                        <?php if ($permitSelfRegister) { ?>
+                                        <?php if ($permit_user_self_registration) { ?>
                                             <div class="text-center">
                                                 <a class="small" href="user_register.php">Register</a>
                                             </div>

@@ -52,7 +52,7 @@ if (!$database->getConnectionStatus()) {
         $user->setId($_POST['user_change_status']);
 
         /* IF User Status was changed from DB without errors */
-        if ($user->changeStatus())
+        if ($user->changeStatus(null))
             /* Print success code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stdout'] = "User Status Changed";
 
