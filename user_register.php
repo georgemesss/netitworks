@@ -1,3 +1,118 @@
+<?php
+
+namespace NetItWorks;
+
+require_once("vendor/autoload.php");
+
+session_start();
+
+$require_sms_verification = false;
+$guest_group = null;
+
+$guest_group = $GLOBALS['netitworks_conf']['guest_group'];
+
+/* Create new Database instance */
+$database = new Database();
+
+$group = new Group($database, null);
+$group->setName($guest_group);
+$group->setGroup_fromName();
+
+if ($group->user_auto_registration == 0)
+    header("Location: login.php");
+
+if ($GLOBALS['netitworks_conf']['require_sms_verification'] == 'yes')
+    $require_sms_verification = true;
+
+/* Create new User instance and link database object */
+$user = new User($database, NULL);
+
+/* If Database is not available */
+if (!$database->getConnectionStatus()) {
+    /* Print error code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stderr'] = "Error! Could not reach DB";
+}
+
+/* If Guest Group is not set */ elseif (empty($guest_group)) {
+    /* Print error code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stderr'] = "Error! Default Group not set";
+}
+/* If Database is OK */ else {
+
+    /* If User presses "Create User" button and username is set */
+    if (isset($_POST['create_user']) && !empty($_POST['id'])) {
+
+        /* If passwords are not equal */
+        if ($_POST['password_1'] != $_POST['password_2']) {
+            /* Print error code to session superglobal (banner will be printed down on page) */
+            $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
+        }
+
+        /* If passwords are equal */ else {
+
+            /* Perform Post Super-Global Sanification */
+            $_POST = $user->database->sanifyArray($_POST);
+
+            /* Convert empty strings to 'NULL' strings */
+            $_POST = emptyToNull($_POST);
+
+            /* Set properties to User object  */
+            $user->setUser(
+                $_POST['id'],
+                "authenticated",
+                $_POST['password_1'],
+                'pending',
+                'NULL',
+                $_POST['email'],
+                0,
+                0,
+                'NULL',
+                'NULL',
+                'NULL'
+            );
+
+            /* Add new User and properties to DataBase */
+            $result = $user->create();
+
+            /* IF User was added to DB without errors */
+            if ($result) {
+
+                /* Join user to given group array */
+                $_POST['groups'] = array([0]['name'] => $guest_group);
+                $result = $user->joinGroups($_POST['groups']);
+
+                $_SESSION['status_stdout'] = "Pending User Added";
+
+                $_SESSION['user_id'] = $_POST['id'];
+                $_SESSION['user_phone'] = $_POST['phone'];
+
+                if ($require_sms_verification)
+                    header('Refresh: 1.5; user_confirm.php');
+                else
+                    header('Refresh: 1.5; login.php');
+
+
+                if (!$result)
+                    /* Print specific error code to session superglobal (banner will be printed down on page) */
+                    $_SESSION['status_stderr'] = "Error on Associating Groups!";
+            } else { /* IF User creation in DB returned errors */
+
+                /* IF error is known */
+                if (strpos($user->database->connection->error, "Duplicate entry") !== false)
+                    /* Print error code to session superglobal (banner will be printed down on page) */
+                    $_SESSION['status_stderr'] = "Error: User already exists ";
+
+                /* IF error is unknown */
+                else
+                    /* Print specific error code to session superglobal (banner will be printed down on page) */
+                    $_SESSION['status_stderr'] = "Error: " . $user->database->connection->error;
+            }
+        }
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,7 +123,7 @@
     <div class="bg-image" style="background-image: url('media/login_background.jpg');
             height: 100vh">
 
-        <form action="user_confirm.php" method="post">
+        <form action="user_register.php" method="post">
 
             <div class="container">
                 <!-- Outer Row -->
@@ -38,7 +153,7 @@
                                                 <input type="email" name="email" class="form-control form-control-user" placeholder="Email Address" required>
                                             </div>
                                             <div class="form-group">
-                                                <input type="tel" name="phone" class="form-control form-control-user" placeholder="Phone Number" required>
+                                                <input type="tel" name="phone" class="form-control form-control-user" placeholder="Phone Number" pattern="[0-9]{3}[0-9]{4}[0-9]{3}" required>
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-sm-6 mb-3 mb-sm-0">
@@ -76,6 +191,12 @@
                         </div>
                     </div>
                 </div>
+                <?php
+                /* Print banner status with $_SESSION stdout/stderr strings */
+                printBanner();
+                unset($_SESSION['status_stderr']);
+                unset($_SESSION['status_stdout']);
+                ?>
             </div>
 
         </form>

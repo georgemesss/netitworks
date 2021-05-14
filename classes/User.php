@@ -208,6 +208,8 @@ class User
 
         $query .= " WHERE group_name = '" . $group_name . "'";
 
+        $query .= " AND user_id = '" . $this->id . "'";
+
         $query_result = $this->database->query($query);
 
         if (!$query_result) {
@@ -316,8 +318,7 @@ class User
                     $newStatus = "disabled";
                 else
                     $newStatus = "active";
-            }
-            else{
+            } else {
                 $newStatus = $condition;
             }
 
@@ -397,17 +398,7 @@ class User
      * Update current User to Database
      * 
      * @return bool Returns true upon success, false otherwise
-     *             "id,
-            type,
-            password,
-            status,
-            phone,
-            email,
-            ip_limitation_status,
-            hw_limitation_status,
-            ip_range_start,
-            ip_range_stop,
-            active_net_group
+     * 
      */
     function update()
     {
@@ -426,6 +417,29 @@ class User
             ip_range_start = '" . $this->ip_range_start . "' , " . "
             ip_range_stop = '" . $this->ip_range_stop . "' , " . "
             active_net_group = '" . $this->active_net_group . "'";
+
+        $query .= " WHERE id = '" . $this->id . "'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Update current User to Database
+     * 
+     * @return bool Returns true upon success, false otherwise
+     * 
+     */
+    function updatePhone()
+    {
+        /* Prepare inserting query */
+        $query = "UPDATE net_user ";
+
+        $query .= " SET
+            phone = '" . $this->phone  . "'";
 
         $query .= " WHERE id = '" . $this->id . "'";
 

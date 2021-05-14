@@ -106,7 +106,7 @@ if (!$database->getConnectionStatus()) {
             } else { /* IF User creation in DB returned errors */
 
                 /* IF error is known */
-                if (strpos($user->connection->error, "Duplicate entry") !== false)
+                if (strpos($user->database->connection, "Duplicate entry") !== false)
                     /* Print error code to session superglobal (banner will be printed down on page) */
                     $_SESSION['status_stderr'] = "Error: User already exists ";
 

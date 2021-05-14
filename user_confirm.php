@@ -4,6 +4,8 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+session_start();
+
 $require_sms_verification = false;
 $guest_group = null;
 
@@ -13,6 +15,9 @@ if ($GLOBALS['netitworks_conf']['permit_user_self_registration'] == 'yes')
     $permit_user_self_registration = true;
 if ($GLOBALS['netitworks_conf']['require_sms_verification'] == 'yes')
     $require_sms_verification = true;
+
+if (!isset($_SESSION['user_id']))
+    $_SESSION['status_stderr'] = "Session Expired! Please login again";
 
 /* Create new Database instance */
 $database = new Database();
@@ -24,80 +29,23 @@ $user = new User($database, NULL);
 if (!$database->getConnectionStatus()) {
     /* Print error code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stderr'] = "Error! Could not reach DB";
-    printbanner();
     header('Refresh: 1.5; user_register.php');
 }
 
 /* If Guest Group is not set */ elseif (empty($guest_group)) {
     /* Print error code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stderr'] = "Error! Default Group not set";
-    printbanner();
     header('Refresh: 1.5; user_register.php');
 }
 /* If Database is OK */ else {
 
-    /* If User presses "Create User" button and username is set */
-    if (isset($_POST['create_user']) && !empty($_POST['id'])) {
-
-        /* If passwords are not equal */
-        if ($_POST['password_1'] != $_POST['password_2']) {
-            /* Print error code to session superglobal (banner will be printed down on page) */
-            $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
-            printbanner();
-            header('Refresh: 1.5; user_register.php');
-        }
-
-        /* If passwords are equal */ else {
-
-            /* Perform Post Super-Global Sanification */
-            $_POST = $user->database->sanifyArray($_POST);
-
-            /* Convert empty strings to 'NULL' strings */
-            $_POST = emptyToNull($_POST);
-
-            /* Set properties to User object  */
-            $user->setUser(
-                $_POST['id'],
-                "authenticated",
-                $_POST['password_1'],
-                'pending',
-                $_POST['phone'],
-                $_POST['email'],
-                0,
-                0,
-                'NULL',
-                'NULL',
-                'NULL'
-            );
-
-            /* Add new User and properties to DataBase */
-            $result = $user->create();
-
-            /* IF User was added to DB without errors */
-            if ($result) {
-
-                /* Join user to given group array */
-                $_POST['groups'] = array([0]['name'] => $guest_group);
-                $result = $user->joinGroups($_POST['groups']);
-
-                $_SESSION['status_stdout'] = "Pending User Added";
-            } else { /* IF User creation in DB returned errors */
-
-                /* Print specific error code to session superglobal (banner will be printed down on page) */
-                $_SESSION['status_stderr'] = "Error on Associating Groups!";
-                printbanner();
-                header('Refresh: 1.5; user_register.php');
-            }
-        }
-    }
-
     /* If User presses "Create Account" button and username is set */
-    if (isset($_POST['confirm_code'])) {
+    if (isset($_POST['confirm_code']) && isset($_SESSION['user_id'])) {
 
-        $_POST['id'] = $_POST['confirm_code'];
-
-        if (1) { ##Condition to Change -> If sms code is correct
-            $user->setId($_POST['id']);
+        if (1) { ##Condition to Change -> If sms code is correct [check $_SESSION['user_phone'] and $_POST['confirm_code']]
+            $user->setId($_SESSION['user_id']);
+            $user->phone = $_SESSION['user_phone'];
+            $user->updatePhone();
 
             $group = new Group($database, null);
             $group->setName($guest_group);
@@ -106,15 +54,14 @@ if (!$database->getConnectionStatus()) {
             if ($group->user_require_admin_approval == 1) {
                 //Send mails to admins
                 $_SESSION['status_stdout'] = "Thank you! Admin will have to confirm you!";
-                printbanner();
                 header('Refresh: 1.5; login.php');
             } else {
                 $user->changeStatus('active');
                 $_SESSION['status_stdout'] = "Thank you!";
-                printbanner();
                 header('Refresh: 1.5; login.php');
             }
-        }
+        } else
+            $_SESSION['status_stderr'] = "Sms Code is incorrect!";
     }
 }
 
@@ -151,7 +98,7 @@ if (!$database->getConnectionStatus()) {
                                     <div class="col-lg-7">
                                         <div class="p-5">
                                             <div class="text-center">
-                                                <h1 class="h4 text-gray-900 mb-4">Hi, <?php echo $_POST['id']; ?></h1>
+                                                <h1 class="h4 text-gray-900 mb-4">Hi, <?php echo $_SESSION['user_id']; ?></h1>
                                             </div>
                                             <hr>
                                             <div class="text-center">
@@ -179,6 +126,8 @@ if (!$database->getConnectionStatus()) {
                 <?php
                 /* Print banner status with $_SESSION stdout/stderr strings */
                 printBanner();
+                unset($_SESSION['status_stderr']);
+                unset($_SESSION['status_stdout']);
                 ?>
             </div>
 
