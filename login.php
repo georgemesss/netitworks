@@ -4,13 +4,16 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-$permit_user_self_registration = false;
-$require_sms_verification = false;
 
-if ($GLOBALS['netitworks_conf']['permit_user_self_registration'] == 'yes')
-    $permit_user_self_registration = true;
-if ($GLOBALS['netitworks_conf']['require_sms_verification'] == 'yes')
-    $require_sms_verification = true;
+$require_sms_verification = false;
+$guest_group = null;
+$permitSelfRegister = false;
+
+$guest_group = $GLOBALS['netitworks_conf']['guest_group'];
+$permitSelfRegister = $GLOBALS['netitworks_conf']['permit_user_self_registration'];
+
+if ((!$permitSelfRegister | $permitSelfRegister != 'yes') && !empty($guest_group))
+    $permitSelfRegister = true;
 
 if (isset($_GET["id"]) && isset($_GET["ap"]))
     echo ("<script>location.href='user_register.php'</script>");
@@ -69,7 +72,7 @@ if (isset($_GET["id"]) && isset($_GET["ap"]))
                                         <div class="text-center">
                                             <a class="small" href="user_reset.php">Reset Password</a>
                                         </div>
-                                        <?php if ($permit_user_self_registration) { ?>
+                                        <?php if ($permitSelfRegister) { ?>
                                             <div class="text-center">
                                                 <a class="small" href="user_register.php">Register</a>
                                             </div>

@@ -64,8 +64,6 @@ CREATE TABLE `net_group` (
   `hw_limitation_status` tinyint(1) NOT NULL DEFAULT 0,
   `ip_range_start` varchar(16) DEFAULT NULL,
   `ip_range_stop` varchar(16) DEFAULT NULL,
-  `user_auto_registration` tinyint(1) NOT NULL DEFAULT 0,
-  `user_require_admin_approval` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

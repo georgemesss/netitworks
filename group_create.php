@@ -12,7 +12,6 @@
 /* Include NetItWorks Classes and use Composer Autoloader */
 
 namespace NetItWorks;
-
 require_once("vendor/autoload.php");
 
 /* Create new Database instance */
@@ -79,23 +78,6 @@ if (!$database->getConnectionStatus()) {
                 /* Set hardware limitation status to 1 */
                 $_POST['hw_limitation_status'] = 1;
 
-            /* IF user auto registration status switch is set */
-            if (!isset($_POST['user_auto_registration']))
-                /* Set user auto registration status to 0 */
-                $_POST['user_auto_registration'] = 0;
-            else
-                /* Set user auto registration status to 1 */
-                $_POST['user_auto_registration'] = 1;
-
-            /* IF require admin approval status switch is set */
-            if (!isset($_POST['user_require_admin_approval']))
-                /* Set require admin approval status to 1 */
-                $_POST['user_require_admin_approval'] = 0;
-            else
-                /* Set require admin approval status to 1 */
-                $_POST['user_require_admin_approval'] = 1;
-
-
             /* Pick up net_* variables from form */
             if ($_POST['net_type'] === "LAN") {
                 $_POST['net_type'] = 13;
@@ -121,9 +103,7 @@ if (!$database->getConnectionStatus()) {
                 (int)$_POST['ip_limitation_status'],
                 (int)$_POST['hw_limitation_status'],
                 $_POST['ip_range_start'],
-                $_POST['ip_range_stop'],
-                (int)$_POST['user_auto_registration'],
-                (int)$_POST['user_require_admin_approval'],
+                $_POST['ip_range_stop']
             );
 
             /* Add new Group and properties to DataBase */
@@ -236,17 +216,6 @@ if (!$database->getConnectionStatus()) {
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch">
                                 <label class="custom-control-label" for="accountStatusSwitch">Disable Group</label>
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" name="user_auto_registration" class="custom-control-input" id="permitUserAutoRegistration">
-                                <label class="custom-control-label" for="permitUserAutoRegistration">Permit User Auto-Registration</label>
-                            </div>
-                            <hr>
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" name="user_require_admin_approval" class="custom-control-input" id="requireAdminApprovalSwitch">
-                                <label class="custom-control-label" for="requireAdminApprovalSwitch">Require Admin Approval</label>
                             </div>
                         </div>
                     </div>

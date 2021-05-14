@@ -27,8 +27,6 @@ class Group
     public $hw_limitation_status;
     public $ip_range_start;
     public $ip_range_stop;
-    public $user_auto_registration;
-    public $user_require_admin_approval;
     public $limitedDevices;
 
     public $database;
@@ -57,8 +55,6 @@ class Group
      * @param string  $ip_limitation_status
      * @param string  $ip_range_start
      * @param string  $ip_range_stop
-     * @param string  $user_auto_registration
-     * @param string  $user_require_admin_approval
      */
     public function setGroup(
         $name,
@@ -71,9 +67,7 @@ class Group
         $ip_limitation_status,
         $hw_limitation_status,
         $ip_range_start,
-        $ip_range_stop,
-        $user_auto_registration,
-        $user_require_admin_approval
+        $ip_range_stop
     ) {
         $this->name = $name;
         $this->status = $status;
@@ -86,8 +80,6 @@ class Group
         $this->hw_limitation_status = $hw_limitation_status;
         $this->ip_range_start =  $ip_range_start;
         $this->ip_range_stop =  $ip_range_stop;
-        $this->user_auto_registration = $user_auto_registration;
-        $this->user_require_admin_approval = $user_require_admin_approval;
     }
 
     /**
@@ -109,9 +101,7 @@ class Group
             ip_limitation_status,
             hw_limitation_status,
             ip_range_start,
-            ip_range_stop,
-            user_auto_registration,
-            user_require_admin_approval
+            ip_range_stop
         " . " FROM net_group";
 
         $query .= " WHERE name = '" . $this->name . "'";
@@ -133,8 +123,6 @@ class Group
                     $this->hw_limitation_status = $row['hw_limitation_status'];
                     $this->ip_range_start = $row['ip_range_start'];
                     $this->ip_range_stop = $row['ip_range_stop'];
-                    $this->user_auto_registration = $row['user_auto_registration'];
-                    $this->user_require_admin_approval = $row['user_require_admin_approval'];
                 }
             } else
                 return false;
@@ -172,9 +160,7 @@ class Group
             ip_limitation_status,
             hw_limitation_status,
             ip_range_start,
-            ip_range_stop,
-            user_auto_registration,
-            user_require_admin_approval
+            ip_range_stop
         )";
 
         $query .= ' VALUES ("'
@@ -188,9 +174,7 @@ class Group
             . $this->ip_limitation_status . ', '
             . $this->hw_limitation_status . ', "'
             . $this->ip_range_start . '", "'
-            . $this->ip_range_stop . '", '
-            . $this->user_auto_registration . ', '
-            . $this->user_require_admin_approval
+            . $this->ip_range_stop . '"'
             . ')';
 
         $query_result = $this->database->query($query);
@@ -221,9 +205,7 @@ class Group
             ip_limitation_status = " . $this->ip_limitation_status . " , " . "
             hw_limitation_status = " . $this->hw_limitation_status . " , " . "
             ip_range_start = '" . $this->ip_range_start . "' , " . "
-            ip_range_stop = '" . $this->ip_range_stop . "' , " . "
-            user_auto_registration = " . $this->user_auto_registration . " , " . "
-            user_require_admin_approval = " . $this->user_require_admin_approval;
+            ip_range_stop = '" . $this->ip_range_stop . "'";
 
         $query .= " WHERE name = '" . $this->name . "'";
 
@@ -253,9 +235,7 @@ class Group
             ip_limitation_status,
             hw_limitation_status,
             ip_range_start,
-            ip_range_stop,
-            user_auto_registration,
-            user_require_admin_approval
+            ip_range_stop
         " . " FROM net_group";
 
         $query_result = $this->database->query($query);
@@ -277,8 +257,6 @@ class Group
                     $groups[$c]->hw_limitation_status = $row['hw_limitation_status'];
                     $groups[$c]->ip_range_start = $row['ip_range_start'];
                     $groups[$c]->ip_range_stop = $row['ip_range_stop'];
-                    $groups[$c]->user_auto_registration = $row['user_auto_registration'];
-                    $groups[$c]->user_require_admin_approval = $row['user_require_admin_approval'];
                     $c++;
                 }
                 return $groups;

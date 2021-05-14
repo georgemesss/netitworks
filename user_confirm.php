@@ -1,67 +1,107 @@
 <?php
 
+/**
+ * -- Page Info -- 
+ * user_register.php
+ * 
+ * -- Page Description -- 
+ * This Page will let the guest user register himself
+ */
+
+
+/* Include NetItWorks Classes and use Composer Autoloader */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Start PHP Session */
 session_start();
 
+/* Set config default variables */
 $require_sms_verification = false;
 $guest_group = null;
+$permit_user_self_registration = false;
+$require_sms_verification = false;
+$require_admin_approval = false;
 
+/* Gets config parameters from variable stored in config/netitworks_config.php */
 $guest_group = $GLOBALS['netitworks_conf']['guest_group'];
+$permit_user_self_registration = $GLOBALS['netitworks_conf']['permit_user_self_registration'];
+$require_sms_verification = $GLOBALS['netitworks_conf']['require_sms_verification'];
+$require_admin_approval = $GLOBALS['netitworks_conf']['require_admin_approval'];
 
-if ($GLOBALS['netitworks_conf']['permit_user_self_registration'] == 'yes')
-    $permit_user_self_registration = true;
-if ($GLOBALS['netitworks_conf']['require_sms_verification'] == 'yes')
-    $require_sms_verification = true;
+/* If user is NOT permitted to register himself */
+if ((!$permit_user_self_registration | $permit_user_self_registration != 'yes') | !$require_sms_verification | $require_sms_verification != 'yes')
+    header("Location: login.php"); //Redirect him to login page
 
-if (!isset($_SESSION['user_id']))
-    $_SESSION['status_stderr'] = "Session Expired! Please login again";
+/* If user IS permitted to register himself */
+else {
 
-/* Create new Database instance */
-$database = new Database();
+    /* Check if sms verification is required */
+    if (!$require_admin_approval | $require_admin_approval != 'yes')
+        $require_admin_approval = false;
+    else
+        $require_admin_approval = true;
 
-/* Create new User instance and link database object */
-$user = new User($database, NULL);
+    if (!isset($_SESSION['user_id']))
+        $_SESSION['status_stderr'] = "Session Expired! Please login again";
 
-/* If Database is not available */
-if (!$database->getConnectionStatus()) {
-    /* Print error code to session superglobal (banner will be printed down on page) */
-    $_SESSION['status_stderr'] = "Error! Could not reach DB";
-    header('Refresh: 1.5; user_register.php');
-}
+    /* Create new Database instance */
+    $database = new Database();
 
-/* If Guest Group is not set */ elseif (empty($guest_group)) {
-    /* Print error code to session superglobal (banner will be printed down on page) */
-    $_SESSION['status_stderr'] = "Error! Default Group not set";
-    header('Refresh: 1.5; user_register.php');
-}
-/* If Database is OK */ else {
+    /* Create new Group instance and link database object */
+    $group = new Group($database, null);
+    $group->setName($guest_group);
 
-    /* If User presses "Create Account" button and username is set */
-    if (isset($_POST['confirm_code']) && isset($_SESSION['user_id'])) {
+    /* Get all group attributes from DB sarching for group name */
+    $group->setGroup_fromName();
 
-        if (1) { ##Condition to Change -> If sms code is correct [check $_SESSION['user_phone'] and $_POST['confirm_code']]
-            $user->setId($_SESSION['user_id']);
-            $user->phone = $_SESSION['user_phone'];
-            $user->updatePhone();
+    /* Create new User instance and link database object */
+    $user = new User($database, NULL);
 
-            $group = new Group($database, null);
-            $group->setName($guest_group);
-            $group->setGroup_fromName();
+    /* If Database is not available */
+    if (!$database->getConnectionStatus()) {
+        /* Print error code to session superglobal (banner will be printed down on page) */
+        $_SESSION['status_stderr'] = "Error! Could not reach DB";
+    }
 
-            if ($group->user_require_admin_approval == 1) {
-                //Send mails to admins
-                $_SESSION['status_stdout'] = "Thank you! Admin will have to confirm you!";
-                header('Refresh: 1.5; login.php');
-            } else {
-                $user->changeStatus('active');
-                $_SESSION['status_stdout'] = "Thank you!";
-                header('Refresh: 1.5; login.php');
+    /* If Guest Group is not set */ elseif (empty($guest_group) | !isset($group->status)) {
+        /* Print error code to session superglobal (banner will be printed down on page) */
+        $_SESSION['status_stderr'] = "Error! Default Group not set";
+        header('Refresh: 1.5; login.php');
+    }
+    /* If Database is OK */ else {
+
+        /* If User presses "Create Account" button and username is set */
+        if (isset($_POST['confirm_code']) && isset($_SESSION['user_id'])) {
+
+            if (1) { ##Condition to Change -> If sms code is correct [check $_SESSION['user_phone'] and $_POST['confirm_code']]
+                /* Set properties to User object  */
+                $user->setId($_SESSION['user_id']);
+                $user->phone = $_SESSION['user_phone'];
+
+                /* Set Phone user attribute in DataBase */
+                $user->updatePhone();
+
+                /* If admin approval is required */
+                if ($require_admin_approval) {
+                    //Send mails to admins
+                    /* Print success code to session superglobal (banner will be printed down on page) */
+                    $_SESSION['status_stdout'] = "Thank you! Admin will have to confirm you!";
+                    header('Refresh: 1.5; login.php'); //Redirect user to login page
+                } else {
+                    /* Set User status to active in DataBase */
+                    $user->changeStatus('active');
+                    /* Print success code to session superglobal (banner will be printed down on page) */
+                    $_SESSION['status_stdout'] = "Thank you!";
+                    header('Refresh: 1.5; login.php'); //Redirect user to login page
+                }
             }
-        } else
-            $_SESSION['status_stderr'] = "Sms Code is incorrect!";
+            /* If sms code is NOT correct */ else
+                /* Print error code to session superglobal (banner will be printed down on page) */
+                $_SESSION['status_stderr'] = "Sms Code is incorrect!";
+        }
     }
 }
 
