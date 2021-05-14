@@ -13,12 +13,15 @@ $database = new Database();
 /* Set config default variables */
 $require_sms_verification = false;
 $guest_group = null;
+$permit_guest_access = false;
 $permit_user_self_registration = false;
 $require_sms_verification = false;
 $require_admin_approval = false;
 
 /* Gets config parameters from variable stored in config/netitworks_config.php */
 $guest_group = $GLOBALS['netitworks_conf']['guest_group'];
+if ($GLOBALS['netitworks_conf']['permit_guest_access'] == 'yes')
+    $permit_guest_access = true;
 if ($GLOBALS['netitworks_conf']['permit_user_self_registration'] == 'yes')
     $permit_user_self_registration = true;
 if ($GLOBALS['netitworks_conf']['require_sms_verification'] == 'yes')
@@ -27,6 +30,11 @@ if ($GLOBALS['netitworks_conf']['require_admin_approval'] == 'yes')
     $require_admin_approval = true;
 
 if (isset($_POST['save_guest_config'])) {
+
+    if (isset($_POST['permit_guest_access']))
+        $permit_guest_access = 'yes';
+    else
+        $permit_guest_access = 'no';
 
     if (isset($_POST['permit_user_self_registration']))
         $permit_user_self_registration = 'yes';
@@ -51,6 +59,7 @@ if (isset($_POST['save_guest_config'])) {
         . '$netitworks_conf' . " = [
             'first_configuration_done' => '" . $GLOBALS['netitworks_conf']['controller_configuration_done'] . "', 
             'controller_configuration_done' => '" . $GLOBALS['netitworks_conf']['controller_configuration_done'] . "',
+            'permit_guest_access' => '" . $permit_guest_access . "',
             'permit_user_self_registration' => '" . $permit_user_self_registration . "',
             'require_admin_approval' => '" . $require_sms_verification . "',
             'require_sms_verification' => '" . $require_admin_approval . "',
@@ -151,6 +160,14 @@ include "./head.html";
                         <div class="card-body">
                             <div class="row justify-content-center mt-2">
                                 <h4 class="text-right">UniFi Guest Settings</h4>
+                            </div>
+                            <div class="row justify-content-center mt-3">
+                                <div class="col-md-6">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" name="permit_guest_access" class="custom-control-input" id="guestStatusSwitch" <?php if ($permit_guest_access) echo 'checked'; ?>>
+                                        <label class="custom-control-label" for="guestStatusSwitch">Permit Guest Access</label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row justify-content-center mt-3">
                                 <div class="col-md-6">
