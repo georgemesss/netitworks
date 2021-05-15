@@ -70,8 +70,8 @@ if ($database->connection) {
                     $linkedGroup->setGroup_fromName();
                     $associatedGroups[$c] = $linkedGroup;
 
-                    /* If Group is the UniFi Guest Group AND is set to ACTIVE */
-                    if ($associatedGroups[$c]->name === $guest_group && $associatedGroups[$c]->status == 1) {
+                    /* If Group is the UniFi Guest Group AND guest access is enabled AND User is set to ACTIVE */
+                    if ($associatedGroups[$c]->name === $guest_group && $permit_guest_access && $associatedGroups[$c]->status == 1) {
                         //User is part of guest group
                         $associated = true;
                         $_SESSION['user_id'] = $user->id;
@@ -83,7 +83,7 @@ if ($database->connection) {
                         $_SESSION['admin_id'] = $user->id;
                         echo ("<script>location.href='dashboard.php'</script>");
                     }
-                    /* If the Group is normal AND is set to ACTIVE */ elseif ($associatedGroups[$c]->status == 1) {
+                    /* If the Group is normal AND is set to ACTIVE */ elseif ($associatedGroups[$c]->name != $guest_group && $associatedGroups[$c]->status == 1) {
                         $associated = true;
                     }
                 }

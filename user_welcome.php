@@ -106,7 +106,7 @@ if ($database->connection) {
                                                 <a class="small" href="user_update.php">Change my account settings</a>
                                             </div>
                                             <div class="text-center">
-                                                <a class="small" href="login.php">Login Again</a>
+                                                <a class="small" href="logout.php">Login Again</a>
                                             </div>
                                             <hr>
                                             <div class="text-center">
