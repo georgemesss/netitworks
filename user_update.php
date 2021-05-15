@@ -2,10 +2,10 @@
 
 /**
  * -- Page Info -- 
- * user_register.php
+ * user_update.php
  * 
  * -- Page Description -- 
- * This Page will let the guest user register himself
+ * This Page will let the user update his information
  */
 
 
@@ -40,10 +40,12 @@ else
 if (!$database->getConnectionStatus()) {
     /* Print error code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stderr'] = "Error! Could not reach DB";
-} elseif (!isset($_SESSION['user_id']))
+}
+/* If Session was lost */ elseif (!isset($_SESSION['user_id'])) {
+    /* Print error code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stderr'] = "Session Expired! Please login again";
-
-else {
+    header("Refresh:2; login.php"); //And redirect him to login page
+} else {
 
     /* Create new Group instance and link database object */
     $guestGroup = new Group($database, null);
@@ -57,6 +59,7 @@ else {
     /* Get all group attributes from DB searching for group name */
     $user->setUser_fromId();
 
+    /* Check if User is a Guest*/
     if ($guestGroup->ifUserAssociated($user->id))
         $isGuest = true;
     else
@@ -170,10 +173,10 @@ else {
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                                    <input type="password" name="password_1" class="form-control form-control-user" placeholder="Password" required>
+                                                    <input type="password" name="password_1" class="form-control form-control-user" placeholder="Password">
                                                 </div>
                                                 <div class="col-sm-6">
-                                                    <input type="password" name="password_2" class="form-control form-control-user" placeholder="Repeat Password" required>
+                                                    <input type="password" name="password_2" class="form-control form-control-user" placeholder="Repeat Password">
                                                 </div>
                                             </div>
                                             <div class="form-check">
@@ -192,10 +195,7 @@ else {
                                             <button type="submit" class="btn btn-success btn-user btn-block" name="update_user">Update Account</button>
                                             <hr>
                                             <div class="text-center">
-                                                <a class="small" href="user_reset.php">Forgot Password?</a>
-                                            </div>
-                                            <div class="text-center">
-                                                <a class="small" href="login.php">Already have an account? Login!</a>
+                                                <a class="small" href="login.php">Login Again</a>
                                             </div>
                                         </div>
                                     </div>

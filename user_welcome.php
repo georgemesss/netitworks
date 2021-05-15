@@ -2,10 +2,10 @@
 
 /**
  * -- Page Info -- 
- * user_register.php
+ * user_welcome.php
  * 
  * -- Page Description -- 
- * This Page will let the guest user register himself
+ * This Page will let the welcome the user to the network
  */
 
 
@@ -17,6 +17,46 @@ require_once("vendor/autoload.php");
 
 /* Start PHP Session */
 session_start();
+
+/* Create new Database instance */
+$database = new Database();
+
+/* If Session was lost */
+if (!isset($_SESSION['user_id'])) {
+    /* Print error code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stderr'] = "Session Expired! Please login again";
+    header("Refresh:2; login.php"); //And redirect him to login page
+} else {
+    /* Create new Group instance and link database object */
+    $guestGroup = new Group($database, null);
+    $guestGroup->setName($guest_group);
+    /* Get all group attributes from DB searching for group name */
+    $guestGroup->setGroup_fromName();
+
+    /* Create new User instance and link database object */
+    $user = new User($database, null);
+    $user->setId($_SESSION['user_id']);
+    /* Get all group attributes from DB searching for group name */
+    $user->setUser_fromId();
+
+    /* If the User is a guest*/
+    if ($guestGroup->ifUserAssociated($user->id)) {
+        $isGuest = true;
+
+        // Authorize Guest HERE
+        // ...
+        // Authorize Guest HERE
+
+        if (1) /* If Authorized */
+            /* Print error code to session superglobal (banner will be printed down on page) */
+            $_SESSION['status_stdout'] = "You have logged into our network!";
+
+        /* If NOT Authorized */
+        else
+            /* Print error code to session superglobal (banner will be printed down on page) */
+            $_SESSION['status_stdout'] = "You have logged into our network!";
+    }
+}
 
 ?>
 
@@ -51,13 +91,15 @@ session_start();
                                     <div class="col-lg-7">
                                         <div class="p-5">
                                             <div class="text-center">
-                                                <h1 class="h4 text-primary mb-4">You have logged into our network!</h1>
+                                                <h1 class="h4 text-primary mb-4">
+                                                    Welcome!
+                                                </h1>
                                             </div>
                                             <div class="text-center">
                                                 <a class="small" href="user_update.php">Change my account settings</a>
                                             </div>
                                             <div class="text-center">
-                                                <a class="small" href="login.php">Login</a>
+                                                <a class="small" href="login.php">Login Again</a>
                                             </div>
                                             <hr>
                                             <div class="text-center">

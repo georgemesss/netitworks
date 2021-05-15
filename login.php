@@ -5,7 +5,7 @@
  * login.php
  * 
  * -- Page Description -- 
- * This Page will let the login to NetItWorks
+ * This Page will let User the login to NetItWorks
  */
 
 
@@ -15,6 +15,7 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Start PHP Session */
 session_start();
 
 /* Set config default variables */
@@ -31,70 +32,75 @@ $database = new Database();
 /* Create new Group instance and link database object */
 $group = new Group($database, null);
 $group->setName($guest_group);
-
-/* Get all group attributes from DB sarching for group name */
+/* Get all group attributes from DB searching for group name */
 $group->setGroup_fromName();
 
-/* If user is NOT permitted to register himself */
-if (!$permit_guest_access | $permit_guest_access != 'yes' | (empty($guest_group) | !isset($group->status)))
+/* If configuration does NOT permit users to register themselves */
+if (!$permit_guest_access | $permit_guest_access != 'yes' | (empty($guest_group) | ($group->status == 0)))
     $permit_guest_access = false;
 
-/* If request includes _GET variables given from UniFi controller */
-if (isset($_GET["id"]) && isset($_GET["ap"]))
-    echo ("<script>location.href='user_register.php'</script>");
-
-if (0) { #To change in button pressed
-
-}
-
-if (isset($_POST['login'])) {
-    //echo ("<script>location.href='dashboard.php'</script>");
+/* If User presses "Login" button */
+if (isset($_POST['login']) && isset($_POST['username'])) {
 
     /* Create new User instance and link database object */
     $user = new User($database, null);
+    /* And set user properties*/
     $user->setId($_POST['username']);
     $user->setUser_fromId();
 
+    /* If User password is Correct */
     if ($user->verifyPassword($_POST['password'])) {
 
+        /* AND if the user status ACTIVE  */
         if ($user->status == 'active') {
 
+            /* Get All Groups associated with User */
             $associatedGroups = $user->getGroups();
+            /* And create group to use methods */
             $linkedGroup = new Group($database, null);
 
+            /* Parse all associated groups*/
             for ($c = 0; $c < sizeof($associatedGroups); $c++) {
 
+                /* Get all parsed group attributes from DB */
                 $linkedGroup->setName($associatedGroups[$c]->name);
                 $linkedGroup->setGroup_fromName();
                 $associatedGroups[$c] = $linkedGroup;
 
+                /* If Group is the UniFi Guest Group AND is set to ACTIVE */
                 if ($associatedGroups[$c]->name === $guest_group && $associatedGroups[$c]->status == 1) {
                     //User is part of guest group
                     $associated = true;
                     $_SESSION['user_id'] = $user->id;
                     echo ("<script>location.href='user_welcome.php'</script>");
-                } elseif ($associatedGroups[$c]->admin_privilege == 1 && $associatedGroups[$c]->status == 1) {
+                }
+                /* If the Group has admin privileges AND is set to ACTIVE */ elseif ($associatedGroups[$c]->admin_privilege == 1 && $associatedGroups[$c]->status == 1) {
                     //User is admin
                     $associated = true;
                     $_SESSION['user_id'] = $user->id;
                     echo ("<script>location.href='dashboard.php'</script>");
-                } elseif ($associatedGroups[$c]->status == 1) {
+                }
+                /* If the Group is normal AND is set to ACTIVE */ elseif ($associatedGroups[$c]->status == 1) {
                     $associated = true;
                 }
             }
+            /* If the User is NOT an admin NOR a guest */
             if ($associated) {
-                //If user is normal
+                /* Set session user_id */
                 $_SESSION['user_id'] = $user->id;
+                /* And redirect him to welcome page */
                 echo ("<script>location.href='user_welcome.php'</script>");
-            } else {
+            }
+            /* If User has no active groups associated */ else {
                 /* Print error code to session superglobal (banner will be printed down on page) */
                 $_SESSION['status_stderr'] = "Your account is not enabled for login";
             }
-        } else {
+        } /* If User status is NOT active */ else {
             /* Print error code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stderr'] = "Your account is not enabled for login";
         }
-    } else {
+    }
+    /* If Password is INCORRECT */ else {
         /* Print error code to session superglobal (banner will be printed down on page) */
         $_SESSION['status_stderr'] = "Credentials are not correct";
     }

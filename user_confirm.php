@@ -44,8 +44,12 @@ else {
     else
         $require_admin_approval = true;
 
-    if (!isset($_SESSION['user_id']))
+    /* If Session was lost */
+    if (!isset($_SESSION['user_id'])) {
+        /* Print error code to session superglobal (banner will be printed down on page) */
         $_SESSION['status_stderr'] = "Session Expired! Please login again";
+        header("Refresh:2; login.php"); //And redirect him to login page
+    }
 
     /* Create new Database instance */
     $database = new Database();
