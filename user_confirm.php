@@ -99,7 +99,7 @@ else {
                     $user->changeStatus('active');
                     /* Print success code to session superglobal (banner will be printed down on page) */
                     $_SESSION['status_stdout'] = "Thank you!";
-                    header('Refresh: 1.5; login.php'); //Redirect user to login page
+                    header('Refresh: 1.5; user_welcome.php'); //Redirect user to user welcome page
                 }
             }
             /* If sms code is NOT correct */ else

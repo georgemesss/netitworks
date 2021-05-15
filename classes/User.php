@@ -98,17 +98,6 @@ class User
      * Get full group attributes from DB and assign is to current group
      *
      * @return bool Returns true upon success, false upon error
-     * $id,
-        $type,
-        $password,
-        $status,
-        $phone,
-        $email,
-        $ip_limitation_status,
-        $hw_limitation_status,
-        $ip_range_start,
-        $ip_range_stop,
-        $active_net_group
      */
     function setUser_fromId()
     {

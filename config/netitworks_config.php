@@ -3,7 +3,7 @@
         global $netitworks_conf;
         
         $netitworks_conf = [
-            'first_configuration_done' => 'no', 
+            'first_configuration_done' => 'yes', 
             'controller_configuration_done' => 'no',
             'permit_guest_access' => 'yes',
             'permit_user_self_registration' => 'yes',
