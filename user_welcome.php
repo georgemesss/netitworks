@@ -21,41 +21,48 @@ session_start();
 /* Create new Database instance */
 $database = new Database();
 
-/* If Session was lost */
-if (!isset($_SESSION['user_id'])) {
-    /* Print error code to session superglobal (banner will be printed down on page) */
-    $_SESSION['status_stderr'] = "Session Expired! Please login again";
-    header("Refresh:2; login.php"); //And redirect him to login page
-} else {
-    /* Create new Group instance and link database object */
-    $guestGroup = new Group($database, null);
-    $guestGroup->setName($guest_group);
-    /* Get all group attributes from DB searching for group name */
-    $guestGroup->setGroup_fromName();
+/* If Database connection is OK */
+if ($database->connection) {
 
-    /* Create new User instance and link database object */
-    $user = new User($database, null);
-    $user->setId($_SESSION['user_id']);
-    /* Get all group attributes from DB searching for group name */
-    $user->setUser_fromId();
+    /* If Session was lost */
+    if (!isset($_SESSION['user_id'])) {
+        /* Print error code to session superglobal (banner will be printed down on page) */
+        $_SESSION['status_stderr'] = "Session Expired! Please login again";
+        header("Refresh:2; login.php"); //And redirect him to login page
+    } else {
+        /* Create new Group instance and link database object */
+        $guestGroup = new Group($database, null);
+        $guestGroup->setName($guest_group);
+        /* Get all group attributes from DB searching for group name */
+        $guestGroup->setGroup_fromName();
 
-    /* If the User is a guest*/
-    if ($guestGroup->ifUserAssociated($user->id)) {
-        $isGuest = true;
+        /* Create new User instance and link database object */
+        $user = new User($database, null);
+        $user->setId($_SESSION['user_id']);
+        /* Get all group attributes from DB searching for group name */
+        $user->setUser_fromId();
 
-        // Authorize Guest HERE
-        // ...
-        // Authorize Guest HERE
+        /* If the User is a guest*/
+        if ($guestGroup->ifUserAssociated($user->id)) {
+            $isGuest = true;
 
-        if (1) /* If Authorized */
-            /* Print error code to session superglobal (banner will be printed down on page) */
-            $_SESSION['status_stdout'] = "You have logged into our network!";
+            // Authorize Guest HERE
+            // ...
+            // Authorize Guest HERE
 
-        /* If NOT Authorized */
-        else
-            /* Print error code to session superglobal (banner will be printed down on page) */
-            $_SESSION['status_stdout'] = "You have logged into our network!";
+            if (1) /* If Authorized */
+                /* Print error code to session superglobal (banner will be printed down on page) */
+                $_SESSION['status_stdout'] = "You have logged into our network!";
+
+            /* If NOT Authorized */
+            else
+                /* Print error code to session superglobal (banner will be printed down on page) */
+                $_SESSION['status_stdout'] = "You have logged into our network!";
+        }
     }
+} else {
+    /* Print error code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stderr'] = "Error! Could not reach DB";
 }
 
 ?>

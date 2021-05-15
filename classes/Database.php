@@ -31,7 +31,7 @@ class Database
      */
     public function __construct()
     {
-        set_time_limit(3);
+        set_time_limit(0);
         $this->ip = $GLOBALS['database_conf']['ip'];
         $this->port = $GLOBALS['database_conf']['port'];
         $this->username = $GLOBALS['database_conf']['username'];

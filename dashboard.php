@@ -46,7 +46,7 @@ else {
     /* If Controller is not available */
     if (!$controller->getConnectionStatus()) {
         /* Print error code to session superglobal (banner will be printed down on page) */
-        $_SESSION['status_stderr'] = "Database not Connected";
+        $_SESSION['status_stderr'] = "Controller not Connected";
 
         /* If ALSO Database is not available */
         if (!$database->getConnectionStatus())
@@ -192,6 +192,8 @@ else {
         <?php
         /* Print banner status with $_SESSION stdout/stderr strings */
         printBanner();
+        unset($_SESSION['status_stderr']);
+        unset($_SESSION['status_stdout']);
         ?>
 
     </div>

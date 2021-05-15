@@ -17,8 +17,17 @@ require_once("vendor/autoload.php");
 /* Create new Controller instance */
 $controller = new Controller();
 
+$first_configuration_done = true;
+
+$first_configuration_done = $GLOBALS['netitworks_conf']['first_configuration_done'];
+if ($GLOBALS['netitworks_conf']['first_configuration_done'] == 'no')
+    $first_configuration_done = false;
+
+if ($first_configuration_done)
+    echo ("<script>location.href='login.php'</script>");
+
 /* If Controller is available and online */
-if ($controller->getConnectionStatus()) {
+elseif ($controller->getConnectionStatus()) {
 
     /* Update NetItWorks Configuration */
     $new_netitworks_conf = "
@@ -76,8 +85,12 @@ if (isset($_POST['save_controller_details'])) {
     ?>
     ";
 
-    /* And push to NetItWorks Configuration File */
-    file_put_contents("config/netitworks_config.php", $new_netitworks_conf);
+    unset($controller);
+    $controller = new Controller();
+    if ($controller->getConnectionStatus()) {
+        /* And push to NetItWorks Configuration File */
+        file_put_contents("config/netitworks_config.php", $new_netitworks_conf);
+    }
     header("Refresh:0"); //Refresh Page
 
 }
@@ -102,6 +115,12 @@ if (isset($_POST['save_controller_details'])) {
 
     /* And push to NetItWorks Configuration File */
     file_put_contents("config/netitworks_config.php", $new_netitworks_conf);
+    unset($controller);
+    $controller = new Controller();
+    if ($controller->getConnectionStatus()) {
+        /* And push to NetItWorks Configuration File */
+        file_put_contents("config/netitworks_config.php", $new_netitworks_conf);
+    }
     header("Refresh:0"); //Refresh Page
 }
 
@@ -109,12 +128,7 @@ if (isset($_POST['save_controller_details'])) {
 These Conditions below are unique of this first configuration operation 
 */
 
-/* If Controller is available and online */ elseif ($controller->getConnectionStatus())
-    /* Redirect to login page */
-    echo ("<script>location.href='login.php'</script>");
-
-/* If User presses "Skip Controller Config" button*/
-else if (isset($_POST['skip_controller_config'])) {
+/* If User presses "Skip Controller Config" button*/ else if (isset($_POST['skip_controller_config'])) {
 
     /* Then Update NetItWorks Configuration */
     $newConfiguration .= "

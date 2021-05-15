@@ -16,8 +16,13 @@ require_once("vendor/autoload.php");
 
 $database = new Database();
 $precontroller = new Controller();
+$first_configuration_done = true;
 
-if ($database->getConnectionStatus() && $precontroller->getConnectionStatus())
+$first_configuration_done = $GLOBALS['netitworks_conf']['first_configuration_done'];
+if ($GLOBALS['netitworks_conf']['first_configuration_done'] == 'no')
+    $first_configuration_done = false;
+
+if ($first_configuration_done)
     echo ("<script>location.href='login.php'</script>");
 
 elseif (isset($_POST['save_database_details'])) {

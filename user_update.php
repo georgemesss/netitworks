@@ -29,103 +29,104 @@ $permit_user_self_registration = $GLOBALS['netitworks_conf']['permit_user_self_r
 /* Create new Database instance */
 $database = new Database();
 
-/* Check if permit user self registration is enabled*/
-if (!$permit_user_self_registration | $permit_user_self_registration != 'yes')
-    $permit_user_self_registration = false;
-else
-    $permit_user_self_registration = true;
+/* If Database connection is OK */
+if ($database->connection) {
 
-
-/* If Database is not available */
-if (!$database->getConnectionStatus()) {
-    /* Print error code to session superglobal (banner will be printed down on page) */
-    $_SESSION['status_stderr'] = "Error! Could not reach DB";
-}
-/* If Session was lost */ elseif (!isset($_SESSION['user_id'])) {
-    /* Print error code to session superglobal (banner will be printed down on page) */
-    $_SESSION['status_stderr'] = "Session Expired! Please login again";
-    header("Refresh:2; login.php"); //And redirect him to login page
-} else {
-
-    /* Create new Group instance and link database object */
-    $guestGroup = new Group($database, null);
-    $guestGroup->setName($guest_group);
-    /* Get all group attributes from DB searching for group name */
-    $guestGroup->setGroup_fromName();
-
-    /* Create new User instance and link database object */
-    $user = new User($database, null);
-    $user->setId($_SESSION['user_id']);
-    /* Get all group attributes from DB searching for group name */
-    $user->setUser_fromId();
-
-    /* Check if User is a Guest*/
-    if ($guestGroup->ifUserAssociated($user->id))
-        $isGuest = true;
+    /* Check if permit user self registration is enabled*/
+    if (!$permit_user_self_registration | $permit_user_self_registration != 'yes')
+        $permit_user_self_registration = false;
     else
-        $isGuest = false;
+        $permit_user_self_registration = true;
 
-    /* IF User is guest AND guest-self-registration is disabled*/
-    if ($isGuest && !$permit_user_self_registration) {
-        /* If Guest Group is not set */
-        if (empty($guest_group) | !isset($group->status)) {
-            /* Print error code to session superglobal (banner will be printed down on page) */
-            $_SESSION['status_stderr'] = "Error! Default Group not set";
-        } else {
-            header("Location: login.php"); //Redirect him to login page
-        }
+    if (!isset($_SESSION['user_id'])) {
+        /* Print error code to session superglobal (banner will be printed down on page) */
+        $_SESSION['status_stderr'] = "Session Expired! Please login again";
+        header("Refresh:2; login.php"); //And redirect him to login page
     } else {
-        /* If User presses "Create User" button and username is set */
-        if (isset($_POST['update_user'])) {
 
-            /* If passwords are not equal */
-            if ((!empty($_POST['password_1']) | !empty($_POST['password_1'])) && ($_POST['password_1'] != $_POST['password_2'])) {
+        /* Create new Group instance and link database object */
+        $guestGroup = new Group($database, null);
+        $guestGroup->setName($guest_group);
+        /* Get all group attributes from DB searching for group name */
+        $guestGroup->setGroup_fromName();
+
+        /* Create new User instance and link database object */
+        $user = new User($database, null);
+        $user->setId($_SESSION['user_id']);
+        /* Get all group attributes from DB searching for group name */
+        $user->setUser_fromId();
+
+        /* Check if User is a Guest*/
+        if ($guestGroup->ifUserAssociated($user->id))
+            $isGuest = true;
+        else
+            $isGuest = false;
+
+        /* IF User is guest AND guest-self-registration is disabled*/
+        if ($isGuest && !$permit_user_self_registration) {
+            /* If Guest Group is not set */
+            if (empty($guest_group) | !isset($group->status)) {
                 /* Print error code to session superglobal (banner will be printed down on page) */
-                $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
+                $_SESSION['status_stderr'] = "Error! Default Group not set";
+            } else {
+                header("Location: login.php"); //Redirect him to login page
             }
+        } else {
+            /* If User presses "Create User" button and username is set */
+            if (isset($_POST['update_user'])) {
 
-            /* If passwords are equal */ else {
+                /* If passwords are not equal */
+                if ((!empty($_POST['password_1']) | !empty($_POST['password_1'])) && ($_POST['password_1'] != $_POST['password_2'])) {
+                    /* Print error code to session superglobal (banner will be printed down on page) */
+                    $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
+                }
 
-                /* IF password is NOT set */
-                if (empty($_POST['password_1']))
-                    /* Get password from database */
-                    $_POST['password_1'] = $user->password;
+                /* If passwords are equal */ else {
 
-                /* Perform Post Super-Global Sanification */
-                $_POST = $user->database->sanifyArray($_POST);
+                    /* IF password is NOT set */
+                    if (empty($_POST['password_1']))
+                        /* Get password from database */
+                        $_POST['password_1'] = $user->password;
 
-                /* Convert empty strings to 'NULL' strings */
-                $_POST = emptyToNull($_POST);
+                    /* Perform Post Super-Global Sanification */
+                    $_POST = $user->database->sanifyArray($_POST);
 
-                if (!$isGuest)
-                    $user->phone = $_POST['phone'];
+                    /* Convert empty strings to 'NULL' strings */
+                    $_POST = emptyToNull($_POST);
 
-                /* Set properties to User object  */
-                $user->setUser(
-                    $user->id,
-                    $user->type,
-                    $_POST['password_1'],
-                    $user->status,
-                    $user->phone,
-                    $_POST['email'],
-                    $user->ip_limitation_status,
-                    $user->hw_limitation_status,
-                    $user->ip_range_start,
-                    $user->ip_range_stop,
-                    $user->active_net_group
-                );
+                    if (!$isGuest)
+                        $user->phone = $_POST['phone'];
 
-                /* Add new User and properties to DataBase */
-                $result = $user->update();
+                    /* Set properties to User object  */
+                    $user->setUser(
+                        $user->id,
+                        $user->type,
+                        $_POST['password_1'],
+                        $user->status,
+                        $user->phone,
+                        $_POST['email'],
+                        $user->ip_limitation_status,
+                        $user->hw_limitation_status,
+                        $user->ip_range_start,
+                        $user->ip_range_stop,
+                        $user->active_net_group
+                    );
 
-                /* IF User was updated to DB without errors */
-                if ($result)
-                    $_SESSION['status_stdout'] = "User Updated Successfuly";
-                else
-                    $_SESSION['status_stderr'] = "Error: " . $user->database->connection->error;
+                    /* Add new User and properties to DataBase */
+                    $result = $user->update();
+
+                    /* IF User was updated to DB without errors */
+                    if ($result)
+                        $_SESSION['status_stdout'] = "User Updated Successfuly";
+                    else
+                        $_SESSION['status_stderr'] = "Error: " . $user->database->connection->error;
+                }
             }
         }
     }
+} else {
+    /* Print error code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stderr'] = "Error! Could not reach DB";
 }
 ?>
 

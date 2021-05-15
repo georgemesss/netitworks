@@ -16,7 +16,16 @@ require_once("vendor/autoload.php");
 
 $database = new Database();
 
-if (!$database->getConnectionStatus()) {
+$first_configuration_done = true;
+
+$first_configuration_done = $GLOBALS['netitworks_conf']['first_configuration_done'];
+if ($GLOBALS['netitworks_conf']['first_configuration_done'] == 'no')
+    $first_configuration_done = false;
+
+if ($first_configuration_done)
+    echo ("<script>location.href='login.php'</script>");
+
+elseif (!$database->getConnectionStatus()) {
     $_SESSION['status_stderr'] = "Database not Connected";
     echo ("<script>location.href='first_conf_database.php'</script>");
 } else {
