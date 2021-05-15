@@ -15,6 +15,8 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+checkAdminSession();
+
 /* Create new Database instance */
 $database = new Database();
 

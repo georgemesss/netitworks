@@ -14,6 +14,8 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+checkAdminSession();
+
 /* Create new Database instance */
 $database = new Database();
 
@@ -52,7 +54,6 @@ else {
             $_SESSION['status_stderr'] = "Database and Controller not Connected";
     }
 }
-
 ?>
 
 <!DOCTYPE html>

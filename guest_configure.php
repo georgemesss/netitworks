@@ -6,7 +6,7 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
-session_start();
+checkAdminSession();
 
 $database = new Database();
 

@@ -4,6 +4,8 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+checkAdminSession();
+
 $database = new Database();
 
 if (isset($_POST['save_database_details'])) {

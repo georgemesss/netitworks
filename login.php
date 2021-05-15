@@ -77,7 +77,7 @@ if (isset($_POST['login']) && isset($_POST['username'])) {
                 /* If the Group has admin privileges AND is set to ACTIVE */ elseif ($associatedGroups[$c]->admin_privilege == 1 && $associatedGroups[$c]->status == 1) {
                     //User is admin
                     $associated = true;
-                    $_SESSION['user_id'] = $user->id;
+                    $_SESSION['admin_id'] = $user->id;
                     echo ("<script>location.href='dashboard.php'</script>");
                 }
                 /* If the Group is normal AND is set to ACTIVE */ elseif ($associatedGroups[$c]->status == 1) {

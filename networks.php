@@ -12,6 +12,8 @@
 
 namespace NetItWorks;
 
+checkAdminSession();
+
 require_once("vendor/autoload.php");
 
 /* Gets config parameters from variable stored in config/configure_controller.php  */

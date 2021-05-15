@@ -48,3 +48,14 @@ function emptyToNull($array)
     }
     return $array;
 }
+
+function checkAdminSession()
+{
+    session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        /* Print error code to session superglobal (banner will be printed down on page) */
+        $_SESSION['status_stderr'] = "You don't hava the access privileges! Login again";
+        /* And redirect him to login page */
+        echo ("<script>location.href='access_denied.php'</script>");
+    }
+}
