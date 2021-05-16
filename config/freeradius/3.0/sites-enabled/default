@@ -1,4 +1,8 @@
 server default {
+        
+#
+#  ### Listen for Authorization-Request packets
+#
 listen {
         type = auth
         ipaddr = *
@@ -9,6 +13,10 @@ listen {
               idle_timeout = 30
         }
 }
+
+#
+#  ### Listen for Accounting-Request packets
+#
 listen {
         ipaddr = *
         port = 0
@@ -16,25 +24,16 @@ listen {
         limit {
         }
 }
-listen {
-        type = auth
-        ipv6addr = ::
-        port = 0
-        limit {
-              max_connections = 16
-              lifetime = 0
-              idle_timeout = 30
-        }
-}
-listen {
-        ipv6addr = ::
-        port = 0
-        type = acct
-        limit {
-        }
-}
+
 authorize {
-        #Rewrite username sytax
+    #
+	#  Take a `User-Name`, and perform some checks on it, for
+	#  spaces and other invalid characters. If the `User-Name`
+	#  is invalid, reject the request.
+	#
+	#  See policy.d/filter for the definition of the
+	#  filter_username policy.
+	#
 	filter_username
 
 	#Rewrite calling station id syntax
@@ -47,13 +46,35 @@ authorize {
 	check_user_permissions
 
 	#
-	#  The chap module will set 'Auth-Type := CHAP' if we are
-	#  handling a CHAP request and Auth-Type has not already been set
-	chap
+	#  The `mschap` module will set `Auth-Type := mschap` if the
+	#  packet contains an `MS-CHAP-Challenge` attribute.  The
+	#  module does this only if the `Auth-Type` attribute has not
+	#  already been set.
+	#
+	mschap
 
-        eap {
-                ok = return
-        }
+    #
+	#  The `eap` module takes care of all EAP authentication,
+	#  including EAP-MD5, EAP-TLS, PEAP and EAP-TTLS.
+	#
+	#  The module also sets the EAP-Type attribute in the request
+	#  list, to the incoming EAP type.
+	#
+	#  The `eap` module returns `ok` if it is not yet ready to
+	#  authenticate the user. The configuration below checks for
+	#  that return value, and if so, stops processing the current
+	#  section.
+	#
+	#  The result is that any LDAP and/or SQL servers will not be
+	#  queried during the initial set of packets that go back and
+	#  forth to set up EAP-TTLS or PEAP.
+	#
+	#  We also recommend doing user lookups in the `inner-tunnel`
+	#  virtual server.
+	#
+    eap {
+        ok = return
+    }
 
 	#
 	#  IF Username EXISTS
@@ -61,43 +82,124 @@ authorize {
 	#  See policy.d/check_credentials for the definition of the check_credentials policy.
 	#
 	check_credentials
-        
 }
 authenticate {
-        Auth-Type PAP {
-                pap
-        }
-        eap
+    #
+    #  ### MS-CHAP authentication
+    #
+    #  For users who are using MS-CHAP authentication. A back-end
+    #  database listed in the "recv Access-Request" section MUST supply
+    #  either a Password.Cleartext attribute, or an NT-Password
+    #  attribute. Encrypted passwords won't work.
+    #
+    Auth-Type MS-CHAP {
+        mschap
+    }
+    mschap
+
+    #
+	#  The `digest` module implements the SIP Digest
+	#  authentication method.
+	#
+	#  Note that the module does not implement RFC 4590.  Instead,
+	#  it implements an earlier draft of the specification.  Since
+	#  all of the NAS equipment also implements the earlier draft,
+	#  this limitation is fine.
+	#
+	#  If you have a Cisco SIP server authenticating against
+	#  FreeRADIUS, the `digest` module will set `Auth-Type :=
+	#  "Digest"` if we are handling a SIP Digest request and the
+	#  `Auth-Type` has not already been set.
+	#
+    digest
+
+    #
+    #  EAP Authentication
+    #
+    #  For EAP-MD5, EAP-MSCHAP, EAP-TLS, EAP-TTLS, EAP-PEAP, EAP-PWD, etc.
+    #
+    eap
 }
 preacct {
-        preprocess
-        acct_unique
-        suffix
+    preprocess
+
+    #
+	#  Ensure that we have a semi-unique identifier for every
+	#  request, as many NAS boxes are broken.
+	#
+    acct_unique
+
+    suffix
 }
 accounting {
-        detail
-        sql
-        exec
-        attr_filter.accounting_response
+    #
+	#  Ensure that we have a semi-unique identifier for every
+	#  request, as many NAS boxes are broken.
+	#
+    detail
+
+    #
+	#  Log traffic to an SQL database.
+	#
+	#  See "Accounting Queries" in `mods-available/sql`.
+	#
+    sql
+
+    exec
+
+    #
+	#  Filter attributes from the accounting response.
+	#
+    attr_filter.accounting_response
 }
+
+#
+#  session:: Controls how ongoing
+#  (multi-round) sessions are handled
+#
+#  This section is primarily useful for EAP.
+#  It controls the number of EAP
+#  authentication attempts that can occur
+#  concurrently.
+#
 session {
         sql
 }
+
 post-auth {
-        update {
-                &reply: += &session-state:
-        }
+    #
+	#  For EAP-TTLS and PEAP, add any cached attributes to the
+	#  reply. The "session-state" attributes are automatically
+	#  cached when an Access-Challenge is sent, and retrieved
+	#  when an `Access-Request` is received.
+	#
+	#  The `session-state` attributes are deleted after an
+	#  `Access-Reject` or `Access-Accept` packet has been sent.
+	#
+    update {
+        &reply: += &session-state:
+    }
+
+    sql
+    exec
+
+    #
+	#  Remove `Reply-Message` if the response contains an
+	#  `EAP-Message` attribute.  Some NAS equipment will
+	#  automatically convert the `Reply-Message` to an "EAP
+	#  notification" packet, which will cause end-user machines to
+	#  drop the network connection.
+	#
+    remove_reply_message_if_eap
+
+    Post-Auth-Type REJECT {
         sql
-        exec
+        attr_filter.access_reject
+        eap
         remove_reply_message_if_eap
-        Post-Auth-Type REJECT {
-                sql
-                attr_filter.access_reject
-                eap
-                remove_reply_message_if_eap
-        }
+    }
 }
 post-proxy {
-        eap
+    eap
 }
 }

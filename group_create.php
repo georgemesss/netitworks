@@ -12,6 +12,7 @@
 /* Include NetItWorks Classes and use Composer Autoloader */
 
 namespace NetItWorks;
+
 require_once("vendor/autoload.php");
 
 checkAdminSession();
@@ -88,6 +89,10 @@ if (!$database->getConnectionStatus()) {
                 $_POST['net_type'] = 3;
                 $_POST['net_attribute_type'] = 1;
             } elseif ($_POST['net_type'] === "External") {
+                $_POST['net_type'] = 1;
+                $_POST['net_attribute_type'] = 1;
+                $_POST['net_vlan_id'] = 1;
+            } elseif ($_POST['net_type'] === "Guest") {
                 $_POST['net_type'] = 0;
                 $_POST['net_attribute_type'] = 0;
                 $_POST['net_vlan_id'] = 0;
@@ -189,6 +194,7 @@ if (!$database->getConnectionStatus()) {
                                     <option selected value="LAN">LAN</option>
                                     <option value="VPN">VPN</option>
                                     <option value="External">External Login</option>
+                                    <option value="Guest">UniFi Guest</option>
                                 </select>
                             </div>
                             <div class="col-md-6"><label class="labels">VLAN ID</label><input type="number" name="net_vlan_id" value=1 class="form-control" placeholder="1" value=""></div>
@@ -278,6 +284,8 @@ if (!$database->getConnectionStatus()) {
             <?php
             /* Print banner status with $_SESSION stdout/stderr strings */
             printBanner();
+            unset($_SESSION['status_stderr']);
+            unset($_SESSION['status_stdout']);
             ?>
 
         </div>

@@ -94,6 +94,20 @@ class User
         $this->id = $id;
     }
 
+    function cryptPassword($password)
+    {
+        // Convert the password from UTF8 to UTF16 (little endian)
+        $Input = iconv('UTF-8', 'UTF-16LE', $password);
+
+        $MD4Hash = hash('md4', $Input);
+
+        // Make it uppercase, not necessary, but it's common to do so with NTLM hashes
+        $NTLMHash = strtoupper($MD4Hash);
+
+        // Return the result
+        return ('0x' . $NTLMHash);
+    }
+
     /**
      * Get full group attributes from DB and assign is to current group
      *
@@ -190,7 +204,7 @@ class User
      */
     function verifyPassword($password)
     {
-        if ($this->password === $password)
+        if ($this->password === $this->cryptPassword($password))
             return true;
         return false;
     }

@@ -41,6 +41,15 @@ elseif (!$database->getConnectionStatus()) {
             /* Post Super-Global sanification*/
             $_POST = $userToCreate->database->sanifyArray($_POST);
 
+            /* IF Password field is empty */
+            if (empty($_POST['password_1']))
+                /* Retrieve old password from DB */
+                $_POST['password_1'] = $user->password;
+            /* IF New password is set */
+            else
+                /* Encrypt new password */
+                $_POST['password_1'] = $user->cryptPassword($_POST['password_1']);
+
             $_POST = emptyToNull($_POST);
 
             /* Force group and admin privilege status to enabled */

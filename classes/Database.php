@@ -37,7 +37,7 @@ class Database
         $this->username = $GLOBALS['database_conf']['username'];
         $this->password = $GLOBALS['database_conf']['password'];
         $this->disabled = $GLOBALS['database_conf']['disabled'];
-        $this->connection = mysqli_connect('p:' . $this->ip, $this->username, $this->password, "5bi_20_21_s02464", null, null); //Up to now we won't specify the port (Doesn't work)
+        $this->connection = mysqli_connect('p:' . $this->ip, $this->username, $this->password, "netitworks", null, null); //Up to now we won't specify the port (Doesn't work)
 
         //$timeout = 30;  /* thirty seconds for timeout */
         //$link = mysqli_init();

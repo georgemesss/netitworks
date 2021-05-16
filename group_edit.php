@@ -30,8 +30,16 @@ if (!$database->getConnectionStatus()) {
     /* Create new Group instance and link database object */
     $group = new Group($database, NULL);
 
-    /* If name post global attribute is set */
-    if (isset($_POST['name'])) {
+    /* If name post global attribute is set OR session variable is set*/
+    if (isset($_POST['name']) | !empty($_SESSION['group_toEdit'])) {
+
+        /* If name post global attribute is set */
+        if (!empty($_POST['name']))
+            /* Save content to a session variable */
+            $_SESSION['group_toEdit'] = $_POST['name'];
+        else
+            /* Restore post superglobal id from session variable */
+            $_POST['name'] = $_SESSION['group_toEdit'];
 
         /* Set name attribute to Group object  */
         $group->setName($_POST['name']);
@@ -106,6 +114,10 @@ if (!$database->getConnectionStatus()) {
                     $_POST['net_type'] = 3;
                     $_POST['net_attribute_type'] = 1;
                 } elseif ($_POST['net_type'] === "External") {
+                    $_POST['net_type'] = 1;
+                    $_POST['net_attribute_type'] = 1;
+                    $_POST['net_vlan_id'] = 1;
+                } elseif ($_POST['net_type'] === "Guest") {
                     $_POST['net_type'] = 0;
                     $_POST['net_attribute_type'] = 0;
                     $_POST['net_vlan_id'] = 0;
@@ -214,9 +226,9 @@ if (!$database->getConnectionStatus()) {
         }
     }
 
-    /* If name post global attribute is NOT set */ else {
+    /* If id post global attribute is NOT set */ else {
         /* Print error code to session superglobal (banner will be printed down on page) */
-        $_SESSION['status_stderr'] = "You cannot reload page! Please return to list";
+        $_SESSION['status_stderr'] = "Session expired. Please return to main menu.";
     }
 }
 ?>
@@ -359,7 +371,8 @@ if (!$database->getConnectionStatus()) {
                                     <select class="form-control" name="net_type" aria-label="Default select example">
                                         <option value="LAN" <?php if ($group->net_type == 13) echo 'selected' ?>>LAN</option>
                                         <option value="VPN" <?php if ($group->net_type == 3) echo 'selected' ?>>VPN</option>
-                                        <option value="External" <?php if ($group->net_type == 0) echo 'selected' ?>>External Login</option>
+                                        <option value="External" <?php if ($group->net_type == 1) echo 'selected' ?>>External Login</option>
+                                        <option value="Guest" <?php if ($group->net_type == 0) echo 'selected' ?>>UniFi Guest</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6"><label class="labels">VLAN ID</label><input type="number" name="net_vlan_id" class="form-control" value="<?php echo $group->net_vlan_id ?>"></div>
@@ -550,6 +563,8 @@ if (!$database->getConnectionStatus()) {
         <?php
         /* Print banner status with $_SESSION stdout/stderr strings */
         printBanner();
+        unset($_SESSION['status_stderr']);
+        unset($_SESSION['status_stdout']);
         ?>
 
     </form>

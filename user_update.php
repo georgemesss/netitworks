@@ -83,13 +83,17 @@ if ($database->connection) {
 
                 /* If passwords are equal */ else {
 
-                    /* IF password is NOT set */
-                    if (empty($_POST['password_1']))
-                        /* Get password from database */
-                        $_POST['password_1'] = $user->password;
-
                     /* Perform Post Super-Global Sanification */
                     $_POST = $user->database->sanifyArray($_POST);
+
+                    /* IF Password field is empty */
+                    if (empty($_POST['password_1']))
+                        /* Retrieve old password from DB */
+                        $_POST['password_1'] = $user->password;
+                    /* IF New password is set */
+                    else
+                        /* Encrypt new password */
+                        $_POST['password_1'] = $user->cryptPassword($_POST['password_1']);
 
                     /* Convert empty strings to 'NULL' strings */
                     $_POST = emptyToNull($_POST);

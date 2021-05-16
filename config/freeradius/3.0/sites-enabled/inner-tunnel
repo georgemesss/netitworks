@@ -38,8 +38,20 @@ listen {
 
 authorize {
 
-	#Rewrite username sytax
+	#
+	#  Take a User-Name, and perform some checks on it, for spaces and other
+	#  invalid characters.  If the User-Name appears invalid, reject the
+	#  request.
+	#
+	#  See policy.d/filter for the definition of the filter_username policy.
+	#
 	filter_username
+
+	#
+	#  Do checks on outer / inner User-Name, so that users
+	#  can't spoof us by using incompatible identities
+	#
+	filter_inner_identity
 
 	#Rewrite calling station id syntax
 	rewrite_calling_station_id
@@ -51,21 +63,12 @@ authorize {
 	check_user_permissions
 
 	#
-	#  The chap module will set 'Auth-Type := CHAP' if we are
-	#  handling a CHAP request and Auth-Type has not already been set
-	chap
-
-	#
-	#  The "suffix" module takes care of stripping the domain
-	#  (e.g. "@example.com") from the User-Name attribute, and the
-	#  next few lines ensure that the request is not proxied.
-	#
-	#  If you want the inner tunnel request to be proxied, delete
-	#  the next few lines.
-	#
-	update control {
-		&Proxy-To-Realm := LOCAL
-	}
+	#  If the users are logging in with an MS-CHAP-Challenge
+	#  attribute for authentication, the mschap module will find
+	#  the MS-CHAP-Challenge attribute, and add 'Auth-Type := MS-CHAP'
+	#  to the request, which will cause the server to then use
+	#  the mschap module for authentication.
+	mschap
 
 	#
 	#  This module takes care of EAP-MSCHAPv2 authentication.
@@ -92,25 +95,43 @@ authorize {
 }
 
 
-#  Authentication.
 authenticate {
 
+    #
+	#  ### MS-CHAP authentication
 	#
-	#  A back-end database listed in the 'authorize' section
-	#  MUST supply a CLEAR TEXT password.  Encrypted passwords
-	#  won't work.
-	Auth-Type CHAP {
-		chap
-	}
-
+	#  For users who are using MS-CHAP authentication. A back-end
+	#  database listed in the "recv Access-Request" section MUST supply
+	#  either a Password.Cleartext attribute, or an NT-Password
+	#  attribute. Encrypted passwords won't work.
+	#
+    Auth-Type MS-CHAP {
+         mschap
+    }
+        
 	#
 	#  For old names, too.
 	#
 	mschap
 
 	#
-	#  Allow EAP authentication.
+	#  For EAP, ensure that the Access-Accept contains a User-Name
+	#  attribute.
+	#
 	eap
+
+	#
+	#  ### PAP Authentication
+	#
+	#  For users who are using PAP authentication. A back-end database
+	#  listed in the "recv Access-Request" section MUST supply a "known
+	#  good" password for the user.  The password can be clear-text, or
+	#  encrypted via `crypt`, `bcrypt`, or other hashing.
+	#
+    Auth-Type PAP {
+         pap
+    }
+        
 }
 
 #  Post-Authentication
@@ -134,29 +155,29 @@ post-auth {
 	#  "if (1)".
 	#
 	if (1) {
+		#  Instead of "use_tunneled_reply", uncomment the
+		#  next two "update" blocks.
 		#
-		#  These attributes are for the inner-tunnel only,
-		#  and MUST NOT be copied to the outer reply.
-		#
-		update reply {
-			User-Name !* ANY
-			Message-Authenticator !* ANY
-			EAP-Message !* ANY
-			Proxy-State !* ANY
-			MS-MPPE-Encryption-Types !* ANY
-			MS-MPPE-Encryption-Policy !* ANY
-			MS-MPPE-Send-Key !* ANY
-			MS-MPPE-Recv-Key !* ANY
+		update {
+				&outer.session-state: += &reply:
 		}
 
 		#
-		#  Copy the inner reply attributes to the outer
-		#  session-state list.  The post-auth policy will take
-		#  care of copying the outer session-state list to the
-		#  outer reply.
+		#  These attributes are for the inner session only.
+		#  They MUST NOT be sent in the outer reply.
 		#
-		update {
-			&outer.session-state: += &reply:
+		#  If you uncomment the previous block and leave
+		#  this one commented out, WiFi WILL NOT WORK,
+		#  because the client will get two MS-MPPE-keys
+		#
+		update outer.session-state {
+				MS-MPPE-Encryption-Policy !* ANY
+				MS-MPPE-Encryption-Types !* ANY
+				MS-MPPE-Send-Key !* ANY
+				MS-MPPE-Recv-Key !* ANY
+				Message-Authenticator !* ANY
+				EAP-Message !* ANY
+				Proxy-State !* ANY
 		}
 	}
 

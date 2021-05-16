@@ -56,9 +56,104 @@
     <script src="node_modules/toastr/toastr.js"></script>
 
     <script>
-        if ( window.history.replaceState ) {
-            window.history.replaceState( null, null, window.location.href );
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
         }
     </script>
+
+    <!--Password Strength Meter-->
+    <link type="text/css" rel="stylesheet" href="node_modules/password-strength-meter/dist/password.min.css" />
+    <script src="netitworks/node_modules/password-strength-meter/dist/password.min.js"></script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            // emojis 😁! See #password5 for more details
+            emojione.imageType = 'svg';
+            emojione.sprints = true;
+            emojione.imagePathSVGSprites = 'https://github.com/Ranks/emojione/raw/master/assets/sprites/emojione.sprites.svg';
+
+            // Showing the progress bar since the first moment.
+            $('#password').password({
+                animate: false
+                // Check out the readme or directly jquery.password.js
+                // for a detailed list of properties.
+            });
+
+            // Default behavior
+            $('#default').password();
+
+            // Linked to field input
+            $('#linked').password({
+                field: '#username',
+                showPercent: true
+            });
+
+            // Custom events (enables button on certain score)
+            // Check the readme for a detailed list of events
+            $('#submit').attr('disabled', true);
+            $('#events').password().on('password.score', function (e, score) {
+                if (score > 75) {
+                    $('#submit').removeAttr('disabled');
+                } else {
+                    $('#submit').attr('disabled', true);
+                }
+            });
+
+            // Change translations
+            $('#translations').password({
+                animate: false,
+                minimumLength: 6,
+                enterPass: emojione.unicodeToImage('Type your password 🔜'),
+                shortPass: emojione.unicodeToImage('You can do it better, dude! 🤕'),
+                badPass: emojione.unicodeToImage('Still needs improvement! 😷'),
+                goodPass: emojione.unicodeToImage('Yeah! That\'s better! 👍'),
+                strongPass: emojione.unicodeToImage('Yup, you made it 🙃'),
+            });
+
+            $('#input-groups').password({
+                closestSelector: '.form-group',
+            });
+        });
+    </script>
+
+    <style type="text/css">
+        label {
+            display: block;
+        }
+
+        input {
+            width: 300px;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        @media (min-width: 600px) {
+            #main {
+                width: 60%;
+            }
+        }
+
+        .emojione {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* better progress bar styles for the bootstrap demo */
+        .pass-strength-visible input.form-control,
+        input.form-control:focus {
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .pass-strength-visible .pass-graybar,
+        .pass-strength-visible .pass-colorbar,
+        .form-control:focus+.pass-wrapper .pass-graybar,
+        .form-control:focus+.pass-wrapper .pass-colorbar {
+            border-bottom-right-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+    </style>
 
 </head>

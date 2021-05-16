@@ -203,8 +203,8 @@ include "./head.html";
                                             /* Create new Group instance and link database object */
                                             $group = new Group($database, NULL);
 
-                                            /* Get full group list array from DB */
-                                            $groupArray = $group->getGroups();
+                                            /* Get Guest Group list array from DB */
+                                            $groupArray = $group->getGuestGroups();
 
                                             /* If User Fetch List retured errors */
                                             if (is_bool($groupArray))

@@ -277,6 +277,8 @@ if (!$database->getConnectionStatus()) {
     <?php
     /* Print banner status with $_SESSION stdout/stderr strings */
     printBanner();
+    unset($_SESSION['status_stderr']);
+    unset($_SESSION['status_stdout']);
     ?>
 
     <?php include "./footer.html" ?>

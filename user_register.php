@@ -85,7 +85,7 @@ if ($database->connection) {
                     $user->setUser(
                         $_POST['id'],
                         "authenticated",
-                        $_POST['password_1'],
+                        $user->cryptPassword($_POST['password_1']),
                         'pending',
                         'NULL',
                         $_POST['email'],

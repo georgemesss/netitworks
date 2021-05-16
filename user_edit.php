@@ -31,7 +31,15 @@ if (!$database->getConnectionStatus()) {
     $user = new User($database, NULL);
 
     /* If name post global attribute is set */
-    if (isset($_POST['id'])) {
+    if (isset($_POST['id']) | !empty($_SESSION['user_toEdit'])) {
+
+        /* If name post global attribute is set */
+        if (!empty($_POST['id']))
+            /* Save content to a session variable */
+            $_SESSION['user_toEdit'] = $_POST['id'];
+        else
+            /* Restore post superglobal id from session variable */
+            $_POST['id'] = $_SESSION['user_toEdit'];
 
         /* Set name attribute to User object  */
         $user->setId($_POST['id']);
@@ -46,7 +54,6 @@ if (!$database->getConnectionStatus()) {
 
         /* If User presses "Save Settings" button*/
         if (isset($_POST['save_settings'])) {
-
 
             /* Check IP Ranges are set if IP Limitation Enabled */
             if (!ifAllElementStatusEqual(array(
@@ -72,10 +79,14 @@ if (!$database->getConnectionStatus()) {
                     /* Perform Post Super-Global Sanification */
                     $_POST = $user->database->sanifyArray($_POST);
 
-                    /* IF disabled switch is set */
+                    /* IF Password field is empty */
                     if (empty($_POST['password_1']))
-                        /* Set user status to ACTIVE */
+                        /* Retrieve old password from DB */
                         $_POST['password_1'] = $user->password;
+                    /* IF New password is set */
+                    else
+                        /* Encrypt new password */
+                        $_POST['password_1'] = $user->cryptPassword($_POST['password_1']);
 
                     /* Convert empty strings to 'NULL' strings */
                     $_POST = emptyToNull($_POST);
@@ -210,7 +221,7 @@ if (!$database->getConnectionStatus()) {
 
     /* If name post global attribute is NOT set */ else {
         /* Print error code to session superglobal (banner will be printed down on page) */
-        $_SESSION['status_stderr'] = "You cannot reload page! Please return to list";
+        $_SESSION['status_stderr'] = "Session expired. Please return to main menu.";
     }
 }
 ?>
@@ -517,6 +528,8 @@ if (!$database->getConnectionStatus()) {
         <?php
         /* Print banner status with $_SESSION stdout/stderr strings */
         printBanner();
+        unset($_SESSION['status_stderr']);
+        unset($_SESSION['status_stdout']);
         ?>
 
     </form>

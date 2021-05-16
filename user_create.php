@@ -76,7 +76,7 @@ if (!$database->getConnectionStatus()) {
             $user->setUser(
                 $_POST['id'],
                 "authenticated",
-                $_POST['password_1'],
+                $user->cryptPassword($_POST['password_1']),
                 $_POST['status'],
                 $_POST['phone'],
                 $_POST['email'],
@@ -259,6 +259,8 @@ if (!$database->getConnectionStatus()) {
             <?php
             /* Print banner status with $_SESSION stdout/stderr strings */
             printBanner();
+            unset($_SESSION['status_stderr']);
+            unset($_SESSION['status_stdout']);
             ?>
 
         </div>

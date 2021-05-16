@@ -265,6 +265,56 @@ class Group
     }
 
     /**
+     * Gets current Guest Group list from Database
+     *
+     * @return array|bool Returns array of Groups, false upon error
+     */
+    function getGuestGroups()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT " .
+            "name,
+            status,
+            admin_privilege,
+            description,
+            net_type,
+            net_attribute_type,
+            net_vlan_id,
+            ip_limitation_status,
+            hw_limitation_status,
+            ip_range_start,
+            ip_range_stop
+        " . " FROM net_group";
+
+        $query .= " WHERE net_type = 0";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false; //Error
+        } else {
+            $groups[] = new Group($this->database, $this->controller);
+            $c = 0;
+            if ($query_result->num_rows != 0) {
+                while ($row = $query_result->fetch_assoc()) {
+                    $groups[$c]->name = $row['name'];
+                    $groups[$c]->status = $row['status'];
+                    $groups[$c]->admin_privilege = $row['admin_privilege'];
+                    $groups[$c]->description = $row['description'];
+                    $groups[$c]->net_type = $row['net_type'];
+                    $groups[$c]->net_attribute_type = $row['net_attribute_type'];
+                    $groups[$c]->net_vlan_id = $row['net_vlan_id'];
+                    $groups[$c]->ip_limitation_status = $row['ip_limitation_status'];
+                    $groups[$c]->hw_limitation_status = $row['hw_limitation_status'];
+                    $groups[$c]->ip_range_start = $row['ip_range_start'];
+                    $groups[$c]->ip_range_stop = $row['ip_range_stop'];
+                    $c++;
+                }
+                return $groups;
+            }
+        }
+    }
+
+    /**
      * Deletes current Group from Database
      *
      * @return bool|false Returns true upon success, false otherwise
