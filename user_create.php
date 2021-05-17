@@ -93,6 +93,12 @@ if (!$database->getConnectionStatus()) {
             /* IF User was added to DB without errors */
             if ($result) {
 
+                /* If User has uploaded a user image */
+                if (isset($_FILES["user_image"]["tmp_name"])) {
+                    /* Upload it to webserver with user id name as filename */
+                    uploadUserImage($_POST['id']);
+                }
+
                 /* Join user to given group array */
                 $result = $user->joinGroups($_POST['groups']);
 
@@ -132,7 +138,7 @@ if (!$database->getConnectionStatus()) {
 
     <?php include "./header.php" ?>
 
-    <form action="user_create.php" method="post">
+    <form action="user_create.php" method="post" enctype="multipart/form-data">
 
         <!-- Modal User Create -->
         <div class="modal fade" id="userCreateModal" tabindex="-1" role="dialog" aria-labelledby="userCreateModalLabel" aria-hidden="true">
@@ -189,6 +195,12 @@ if (!$database->getConnectionStatus()) {
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" name="disabled" class="custom-control-input" id="accountStatusSwitch">
                                 <label class="custom-control-label" for="accountStatusSwitch">Disable Account</label>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="custom-file">
+                                <input type="file" name="user_image" id="user_image" class="custom-file-input">
+                                <label class="custom-file-label" for="user_image">Upload User Image - JPG JPEG PNG GIF allowed</label>
                             </div>
                         </div>
                     </div>

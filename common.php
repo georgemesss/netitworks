@@ -62,10 +62,77 @@ function checkAdminSession()
 
 function getUserImage($user_id)
 {
-    if (glob($_SERVER['DOCUMENT_ROOT'] . "netitworks/media/" . $user_id . ".*", GLOB_ERR))
-        $user_image_path = glob("media/" . $user_id . ".*", GLOB_ERR)[0];
+    if (glob($_SERVER['DOCUMENT_ROOT'] . "netitworks/media/user_pics/" . $user_id . ".*", GLOB_ERR))
+        $user_image_path = glob("media/user_pics/" . $user_id . ".*", GLOB_ERR)[0];
     else
-        $user_image_path = "media/default_user.svg";
+        $user_image_path = "media/user_pics/default_user.svg";
 
     return $user_image_path;
+}
+
+function uploadUserImage($user_id)
+{
+    $target_dir = "/netitworks/media/user_pics/";
+    $fileIntegrity = true;
+    $imageFileType = explode(".", $_FILES["user_image"]["name"])[1];
+    $target_file = $target_dir . $user_id . "." . $imageFileType;
+
+    /* Check if file is a Picture */
+    $check = getimagesize($_FILES["user_image"]["tmp_name"]);
+    /* Check if file is a Picture */
+    if ($check !== false) {
+        // Check if file already exists
+        if (file_exists($target_file)) {
+            $_SESSION['status_stderr'] =  "Sorry, file already exists.";
+            $fileIntegrity = false;
+        }
+
+        // Check file size
+        if ($_FILES["user_image"]["size"] > 500000) {
+            $_SESSION['status_stderr'] =  "Sorry, your file is too large.";
+            $fileIntegrity = false;
+        }
+    }
+    /* Check if file is a Picture */ else {
+        $_SESSION['status_stderr'] =  "File is not an image.";
+        $fileIntegrity = false;
+    }
+
+    /* Check if file format is not acceptable */
+    if (
+        $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+        && $imageFileType != "gif"
+    ) {
+        $_SESSION['status_stderr'] =  "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+        $fileIntegrity = false;
+    }
+
+    // IF file is uploadable
+    if ($fileIntegrity) {
+
+        $arrayUserImages = glob($_SERVER['DOCUMENT_ROOT'] . "netitworks/media/user_pics/" . $_POST['id'] . ".*", GLOB_ERR);
+        if ($arrayUserImages) {
+            for ($c = 0; $c < sizeof($arrayUserImages); $c++) {
+                // Use unlink() function to delete a file 
+                if (!unlink($arrayUserImages[$c]))
+                    $_SESSION['status_stderr'] = ("Previous image cannot be deleted due to an error");
+            }
+        }
+
+        if (move_uploaded_file($_FILES["user_image"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'] . $target_file)) {
+            $_SESSION['status_stdout'] =  "The file " . htmlspecialchars(basename($_FILES["user_image"]["name"])) . " has been uploaded.";
+        }
+    }
+}
+
+function deleteUserImage($user_id)
+{
+    $arrayUserImages = glob($_SERVER['DOCUMENT_ROOT'] . "netitworks/media/user_pics/" . $user_id . ".*", GLOB_ERR);
+    if ($arrayUserImages) {
+        for ($c = 0; $c < sizeof($arrayUserImages); $c++) {
+            // Use unlink() function to delete a file 
+            if (!unlink($arrayUserImages[$c]))
+                $_SESSION['status_stderr'] = ("Previous image cannot be deleted due to an error");
+        }
+    }
 }

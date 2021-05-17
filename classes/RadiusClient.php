@@ -5,7 +5,7 @@ namespace NetItWorks;
 /**
  * Netitworks Radius class
  *
- * This class contains the properties and methods of a NetItWorks's Radius Client
+ * This class contains the properties and methods of a NetItWorks's Radius nasname
  *
  * @package Netitworks
  * @author  George Mess <4onwb@protonmail.com>
@@ -16,7 +16,7 @@ class RadiusClient
 {
 
     /* Properties */
-    public $client;
+    public $nasname;
     public $secret;
     public $description;
     public $database;
@@ -27,7 +27,7 @@ class RadiusClient
      */
     public function __construct($database)
     {
-        $this->client = null;
+        $this->nasname = null;
         $this->secret = null;
         $this->description = null;
         $this->database = $database;
@@ -36,18 +36,29 @@ class RadiusClient
     /**
      * Set group details
      *
-     * @param string  $client
+     * @param string  $nasname
      * @param string  $secret
      * @param string  $description
      */
     public function setRadiusClient(
-        $client,
+        $nasname,
         $secret,
         $description
     ) {
-        $this->client = $client;
+        $this->nasname = $nasname;
         $this->secret = $secret;
         $this->description = $description;
+    }
+
+    /**
+     * Set NasName
+     *
+     * @param string  $nasname
+     */
+    public function setNasName(
+        $nasname
+    ) {
+        $this->nasname = $nasname;
     }
 
     /**
@@ -59,12 +70,12 @@ class RadiusClient
     {
         /* Prepare inserting query */
         $query = "SELECT " .
-            "client,
+            "nasname,
             secret,
             description
         " . " FROM nas";
 
-        $query .= " WHERE client = '" . $this->client . "'";
+        $query .= " WHERE nasname = '" . $this->nasname . "'";
 
         $query_result = $this->database->query($query);
         if (!$query_result) {
@@ -72,7 +83,7 @@ class RadiusClient
         } else {
             if ($query_result->num_rows == 1) {
                 while ($row = $query_result->fetch_assoc()) {
-                    $this->client = $row['client'];
+                    $this->nasname = $row['nasname'];
                     $this->secret = $row['secret'];
                     $this->description = $row['description'];
                 }
@@ -83,20 +94,20 @@ class RadiusClient
     }
 
     /**
-     * Create Radius Client in DB
+     * Create Radius nasname in DB
      * @return bool Returns true on success, false otherwise
      */
     function create()
     {
         /* Prepare inserting query */
         $query = "INSERT INTO nas(
-            client,
+            nasname,
             secret,
             description
         )";
 
         $query .= ' VALUES ("'
-            . $this->client . '", "'
+            . $this->nasname . '", "'
             . $this->secret . '", "'
             . $this->description
             . '")';
@@ -109,17 +120,17 @@ class RadiusClient
     }
 
     /**
-     * Delete Radius clients other than current one
+     * Delete Radius client
      *
      * @return bool Returns true on success, false otherwise
      */
-    function deleteOtherClients()
+    function delete()
     {
         /* Prepare inserting query */
         $query = "DELETE "
             . " FROM nas";
 
-        $query .= " WHERE client <> '" . $this->client . "'";
+        $query .= " WHERE nasname = '" . $this->nasname . "'";
 
         $query_result = $this->database->query($query);
         if (!$query_result)
@@ -140,16 +151,43 @@ class RadiusClient
         $query = "UPDATE nas ";
 
         $query .= " SET
-        client = '" . $this->client . "' , " . "
+        nasname = '" . $this->nasname . "' , " . "
             secret = '" . $this->secret . "' , " . "
             description = '" . $this->description . "'";
 
-        $query .= " WHERE client = '" . $this->client . "'";
+        $query .= " WHERE nasname = '" . $this->nasname . "'";
 
         $query_result = $this->database->query($query);
         if (!$query_result) {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Update current User to Database
+     * 
+     * @return array Returns true upon success, false otherwise
+     * 
+     */
+    function getClients()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT nasname, description FROM nas";
+
+        $query_result = $this->database->query($query);
+        if ($query_result) {
+            $clients[] = new RadiusClient($this->database);
+            $c = 0;
+            if ($query_result->num_rows != 0) {
+                while ($row = $query_result->fetch_assoc()) {
+                    $clients[$c]->nasname = $row['nasname'];
+                    $clients[$c]->description = $row['description'];
+                    $c++;
+                }
+                return $clients;
+            }
+        } else
+            return false;
     }
 }

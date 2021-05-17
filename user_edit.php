@@ -172,6 +172,7 @@ if (!$database->getConnectionStatus()) {
             /* IF User was deleted from DB without errors */
             if ($user->delete()) {
                 /* Print success code to session superglobal (banner will be printed down on page) */
+                deleteUserImage($_POST['id']);
                 $_SESSION['status_stdout'] = "User Deleted";
                 echo ("<script>location.href='users.php'</script>");
             }
@@ -220,61 +221,8 @@ if (!$database->getConnectionStatus()) {
 
         /* If User presses "Save Profile Image" button */
         if (isset($_POST['upload_image'])) {
-
-            $target_dir = "/netitworks/media/";
-            $uploadOk = 1;
-            $imageFileType = explode(".", $_FILES["user_image"]["name"])[1];
-            $target_file = $target_dir . $_SESSION['user_toEdit'] . "." . $imageFileType;
-
-            // Check if image file is a actual image or fake image
-            if (isset($_POST["upload_image"])) {
-                $check = getimagesize($_FILES["user_image"]["tmp_name"]);
-                if ($check !== false) {
-                    $uploadOk = 1;
-                } else {
-                    $_SESSION['status_stderr'] =  "File is not an image.";
-                    $uploadOk = 0;
-                }
-            }
-
-            // Check if file already exists
-            if (file_exists($target_file)) {
-                $_SESSION['status_stderr'] =  "Sorry, file already exists.";
-                $uploadOk = 0;
-            }
-
-            // Check file size
-            if ($_FILES["user_image"]["size"] > 500000) {
-                $_SESSION['status_stderr'] =  "Sorry, your file is too large.";
-                $uploadOk = 0;
-            }
-
-            // Allow certain file formats
-            if (
-                $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-                && $imageFileType != "gif"
-            ) {
-                $_SESSION['status_stderr'] =  "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-                $uploadOk = 0;
-            }
-
-            // Check if $uploadOk is set to 0 by an error
-            if ($uploadOk == 1) {
-
-                $arrayUserImages = glob($_SERVER['DOCUMENT_ROOT'] . "netitworks/media/" . $_POST['id'] . ".*", GLOB_ERR);
-                if ($arrayUserImages) {
-                    for ($c = 0; $c < sizeof($arrayUserImages); $c++) {
-                        // Use unlink() function to delete a file 
-                        if (!unlink($arrayUserImages[$c]))
-                            $_SESSION['status_stderr'] = ("Previous image cannot be deleted due to an error");
-                    }
-                }
-
-                if (move_uploaded_file($_FILES["user_image"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'] . $target_file)) {
-                    $_SESSION['status_stdout'] =  "The file " . htmlspecialchars(basename($_FILES["user_image"]["name"])) . " has been uploaded.";
-                    header("Refresh:2; user_edit.php");
-                }
-            }
+            /* Upload it to webserver with user id name as filename */
+            uploadUserImage($_SESSION['user_toEdit']);
         }
     }
 
@@ -309,7 +257,7 @@ if (!$database->getConnectionStatus()) {
                         </div>
                         <div class="custom-file">
                             <input type="file" name="user_image" id="user_image" class="custom-file-input">
-                            <label class="custom-file-label" for="user_image">Edit Profile Image</label>
+                            <label class="custom-file-label" for="user_image">JPG JPEG PNG GIF are accepted file formats</label>
                             <div class="mt-2 text-center">
                                 <button class="btn btn-primary profile-button" data-toggle="modal" data-target="#userUploadImage" type="button">Save Profile Image</button>
                             </div>
