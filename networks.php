@@ -12,9 +12,9 @@
 
 namespace NetItWorks;
 
-checkAdminSession();
-
 require_once("vendor/autoload.php");
+
+checkAdminSession();
 
 /* Gets config parameters from variable stored in config/configure_controller.php  */
 if ($GLOBALS['netitworks_conf']['controller_configuration_done'] == 'yes')
@@ -202,6 +202,8 @@ else {
         <?php
         /* Print banner status with $_SESSION stdout/stderr strings */
         printBanner();
+        unset($_SESSION['status_stderr']);
+        unset($_SESSION['status_stdout']);
         ?>
 
     </div>

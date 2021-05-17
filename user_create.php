@@ -173,7 +173,7 @@ if (!$database->getConnectionStatus()) {
                             <h4 class="text-right">User Settings</h4>
                         </div>
                         <div class="row mt-2">
-                            <div class="col-md-6"><label class="labels">Username</label><input type="text" name="id" class="form-control" placeholder="Username" value="" required></div>
+                            <div class="col-md-6"><label class="labels">Username or MAC Address</label><input type="text" name="id" class="form-control" placeholder="Username" value="" required></div>
                         </div>
                         <div class="row mt-3">
                             <div class="col-md-6"><label class="labels">Phone Number</label><input type="text" name="phone" class="form-control" placeholder="Phone Number" value=""></div>

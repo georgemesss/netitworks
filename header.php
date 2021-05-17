@@ -48,7 +48,6 @@ require_once("vendor/autoload.php");
                     <h6 class="collapse-header">User Management:</h6>
                     <a class="collapse-item" href="users.php">List Users</a>
                     <a class="collapse-item" href="user_create.php">Create User</a>
-                    <a class="collapse-item" href="user_hw_create.php">Create Hardware User</a>
                 </div>
             </div>
         </li>
