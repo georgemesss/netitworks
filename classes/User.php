@@ -283,6 +283,56 @@ class User
     }
 
     /**
+     * Get Pending Users list
+     *
+     * @return array|bool  $Return array of Users, false upon error
+     */
+    function getPendingUsers()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT " .
+            "id,
+            type,
+            password,
+            status,
+            phone,
+            email,
+            ip_limitation_status,
+            hw_limitation_status,
+            ip_range_start,
+            ip_range_stop,
+            active_net_group
+        " . " FROM net_user";
+
+        $query .= " WHERE status = 'pending'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result) {
+            return false; //Error
+        } else {
+            $users[] = new User($this->database, $this->controller);
+            $c = 0;
+            if ($query_result->num_rows != 0) {
+                while ($row = $query_result->fetch_assoc()) {
+                    $users[$c]->id = $row['id'];
+                    $users[$c]->type = $row['type'];
+                    $users[$c]->password = $row['password'];
+                    $users[$c]->status = $row['status'];
+                    $users[$c]->phone = $row['phone'];
+                    $users[$c]->email = $row['email'];
+                    $users[$c]->ip_limitation_status = $row['ip_limitation_status'];
+                    $users[$c]->hw_limitation_status = $row['hw_limitation_status'];
+                    $users[$c]->ip_range_start = $row['ip_range_start'];
+                    $users[$c]->ip_range_stop = $row['ip_range_stop'];
+                    $users[$c]->active_net_group = $row['active_net_group'];
+                    $c++;
+                }
+                return $users;
+            }
+        }
+    }
+
+    /**
      * Delete a user
      *
      * @return bool Returns true on success, false otherwise

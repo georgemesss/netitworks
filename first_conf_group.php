@@ -40,7 +40,7 @@ elseif (!$database->getConnectionStatus()) {
         $_POST = emptyToNull($_POST);
 
         /* Force group and admin privilege status to enabled */
-        $_POST['disabled'] = 0;
+        $_POST['status'] = 1;
         $_POST['admin_privilege_status'] = 1;
 
         if (!isset($_POST['ip_limitation_status']))

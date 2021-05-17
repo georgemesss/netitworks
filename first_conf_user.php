@@ -48,12 +48,12 @@ elseif (!$database->getConnectionStatus()) {
             /* IF New password is set */
             else
                 /* Encrypt new password */
-                $_POST['password_1'] = $user->cryptPassword($_POST['password_1']);
+                $_POST['password_1'] = $userToCreate->cryptPassword($_POST['password_1']);
 
             $_POST = emptyToNull($_POST);
 
             /* Force group and admin privilege status to enabled */
-            $_POST['disabled'] = 0;
+            $_POST['status'] = 'active';
 
             if (!isset($_POST['ip_limitation_status']))
                 $_POST['ip_limitation_status'] = 0;

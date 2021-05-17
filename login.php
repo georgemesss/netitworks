@@ -81,7 +81,13 @@ if ($database->connection) {
                         //User is admin
                         $associated = true;
                         $_SESSION['admin_id'] = $user->id;
-                        echo ("<script>location.href='dashboard.php'</script>");
+
+                        if (isset($_SESSION['user_toApprove']) | isset($_SESSION['user_toDeny'])) {
+                            $_SESSION['status_stdout'] = "User Status Changed";
+                            echo ("<script>location.href='users_pending.php'</script>");
+                        } else {
+                            echo ("<script>location.href='dashboard.php'</script>");
+                        }
                     }
                     /* If the Group is normal AND is set to ACTIVE */ elseif ($associatedGroups[$c]->name != $guest_group && $associatedGroups[$c]->status == 1) {
                         $associated = true;
