@@ -121,7 +121,7 @@ include "./head.html";
 
 <body>
 
-    <?php include "./header.html" ?>
+    <?php include "./header.php" ?>
 
     <form action="controller_configure.php" method="post">
 

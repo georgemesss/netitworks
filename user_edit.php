@@ -217,6 +217,65 @@ if (!$database->getConnectionStatus()) {
                 /* Print error code to session superglobal (banner will be printed down on page) */
                 $_SESSION['status_stderr'] = "Error on Deleting Device";
         }
+
+        /* If User presses "Save Profile Image" button */
+        if (isset($_POST['upload_image'])) {
+
+            $target_dir = "/netitworks/media/";
+            $uploadOk = 1;
+            $imageFileType = explode(".", $_FILES["user_image"]["name"])[1];
+            $target_file = $target_dir . $_SESSION['user_toEdit'] . "." . $imageFileType;
+
+            // Check if image file is a actual image or fake image
+            if (isset($_POST["upload_image"])) {
+                $check = getimagesize($_FILES["user_image"]["tmp_name"]);
+                if ($check !== false) {
+                    $uploadOk = 1;
+                } else {
+                    $_SESSION['status_stderr'] =  "File is not an image.";
+                    $uploadOk = 0;
+                }
+            }
+
+            // Check if file already exists
+            if (file_exists($target_file)) {
+                $_SESSION['status_stderr'] =  "Sorry, file already exists.";
+                $uploadOk = 0;
+            }
+
+            // Check file size
+            if ($_FILES["user_image"]["size"] > 500000) {
+                $_SESSION['status_stderr'] =  "Sorry, your file is too large.";
+                $uploadOk = 0;
+            }
+
+            // Allow certain file formats
+            if (
+                $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+                && $imageFileType != "gif"
+            ) {
+                $_SESSION['status_stderr'] =  "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+                $uploadOk = 0;
+            }
+
+            // Check if $uploadOk is set to 0 by an error
+            if ($uploadOk == 1) {
+
+                $arrayUserImages = glob($_SERVER['DOCUMENT_ROOT'] . "netitworks/media/" . $_POST['id'] . ".*", GLOB_ERR);
+                if ($arrayUserImages) {
+                    for ($c = 0; $c < sizeof($arrayUserImages); $c++) {
+                        // Use unlink() function to delete a file 
+                        if (!unlink($arrayUserImages[$c]))
+                            $_SESSION['status_stderr'] = ("Previous image cannot be deleted due to an error");
+                    }
+                }
+
+                if (move_uploaded_file($_FILES["user_image"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'] . $target_file)) {
+                    $_SESSION['status_stdout'] =  "The file " . htmlspecialchars(basename($_FILES["user_image"]["name"])) . " has been uploaded.";
+                    header("Refresh:2; user_edit.php");
+                }
+            }
+        }
     }
 
     /* If name post global attribute is NOT set */ else {
@@ -233,9 +292,9 @@ if (!$database->getConnectionStatus()) {
 
 <body>
 
-    <?php include "./header.html" ?>
+    <?php include "./header.php" ?>
 
-    <form action="user_edit.php" method="post">
+    <form action="user_edit.php" enctype="multipart/form-data" method="post">
 
         <div class="container-fluid mt-5 mb-5">
             <h1 class="text-center">Edit User</h1>
@@ -245,52 +304,64 @@ if (!$database->getConnectionStatus()) {
                 if ($ifUserSet) { ?>
                 <div class="row">
                     <div class="col-md-4 border-right">
+                        <div class="d-flex flex-column align-items-center text-center p-3 py-2">
+                            <img class="img-fluid rounded-circle" style="width: 195px; height: 195px;" src="<?php echo getUserImage($user->id); ?>">
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" name="user_image" id="user_image" class="custom-file-input">
+                            <label class="custom-file-label" for="user_image">Edit Profile Image</label>
+                            <div class="mt-2 text-center">
+                                <button class="btn btn-primary profile-button" data-toggle="modal" data-target="#userUploadImage" type="button">Save Profile Image</button>
+                            </div>
+                        </div>
                         <div class="p-3 py-5">
-                            <div class="row">
-                                <h7>User Name: </h7>
-                                <span class="badge badge-primary">
-                                    <?php echo $user->id; ?></span>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h7>User Name: </h7>
+                                    <span class="badge badge-primary">
+                                        <?php echo $user->id; ?></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <h7>Status: </h7>
+                                    <?php if ($user->status == 'active')
+                                        echo '<span class="badge badge-success">Enabled</span>';
+                                    else
+                                        echo '<span class="badge badge-danger">Disabled</span>'; ?>
+                                </div>
                             </div>
-                            <br>
-                            <div class="row">
-                                <h7>Status: </h7>
-                                <?php if ($user->status == 'active')
-                                    echo '<span class="badge badge-success">Enabled</span>';
-                                else
-                                    echo '<span class="badge badge-danger">Disabled</span>'; ?>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h7>Active Connections: </h7> <span class="badge badge-success"><?php echo $user->countActiveConnections(); ?></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <h7>History Devices: </h7> <span class="badge badge-success"><?php echo $user->countConnectedDevices(); ?></span>
+                                </div>
                             </div>
-                            <br>
-                            <div class="row">
-                                <h7>Active Connections: </h7> <span class="badge badge-success"><?php echo $user->countActiveConnections(); ?></span>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h7>IP Address Range: </h7>
+                                    <span class="badge badge-info">
+                                        <?php
+                                        if ($user->ip_range_start != 'NULL' && $user->ip_range_stop != 'NULL')
+                                            echo $user->ip_range_start . " - " . $user->ip_range_stop;
+                                        ?></span>
+                                </div>
                             </div>
-                            <br>
-                            <div class="row">
-                                <h7>Connected Devices (Total History): </h7> <span class="badge badge-success"><?php echo $user->countConnectedDevices(); ?></span>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <h7>IP Address Range: </h7>
-                                <span class="badge badge-info">
-                                    <?php
-                                    if ($user->ip_range_start != 'NULL' && $user->ip_range_stop != 'NULL')
-                                        echo $user->ip_range_start . " - " . $user->ip_range_stop;
-                                    ?></span>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <h7>Hw Limitation Status: </h7>
-                                <?php if ($user->hw_limitation_status == 1)
-                                    echo '<span class="badge badge-success">Enabled</span>';
-                                else
-                                    echo '<span class="badge badge-danger">Disabled</span>'; ?>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <h7>IP Limitation Status: </h7>
-                                <?php if ($user->ip_limitation_status == 1)
-                                    echo '<span class="badge badge-success">Enabled</span>';
-                                else
-                                    echo '<span class="badge badge-danger">Disabled</span>'; ?>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h7>Hw Limitation Status: </h7>
+                                    <?php if ($user->hw_limitation_status == 1)
+                                        echo '<span class="badge badge-success">Enabled</span>';
+                                    else
+                                        echo '<span class="badge badge-danger">Disabled</span>'; ?>
+                                </div>
+                                <div class="col-md-6">
+                                    <h7>IP Limitation Status: </h7>
+                                    <?php if ($user->ip_limitation_status == 1)
+                                        echo '<span class="badge badge-success">Enabled</span>';
+                                    else
+                                        echo '<span class="badge badge-danger">Disabled</span>'; ?>
+                                </div>
                             </div>
                             <br>
                             <br>
@@ -337,7 +408,7 @@ if (!$database->getConnectionStatus()) {
                                 <h4 class="text-right">User Settings</h4>
                             </div>
                             <div class="row mt-2">
-                                <div class="col-md-6"><label class="labels">Username</label><input type="text" name="id" class="form-control" placeholder="Username" value="<?php echo $user->id ?>" value="<?php echo $user->id ?>" readonly></div>
+                                <div class="col-md-6"><label class="labels">Username</label><input type="text" name="id" class="form-control" placeholder="Username" value="<?php echo $user->id; ?>" value="<?php echo $user->id; ?>" readonly></div>
                             </div>
                             <div class="row mt-3">
                                 <div class="col-md-6"><label class="labels">Phone Number</label><input type="text" name="phone" class="form-control" placeholder="Phone Number" value="<?php if ($user->phone != 'NULL') echo $user->phone ?>"></div>
@@ -376,7 +447,7 @@ if (!$database->getConnectionStatus()) {
                             <div class="row mt-2">
                                 <div class="mt-5 text-center"><button class="btn btn-success User-button" data-toggle="modal" data-target="#userSaveSettingsModal" type="button">Save Settings</button></div>
                                 <hr>
-                                <div class="mt-5 text-center"><button class="btn btn-danger User-button" data-toggle="modal" data-target="#userDeleteModal" type="button">Delete User</button></div>
+                                <div class="mt-5 text-center"><button class="btn btn-danger User-button" data-toggle="modal" data-target="#userDeleteModal" type="button">Delete My Account</button></div>
                             </div>
                         </div>
                     </div>
@@ -426,7 +497,7 @@ if (!$database->getConnectionStatus()) {
                                                             <td>
                                                                 <?php $deviceToDelete =  str_replace(':', '', $user->limitedDevices[$c]['mac_address']) ?>
                                                                 <div class="mt-5 text-center"><button class="btn btn-danger User-button btn-sm" data-toggle="modal" data-target="#groupDeleteLimitedDevice<?php echo $deviceToDelete; ?>" type="button">Delete</button></div>
-                                                                <!-- Modal User Delete -->
+                                                                <!-- Modal Device Delete -->
                                                                 <div class="modal fade" id="groupDeleteLimitedDevice<?php echo $deviceToDelete; ?>" tabindex="-1" role="dialog" aria-labelledby="groupDeleteLimitedDeviceLabel<?php $deviceToDelete; ?>" aria-hidden="true">
                                                                     <div class="modal-dialog" role="document">
                                                                         <div class="modal-content">
@@ -458,26 +529,26 @@ if (!$database->getConnectionStatus()) {
                         </div>
                     </div>
 
-                    <!-- Modal User Delete -->
+                    <!-- Modal Account Delete -->
                     <div class="modal fade" id="userDeleteModal" tabindex="-1" role="dialog" aria-labelledby="userDeleteModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h7 class="modal-title" id="userDeleteModalLabel">Hey! Are you sure you want to DELETE the User?</h7>
+                                    <h7 class="modal-title" id="userDeleteModalLabel">Hey! Are you sure you want to DELETE your Account?</h7>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-danger" name="user_delete">Delete User</button>
+                                    <button type="submit" class="btn btn-danger" name="user_delete">Delete My Account</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
 
-                    <!-- Modal User Save Settings -->
+                    <!-- Modal Account Save Settings -->
                     <div class="modal fade" id="userSaveSettingsModal" tabindex="-1" role="dialog" aria-labelledby="userSaveSettingsModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -514,6 +585,27 @@ if (!$database->getConnectionStatus()) {
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-primary" name="add_limited_device">Add Device</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal User Edit Image Device -->
+                    <div class="modal fade" id="userUploadImage" tabindex="-1" role="dialog" aria-labelledby="userUploadImageLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h7 class="modal-title" id="userUploadImageLabel">Hey! Are you sure?</h7>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    You are changing the User's Profile Image
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success" name="upload_image">Save Image</button>
                                 </div>
                             </div>
                         </div>

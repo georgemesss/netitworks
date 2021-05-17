@@ -91,7 +91,7 @@ include "./head.html";
 
 <body>
 
-    <?php include "./header.html" ?>
+    <?php include "./header.php" ?>
 
     <form action="guest_configure.php" method="post">
 

@@ -50,7 +50,7 @@ include "./head.html";
 
 <body>
 
-    <?php include "./header.html" ?>
+    <?php include "./header.php" ?>
 
     <form action="database_configure.php" method="post">
 

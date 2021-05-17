@@ -1,11 +1,11 @@
 <?php
     global $controller_conf;
     $controller_conf = [
-        'name' => '',
-        'description' => '',
-        'ip' => '',
-        'port' => '',
-        'username' => '',
-        'password' => '',
+        'name' => 'unifi',
+        'description' => 'mysetup',
+        'ip' => '192.168.100.216',
+        'port' => '8443',
+        'username' => 'giorgiodev',
+        'password' => 'lasolit@xgcDEV',
         'disabled' => '' ]
 ?>

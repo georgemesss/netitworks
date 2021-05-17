@@ -100,7 +100,7 @@ if (!isset($_SESSION['admin_id'])) {
 
 <body>
 
-    <?php include "./header.html" ?>
+    <?php include "./header.php" ?>
 
     <div class="container-fluid">
         <!-- Page Heading -->

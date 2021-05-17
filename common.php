@@ -59,3 +59,13 @@ function checkAdminSession()
         echo ("<script>location.href='access_denied.php'</script>");
     }
 }
+
+function getUserImage($user_id)
+{
+    if (glob($_SERVER['DOCUMENT_ROOT'] . "netitworks/media/" . $user_id . ".*", GLOB_ERR))
+        $user_image_path = glob("media/" . $user_id . ".*", GLOB_ERR)[0];
+    else
+        $user_image_path = "media/default_user.svg";
+
+    return $user_image_path;
+}

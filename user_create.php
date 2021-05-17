@@ -130,7 +130,7 @@ if (!$database->getConnectionStatus()) {
 
 <body>
 
-    <?php include "./header.html" ?>
+    <?php include "./header.php" ?>
 
     <form action="user_create.php" method="post">
 

@@ -106,7 +106,7 @@ authenticate {
 	#  attribute. Encrypted passwords won't work.
 	#
     Auth-Type MS-CHAP {
-         mschap
+        mschap
     }
         
 	#
@@ -129,7 +129,7 @@ authenticate {
 	#  encrypted via `crypt`, `bcrypt`, or other hashing.
 	#
     Auth-Type PAP {
-         pap
+    	pap
     }
         
 }

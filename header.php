@@ -1,3 +1,10 @@
+<?php
+
+namespace NetItWorks;
+
+require_once("vendor/autoload.php");
+?>
+
 <!-- Page Wrapper -->
 <div id="wrapper">
 
@@ -32,13 +39,11 @@
 
         <!-- Nav Item - Users Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUserManagement"
-                aria-expanded="true" aria-controls="collapseUserManagement">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUserManagement" aria-expanded="true" aria-controls="collapseUserManagement">
                 <i class="fas fa-fw fa-cog"></i>
                 <span>Users</span>
             </a>
-            <div id="collapseUserManagement" class="collapse" aria-labelledby="collapseUserManagement"
-                data-parent="#accordionSidebar">
+            <div id="collapseUserManagement" class="collapse" aria-labelledby="collapseUserManagement" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">User Management:</h6>
                     <a class="collapse-item" href="users.php">List Users</a>
@@ -50,13 +55,11 @@
 
         <!-- Nav Item - Groups Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGroupManagement"
-                aria-expanded="true" aria-controls="collapseGroupManagement">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGroupManagement" aria-expanded="true" aria-controls="collapseGroupManagement">
                 <i class="fas fa-fw fa-cog"></i>
                 <span>Groups</span>
             </a>
-            <div id="collapseGroupManagement" class="collapse" aria-labelledby="collapseGroupManagement"
-                data-parent="#accordionSidebar">
+            <div id="collapseGroupManagement" class="collapse" aria-labelledby="collapseGroupManagement" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Group Management:</h6>
                     <a class="collapse-item" href="groups.php">List Groups</a>
@@ -67,13 +70,11 @@
 
         <!-- Nav Item - Radius Log Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRadiusManagement"
-                aria-expanded="true" aria-controls="collapseRadiusManagement">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRadiusManagement" aria-expanded="true" aria-controls="collapseRadiusManagement">
                 <i class="fas fa-fw fa-cog"></i>
                 <span>Radius Log</span>
             </a>
-            <div id="collapseRadiusManagement" class="collapse" aria-labelledby="collapseRadiusManagement"
-                data-parent="#accordionSidebar">
+            <div id="collapseRadiusManagement" class="collapse" aria-labelledby="collapseRadiusManagement" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Radius Log:</h6>
                     <a class="collapse-item" href="radius_access_log.php">Access Log</a>
@@ -92,13 +93,11 @@
 
         <!-- Nav Item - Self-Registered Users Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGuestManagement"
-                aria-expanded="true" aria-controls="collapseGuestManagement">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGuestManagement" aria-expanded="true" aria-controls="collapseGuestManagement">
                 <i class="fas fa-fw fa-cog"></i>
                 <span>Manage Guests</span>
             </a>
-            <div id="collapseGuestManagement" class="collapse" aria-labelledby="collapseGuestManagement"
-                data-parent="#accordionSidebar">
+            <div id="collapseGuestManagement" class="collapse" aria-labelledby="collapseGuestManagement" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Self-Registered Users:</h6>
                     <a class="collapse-item" href="guest_configure.php">Configure Registration</a>
@@ -109,13 +108,11 @@
 
         <!-- Nav Item - Manage Networks Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseNetworkManagement"
-                aria-expanded="true" aria-controls="collapseNetworkManagement">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseNetworkManagement" aria-expanded="true" aria-controls="collapseNetworkManagement">
                 <i class="fas fa-fw fa-cog"></i>
                 <span>Manage Networks</span>
             </a>
-            <div id="collapseNetworkManagement" class="collapse" aria-labelledby="collapseNetworkManagementLabel"
-                data-parent="#accordionSidebar">
+            <div id="collapseNetworkManagement" class="collapse" aria-labelledby="collapseNetworkManagementLabel" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Manage Networks:</h6>
                     <a class="collapse-item" href="networks.php">List Networks</a>
@@ -138,13 +135,11 @@
 
         <!-- Nav Item - Devices Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatabaseManagement"
-                aria-expanded="true" aria-controls="collapseDatabaseManagement">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatabaseManagement" aria-expanded="true" aria-controls="collapseDatabaseManagement">
                 <i class="fas fa-fw fa-cog"></i>
                 <span>NetITworks Settings</span>
             </a>
-            <div id="collapseDatabaseManagement" class="collapse" aria-labelledby="collapseDatabaseManagementLabel"
-                data-parent="#accordionSidebar">
+            <div id="collapseDatabaseManagement" class="collapse" aria-labelledby="collapseDatabaseManagementLabel" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Database Management:</h6>
                     <a class="collapse-item" href="database_configure.php">Configure Database</a>
@@ -184,17 +179,14 @@
 
                     <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                     <li class="nav-item dropdown no-arrow d-sm-none">
-                        <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-search fa-fw"></i>
                         </a>
                         <!-- Dropdown - Messages -->
-                        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                            aria-labelledby="searchDropdown">
+                        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
                             <form class="form-inline mr-auto w-100 navbar-search">
                                 <div class="input-group">
-                                    <input type="text" class="form-control bg-light border-0 small"
-                                        placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="button">
                                             <i class="fas fa-search fa-sm"></i>
@@ -207,15 +199,13 @@
 
                     <!-- Nav Item - Alerts -->
                     <li class="nav-item dropdown no-arrow mx-1">
-                        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-bell fa-fw"></i>
                             <!-- Counter - Alerts -->
                             <span class="badge badge-danger badge-counter">1</span>
                         </a>
                         <!-- Dropdown - Alerts -->
-                        <div class="dropdown-list bg-gray-200 dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                            aria-labelledby="alertsDropdown">
+                        <div class="dropdown-list bg-gray-200 dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
                             <h6 class="dropdown-header bg-danger">
                                 Alerts Center
                             </h6>
@@ -240,19 +230,18 @@
 
                     <!-- Nav Item - User Information -->
                     <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="mr-2 d-none d-lg-inline text-gray-600 small">Username</span>
-                            <img class="img-profile rounded-circle"
-                                src="/netitworks/media/tux.svg">
+                            <img class="img-profile rounded-circle" src="<?php echo getUserImage($_SESSION['admin_id']); ?>">
                         </a>
                         <!-- Dropdown - User Information -->
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                            aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="profile_edit.php">
-                                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Profile Settings
-                            </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                            <form action="user_edit.php" method="post">
+                                <button class="dropdown-item" type="submit" name="id" value=<?php echo $_SESSION['admin_id']; ?>>
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile Settings
+                                </button>
+                            </form>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="logout.php">
                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>

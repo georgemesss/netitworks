@@ -214,7 +214,7 @@ else {
 
 <body>
 
-    <?php include "./header.html" ?>
+    <?php include "./header.php" ?>
 
     <form action="network_create_specific_lan.php" method="post">
 
