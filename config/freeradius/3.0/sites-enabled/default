@@ -193,7 +193,11 @@ post-auth {
     remove_reply_message_if_eap
 
     Post-Auth-Type REJECT {
-        sql
+        #
+		#	POST-Auth Query to LOG reply
+		#
+		log_user
+		
         attr_filter.access_reject
         eap
         remove_reply_message_if_eap

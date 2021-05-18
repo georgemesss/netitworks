@@ -51,7 +51,7 @@ if (!$database->getConnectionStatus()) {
 
     <div class="container-fluid">
         <!-- Page Heading -->
-        <h1 class="h3 mb-4 text-gray-800">Radius Client Session Log</h1>
+        <h1 class="h3 mb-4 text-gray-800">Radius Client Access Log</h1>
 
         <div class="users-list-filter px-1">
             <form>
@@ -104,22 +104,21 @@ if (!$database->getConnectionStatus()) {
                         <table id="users-list-datatable" class="table dataTable no-footer" role="grid" aria-describedby="users-list-datatable_info">
                             <thead>
                                 <tr role="row">
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending" style="width: 22.2%">MAC Address</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending" style="width: 22.2%">Username</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending" style="width: 11.1%">Time</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending" style="width: 11.1%">IP</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending" style="width: 11.1%">AP ID</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Active Connections: activate to sort column ascending" style="width: 5.5%">Reply Status</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="HW Limitation: activate to sort column ascending" style="width: 5.5%">Reply Net Type</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="HW Limitation: activate to sort column ascending" style="width: 5.5%">Reply Tunnel Type</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Group: activate to sort column ascending" style="width: 5.5%">Reply VLAN ID</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="MAC Address: activate to sort column ascending">MAC Address</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending">Username</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Time: activate to sort column ascending">Time</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="AP ID: activate to sort column ascending">AP ID</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Reply Status: activate to sort column ascending">Reply Status</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Reply Net Type: activate to sort column ascending">Reply Net Type</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Reply Tunnel Type: activate to sort column ascending">Reply Tunnel Type</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Reply VLAN ID: activate to sort column ascending">Reply VLAN ID</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (!empty($keys)) for ($c = 0; $c < sizeof($accessList); $c++) { ?>
                                     <tr role="row" class="odd">
                                         <td>
-                                            <?php echo $accessList[$c]['mac_address']; ?>
+                                            <?php echo str_replace('-', ':',$accessList[$c]['mac_address']); ?>
                                         </td>
                                         <td>
                                             <form action="user_edit.php" method="post">
@@ -133,7 +132,7 @@ if (!$database->getConnectionStatus()) {
                                             <?php echo $accessList[$c]['date_time']; ?>
                                         </td>
                                         <td>
-                                            <?php echo $accessList[$c]['ap_id']; ?>
+                                            <?php echo str_replace('-', ':',$accessList[$c]['ap_id']); ?>
                                         </td>
                                         <td>
                                             <?php echo $accessList[$c]['reply_status']; ?>

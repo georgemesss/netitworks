@@ -12,8 +12,7 @@
     <title>NetItWorks</title>
 
     <!-- Custom fonts for this template-->
-    <link href="node_modules/startbootstrap-sb-admin-2/vendor/fontawesome-free/css/all.min.css" rel="stylesheet"
-        type="text/css">
+    <link href="node_modules/startbootstrap-sb-admin-2/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
     <!-- Custom styles for this template-->
     <link href="node_modules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css" rel="stylesheet">
@@ -46,7 +45,7 @@
     <script src="node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#users-list-datatable').DataTable();
             $('.dataTables_length').addClass('bs-select');
         });
@@ -61,99 +60,57 @@
         }
     </script>
 
-    <!--Password Strength Meter-->
-    <link type="text/css" rel="stylesheet" href="node_modules/password-strength-meter/dist/password.min.css" />
-    <script src="netitworks/node_modules/password-strength-meter/dist/password.min.js"></script>
-
-    <script type="text/javascript">
-        jQuery(document).ready(function ($) {
-            // emojis 😁! See #password5 for more details
-            emojione.imageType = 'svg';
-            emojione.sprints = true;
-            emojione.imagePathSVGSprites = 'https://github.com/Ranks/emojione/raw/master/assets/sprites/emojione.sprites.svg';
-
-            // Showing the progress bar since the first moment.
-            $('#password').password({
-                animate: false
-                // Check out the readme or directly jquery.password.js
-                // for a detailed list of properties.
-            });
-
-            // Default behavior
-            $('#default').password();
-
-            // Linked to field input
-            $('#linked').password({
-                field: '#username',
-                showPercent: true
-            });
-
-            // Custom events (enables button on certain score)
-            // Check the readme for a detailed list of events
-            $('#submit').attr('disabled', true);
-            $('#events').password().on('password.score', function (e, score) {
-                if (score > 75) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
-                }
-            });
-
-            // Change translations
-            $('#translations').password({
-                animate: false,
-                minimumLength: 6,
-                enterPass: emojione.unicodeToImage('Type your password 🔜'),
-                shortPass: emojione.unicodeToImage('You can do it better, dude! 🤕'),
-                badPass: emojione.unicodeToImage('Still needs improvement! 😷'),
-                goodPass: emojione.unicodeToImage('Yeah! That\'s better! 👍'),
-                strongPass: emojione.unicodeToImage('Yup, you made it 🙃'),
-            });
-
-            $('#input-groups').password({
-                closestSelector: '.form-group',
-            });
-        });
-    </script>
+    <script src="node_modules/chart.js/dist/chart.js"></script>
 
     <style type="text/css">
-        label {
-            display: block;
-        }
-
-        input {
-            width: 300px;
-        }
-
-        .container {
-            margin-top: 30px;
-        }
-
-        @media (min-width: 600px) {
-            #main {
-                width: 60%;
+        /* Chart.js */
+        
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: .99
+            }
+            to {
+                opacity: 1
             }
         }
-
-        .emojione {
-            width: 20px;
-            height: 20px;
+        
+        .chartjs-render-monitor {
+            animation: chartjs-render-animation 1ms
         }
-
-        /* better progress bar styles for the bootstrap demo */
-        .pass-strength-visible input.form-control,
-        input.form-control:focus {
-            border-bottom-right-radius: 0;
-            border-bottom-left-radius: 0;
+        
+        .chartjs-size-monitor,
+        .chartjs-size-monitor-expand,
+        .chartjs-size-monitor-shrink {
+            position: absolute;
+            direction: ltr;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            pointer-events: none;
+            visibility: hidden;
+            z-index: -1
         }
-
-        .pass-strength-visible .pass-graybar,
-        .pass-strength-visible .pass-colorbar,
-        .form-control:focus+.pass-wrapper .pass-graybar,
-        .form-control:focus+.pass-wrapper .pass-colorbar {
-            border-bottom-right-radius: 4px;
-            border-bottom-left-radius: 4px;
+        
+        .chartjs-size-monitor-expand>div {
+            position: absolute;
+            width: 1000000px;
+            height: 1000000px;
+            left: 0;
+            top: 0
+        }
+        
+        .chartjs-size-monitor-shrink>div {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            left: 0;
+            top: 0
         }
     </style>
+
+    <!-- Custom styles for this template-->
+    <link href="customLayout.css" rel="stylesheet">
 
 </head>

@@ -103,22 +103,22 @@ if (!$database->getConnectionStatus()) {
                         <table id="users-list-datatable" class="table dataTable no-footer" role="grid" aria-describedby="users-list-datatable_info">
                             <thead>
                                 <tr role="row">
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending" style="width: 22.2%">MAC Address</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending" style="width: 11.1%">Username</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending" style="width: 11.1%">AP ID</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending" style="width: 11.1%">IP</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending" style="width: 11.1%">Start Time</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Active Connections: activate to sort column ascending" style="width: 11.1%">Disconnection Time</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="HW Limitation: activate to sort column ascending" style="width: 5.5%">Input Bytes</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="HW Limitation: activate to sort column ascending" style="width: 5.5%">Output Bytes</th>
-                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Group: activate to sort column ascending" style="width: 11.1%">Termination Cause</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="MAC Address: activate to sort column ascending">MAC Address</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending">Username</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="AP ID: activate to sort column ascending">AP ID</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="IP: activate to sort column ascending">IP</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="First Seen: activate to sort column ascending">First Seen</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Disconnection Time: activate to sort column ascending">Disconnection Time</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Input Bytes: activate to sort column ascending">Input Bytes</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Output Bytes: activate to sort column ascending">Output Bytes</th>
+                                    <th class="sorting" tabindex="0" aria-controls="users-list-datatable" rowspan="1" colspan="1" aria-label="Termination Cause: activate to sort column ascending">Termination Cause</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (!is_bool($clientList)) for ($c = 0; $c < sizeof($clientList); $c++) { ?>
                                     <tr role="row" class="odd">
                                         <td>
-                                            <?php echo $clientList[$c]['mac_address']; ?>
+                                            <?php echo str_replace('-', ':',$clientList[$c]['mac_address']); ?>
                                         </td>
                                         <td>
                                             <form action="user_edit.php" method="post">
@@ -129,7 +129,7 @@ if (!$database->getConnectionStatus()) {
                                             </form>
                                         </td>
                                         <td>
-                                            <?php echo $clientList[$c]['ap_id']; ?>
+                                            <?php echo str_replace('-', ':',$clientList[$c]['ap_id']); ?>
                                         </td>
                                         <td>
                                             <?php echo $clientList[$c]['client_ip']; ?>

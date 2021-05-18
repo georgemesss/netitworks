@@ -106,7 +106,7 @@ authenticate {
 	#  attribute. Encrypted passwords won't work.
 	#
     Auth-Type MS-CHAP {
-        mschap
+		mschap
     }
         
 	#
@@ -182,8 +182,12 @@ post-auth {
 	}
 
 	Post-Auth-Type REJECT {
-		attr_filter.access_reject
+		#
+		#	POST-Auth Query to LOG reply
+		#
+		log_user
 
+		attr_filter.access_reject
 		#
 		#  Let the outer session know which module failed, and why.
 		#

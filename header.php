@@ -9,7 +9,7 @@ require_once("vendor/autoload.php");
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul class="navbar-nav bg-secondary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-medium-purple sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
@@ -115,11 +115,7 @@ require_once("vendor/autoload.php");
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Manage Networks:</h6>
                     <a class="collapse-item" href="networks.php">List Networks</a>
-                    <a class="collapse-item" href="network_create_wan.php">Create WAN</a>
-                    <a class="collapse-item" href="network_create_default_lan.php">Create Default LAN</a>
                     <a class="collapse-item" href="network_create_specific_lan.php">Create Specific LAN</a>
-                    <a class="collapse-item" href="network_create_vpn.php">Create VPN</a>
-                    <a class="collapse-item" href="network_create_vpn.php">Manage Clients</a>
                 </div>
             </div>
         </li>
@@ -163,10 +159,10 @@ require_once("vendor/autoload.php");
     <div id="content-wrapper" class="d-flex flex-column">
 
         <!-- Main Content -->
-        <div id="content">
+        <div id="content" class="bg-magnolia">
 
             <!-- Topbar -->
-            <nav class="navbar navbar-expand navbar bg-gray-400 topbar mb-4 static-top shadow">
+            <nav class="navbar navbar-expand navbar bg-moon-raker topbar mb-4 static-top shadow">
 
                 <!-- Sidebar Toggle (Topbar) -->
                 <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">

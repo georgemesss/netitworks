@@ -626,4 +626,61 @@ class Group
         }
         return false;
     }
+
+    /**
+     * Returns total number of Disabled Groups in DataBase
+     *
+     * @return int|bool Returns number of disabled groups , false upon error
+     */
+    public function countDisabledGroups()
+    {
+        /* Prepare select query */
+        $query = "SELECT COUNT(name) FROM net_group WHERE status=0";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+        else
+            return $query_result->fetch_assoc()["COUNT(name)"];
+    }
+
+    public function getGroupUserStat()
+    {
+        $groupList = $this->getGroups();
+        $groupUserNumbers = array();
+        for ($c = 0; $c < sizeof($groupList); $c++) {
+            $query = "SELECT COUNT(user_id) FROM user_group_partecipation WHERE group_name = '" . $groupList[$c]->name . "'";
+            $query_result = $this->database->query($query);
+            $groupUserNumbers[$c]['group'] = $groupList[$c]->name;
+            $groupUserNumbers[$c]['numberUsers'] = $query_result->fetch_assoc()["COUNT(user_id)"];
+        }
+        return ($groupUserNumbers);
+    }
+
+    public function getGroupTypeStat()
+    {
+        $groupTypesNumbers = array();
+
+        $query = "SELECT COUNT(name) FROM net_group WHERE net_type = 13";
+        $query_result = $this->database->query($query);
+        $groupTypesNumbers[0]['net_type'] = 'LAN';
+        $groupTypesNumbers[0]['numberGroups'] = $query_result->fetch_assoc()["COUNT(name)"];
+
+        $query = "SELECT COUNT(name) FROM net_group WHERE net_type = 6";
+        $query_result = $this->database->query($query);
+        $groupTypesNumbers[1]['net_type'] = 'VPN';
+        $groupTypesNumbers[1]['numberGroups'] = $query_result->fetch_assoc()["COUNT(name)"];
+
+        $query = "SELECT COUNT(name) FROM net_group WHERE net_type = 1";
+        $query_result = $this->database->query($query);
+        $groupTypesNumbers[2]['net_type'] = 'Access Login';
+        $groupTypesNumbers[2]['numberGroups'] = $query_result->fetch_assoc()["COUNT(name)"];
+
+        $query = "SELECT COUNT(name) FROM net_group WHERE net_type = 0";
+        $query_result = $this->database->query($query);
+        $groupTypesNumbers[3]['net_type'] = 'Guest';
+        $groupTypesNumbers[3]['numberGroups'] = $query_result->fetch_assoc()["COUNT(name)"];
+
+        return ($groupTypesNumbers);
+    }
 }

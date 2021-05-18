@@ -686,6 +686,80 @@ class User
     }
 
     /**
+     * Returns total number of Users in DataBase
+     *
+     * @return int|bool Returns number of users , false upon error
+     */
+    public function countTotalUsers()
+    {
+        /* Prepare inserting query */
+        $query = "SELECT count(id) from net_user";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+        else {
+            if ($query_result->num_rows != 0) {
+                while ($row = $query_result->fetch_assoc())
+                    $counter = $row["count(id)"];
+            }
+            return $counter;
+        }
+        return false;
+    }
+
+    /**
+     * Returns total number of Active Users in DataBase
+     *
+     * @return int|bool Returns number of active users , false upon error
+     */
+    public function countActiveUsers()
+    {
+        /* Prepare select query */
+        $query = "SELECT COUNT(id) FROM net_user WHERE status='active'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+        else
+            return $query_result->fetch_assoc()["COUNT(id)"];
+    }
+
+    /**
+     * Returns total number of Disabled Users in DataBase
+     *
+     * @return int|bool Returns number of disabled users , false upon error
+     */
+    public function countDisabledUsers()
+    {
+        /* Prepare select query */
+        $query = "SELECT COUNT(id) FROM net_user WHERE status='disabled'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+        else
+            return $query_result->fetch_assoc()["COUNT(id)"];
+    }
+
+    /**
+     * Returns total number of Pending Users in DataBase
+     *
+     * @return int|bool Returns number of pending users , false upon error
+     */
+    public function countPendingUsers()
+    {
+        /* Prepare select query */
+        $query = "SELECT COUNT(id) FROM net_user WHERE status='pending'";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+        else
+            return $query_result->fetch_assoc()["COUNT(id)"];
+    }
+
+    /**
      * Returns array of client sessions 
      *
      * @return array|bool Returns array of client sessions , false upon error
@@ -712,6 +786,7 @@ class User
             $sessions[] = array();
             while ($row = $query_result->fetch_assoc()) {
                 $sessions[$c] = $row;
+                $c++;
             }
             return $sessions;
         }
@@ -731,7 +806,7 @@ class User
         date_time,
         ap_id,
         reply_status,
-        reply_net_type,
+        reply_mac_address,
         reply_net_attribute_type,
         reply_net_vlan_id from client_access_log";
 
@@ -743,8 +818,28 @@ class User
             $access[] = array();
             while ($row = $query_result->fetch_assoc()) {
                 $access[$c] = $row;
+                $c++;
             }
             return $access;
         }
+    }
+
+    public function getUserStatusStat()
+    {
+        $userStatusNumbers = array();
+
+        $query = "SELECT * FROM client_session_log
+        LEFT JOIN net_user 
+        ON client_session_log.user_name = net_user.id
+        WHERE client_session_log.session_termination_cause = ''
+        GROUP BY user_name";
+        $query_result = $this->database->query($query);
+        $userStatusNumbers[0]['status'] = 'Online';
+        $userStatusNumbers[0]['numberUsers'] = $query_result->num_rows;
+
+        $userStatusNumbers[1]['status'] = 'Offline';
+        $userStatusNumbers[1]['numberUsers'] = $this->countTotalUsers() - $userStatusNumbers[0]['numberUsers'];
+
+        return ($userStatusNumbers);
     }
 }
