@@ -34,7 +34,7 @@ require_once("vendor/autoload.php");
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            RADIUS Log
+            User Management
         </div>
 
         <!-- Nav Item - Users Collapse Menu -->

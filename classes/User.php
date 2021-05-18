@@ -684,4 +684,67 @@ class User
         }
         return false;
     }
+
+    /**
+     * Returns array of client sessions 
+     *
+     * @return array|bool Returns array of client sessions , false upon error
+     */
+    public function getSessions()
+    {
+        /* Prepare select query */
+        $query = "SELECT 
+        mac_address,
+        user_name,
+        ap_id,
+        client_ip,
+        first_seen_datetime,
+        last_seen_datetime,
+        input_bytes_session,
+        output_bytes_session,
+        session_termination_cause from client_session_log";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+        else {
+            $c = 0;
+            $sessions[] = array();
+            while ($row = $query_result->fetch_assoc()) {
+                $sessions[$c] = $row;
+            }
+            return $sessions;
+        }
+    }
+
+    /**
+     * Returns array of client access  
+     *
+     * @return array|bool Returns array of client access   , false upon error
+     */
+    public function getAccess()
+    {
+        /* Prepare select query */
+        $query = "SELECT 
+        mac_address,
+        user_name,
+        date_time,
+        ap_id,
+        reply_status,
+        reply_net_type,
+        reply_net_attribute_type,
+        reply_net_vlan_id from client_access_log";
+
+        $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false; //Error
+        else {
+            $c = 0;
+            $access[] = array();
+            while ($row = $query_result->fetch_assoc()) {
+                $access[$c] = $row;
+            }
+            return $access;
+        }
+    }
 }
