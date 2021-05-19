@@ -35,7 +35,7 @@ if (!$database->getConnectionStatus()) {
     /* IF Group List Fetching in DB returned errors */
     if (!$clientList && !is_null($clientList))
         /* Print error code to session superglobal (banner will be printed down on page) */
-        $_SESSION['status_stderr'] = "Error on User Fetching";
+        $_SESSION['status_stderr'] = "Error on Client List Fetching";
 }
 ?>
 

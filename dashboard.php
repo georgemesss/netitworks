@@ -467,7 +467,7 @@ if ($GLOBALS['netitworks_conf']['controller_configuration_done'] == 'yes') {
                                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                                         Pending Guests</div>
                                     <div class="h5 mb-0 font-weight-bold text-danger">
-                                    <?php echo $user->countPendingUsers(); ?>
+                                        <?php echo $user->countPendingUsers(); ?>
                                     </div>
                                 </div>
                                 <div class="col-auto">

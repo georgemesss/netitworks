@@ -666,7 +666,7 @@ class User
     public function countConnectedDevices()
     {
         /* Prepare inserting query */
-        $query = "SELECT count(net_user.id) from net_user
+        $query = "SELECT COUNT(net_user.id) from net_user
             LEFT JOIN client_session_log
             on net_user.id = client_session_log.user_name";
 
@@ -678,7 +678,7 @@ class User
         else {
             if ($query_result->num_rows != 0) {
                 while ($row = $query_result->fetch_assoc())
-                    $counter = $row["count(net_user.id)"];
+                    $counter = $row["COUNT(net_user.id)"];
             }
             return $counter;
         }
@@ -698,14 +698,8 @@ class User
         $query_result = $this->database->query($query);
         if (!$query_result)
             return false; //Error
-        else {
-            if ($query_result->num_rows != 0) {
-                while ($row = $query_result->fetch_assoc())
-                    $counter = $row["count(id)"];
-            }
-            return $counter;
-        }
-        return false;
+        else
+            return $query_result->fetch_assoc()["COUNT(id)"];
     }
 
     /**
@@ -762,7 +756,7 @@ class User
     /**
      * Returns array of client sessions 
      *
-     * @return array|bool Returns array of client sessions , false upon error
+     * @return array|bool Returns array of client sessions, false upon error
      */
     public function getSessions()
     {
@@ -795,7 +789,7 @@ class User
     /**
      * Returns array of client access  
      *
-     * @return array|bool Returns array of client access   , false upon error
+     * @return array|bool Returns array of client access, false upon error
      */
     public function getAccess()
     {
@@ -824,6 +818,11 @@ class User
         }
     }
 
+    /**
+     * Returns array of users list and their status from DataBase
+     *
+     * @return array|bool Returns array of users and their status, false upon error
+     */
     public function getUserStatusStat()
     {
         $userStatusNumbers = array();
@@ -833,7 +832,9 @@ class User
         ON client_session_log.user_name = net_user.id
         WHERE client_session_log.session_termination_cause = ''
         GROUP BY user_name";
+
         $query_result = $this->database->query($query);
+
         $userStatusNumbers[0]['status'] = 'Online';
         $userStatusNumbers[0]['numberUsers'] = $query_result->num_rows;
 

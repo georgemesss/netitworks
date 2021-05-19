@@ -2,10 +2,10 @@
 
 /**
  * -- Page Info -- 
- * radius_session_log.php
+ * radius_access_log.php
  * 
  * -- Page Description -- 
- * This Page will let the user view the Users Session Log in DataBase
+ * This Page will let the user view the Users Access Log in DataBase
  */
 
 /* Include NetItWorks Classes and use Composer Autoloader */
@@ -36,7 +36,7 @@ if (!$database->getConnectionStatus()) {
     /* IF Group List Fetching in DB returned errors */
     if (!$accessList && !is_null($accessList))
         /* Print error code to session superglobal (banner will be printed down on page) */
-        $_SESSION['status_stderr'] = "Error on User Fetching";
+        $_SESSION['status_stderr'] = "Error on Client List Fetching";
 }
 ?>
 

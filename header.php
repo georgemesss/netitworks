@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * -- Page Info -- 
+ * header.php
+ * 
+ * -- Page Description -- 
+ * This Page includes the Header (TopBar + Navbar) of each page
+ */
+
+/* Include NetItWorks Classes and use Composer Autoloader */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");

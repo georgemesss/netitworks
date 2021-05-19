@@ -630,7 +630,7 @@ class Group
     /**
      * Returns total number of Disabled Groups in DataBase
      *
-     * @return int|bool Returns number of disabled groups , false upon error
+     * @return int|bool Returns number of disabled groups, false upon error
      */
     public function countDisabledGroups()
     {
@@ -644,40 +644,62 @@ class Group
             return $query_result->fetch_assoc()["COUNT(name)"];
     }
 
+    /**
+     * Returns array of groups and the number of their users from DataBase
+     *
+     * @return array|bool Returns array of groups and the number of their users, false upon error
+     */
     public function getGroupUserStat()
     {
         $groupList = $this->getGroups();
+        if (!$groupList)
+            return false;
         $groupUserNumbers = array();
         for ($c = 0; $c < sizeof($groupList); $c++) {
             $query = "SELECT COUNT(user_id) FROM user_group_partecipation WHERE group_name = '" . $groupList[$c]->name . "'";
             $query_result = $this->database->query($query);
+            if (!$query_result)
+                return false;
             $groupUserNumbers[$c]['group'] = $groupList[$c]->name;
             $groupUserNumbers[$c]['numberUsers'] = $query_result->fetch_assoc()["COUNT(user_id)"];
         }
         return ($groupUserNumbers);
     }
 
+    /**
+     * Returns array of group net_types and the number of groups associated from DataBase
+     *
+     * @return array|bool Returns array of group net_types and the number of groups associated, false upon error
+     */
     public function getGroupTypeStat()
     {
         $groupTypesNumbers = array();
 
         $query = "SELECT COUNT(name) FROM net_group WHERE net_type = 13";
         $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false;
         $groupTypesNumbers[0]['net_type'] = 'LAN';
         $groupTypesNumbers[0]['numberGroups'] = $query_result->fetch_assoc()["COUNT(name)"];
 
         $query = "SELECT COUNT(name) FROM net_group WHERE net_type = 6";
         $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false;
         $groupTypesNumbers[1]['net_type'] = 'VPN';
         $groupTypesNumbers[1]['numberGroups'] = $query_result->fetch_assoc()["COUNT(name)"];
 
         $query = "SELECT COUNT(name) FROM net_group WHERE net_type = 1";
         $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false;
         $groupTypesNumbers[2]['net_type'] = 'Access Login';
         $groupTypesNumbers[2]['numberGroups'] = $query_result->fetch_assoc()["COUNT(name)"];
 
         $query = "SELECT COUNT(name) FROM net_group WHERE net_type = 0";
         $query_result = $this->database->query($query);
+        if (!$query_result)
+            return false;
         $groupTypesNumbers[3]['net_type'] = 'Guest';
         $groupTypesNumbers[3]['numberGroups'] = $query_result->fetch_assoc()["COUNT(name)"];
 
