@@ -14,6 +14,7 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Check if Admin is authenticated */
 checkAdminSession();
 
 /* Create new Database instance */

@@ -1,14 +1,30 @@
 <?php
 
+/**
+ * -- Page Info -- 
+ * database_configure.php
+ * 
+ * -- Page Description -- 
+ * This Page lets the User configure the Database Connection
+ */
+
+/* Include NetItWorks Classes and use Composer Autoloader */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Check if Admin is authenticated */
 checkAdminSession();
 
+/* Create new Database instance */
 $database = new Database();
 
+/* If User presses "Save Details" button*/
 if (isset($_POST['save_database_details'])) {
+    
+    /* IF Disabled switch is set in form */
+    /* Set boolean accordingly*/
     if (isset($_POST['database_disabled']))
         $database_disabled = true;
     else
@@ -30,11 +46,17 @@ if (isset($_POST['save_database_details'])) {
     ";
 
     file_put_contents("config/database_config.php", $newConfiguration);
-    header("Refresh:0");
-} else if (isset($_POST['reset_database_details'])) {
+    /* Print success code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stdout'] = "Config Resetted Successfuly";
+    header("Refresh:1"); //Refresh Page with 1sec timeout
+}
+/* If User presses "Reset Details" button*/ else if (isset($_POST['reset_database_details'])) {
 
+    /* Copy Default Config File to Database Configuration File */
     file_put_contents("config/database_config.php", file_get_contents('config/database_config_default.php'));
-    header("Refresh:0");
+    /* Print success code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stdout'] = "Config Resetted Successfuly";
+    header("Refresh:1"); //Refresh Page with 1sec timeout
 }
 
 ?>

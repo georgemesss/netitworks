@@ -15,9 +15,11 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Start and Destroy session */
 session_start();
 session_destroy();
 
+/* And redirect user to login page */
 echo ("<script>location.href='login.php'</script>");
 
 ?>

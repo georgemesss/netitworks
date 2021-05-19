@@ -1,34 +1,61 @@
 <?php
 
+/**
+ * -- Page Info -- 
+ * radius_configure.php
+ * 
+ * -- Page Description -- 
+ * This Page lets the User configure the Radius Clients
+ */
+
+/* Include NetItWorks Classes and use Composer Autoloader */
+
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Check if Admin is authenticated */
 checkAdminSession();
 
+/* Create new Database instance */
 $database = new Database();
+/* And RadiusClient instance */
 $radius = new RadiusClient($database);
 
+/* If User presses "Add Radius Client" button*/
 if (isset($_POST['add_radius_client'])) {
 
+    /* Set radiusClient object attributes from form*/
     $radius->setRadiusClient(
         $_POST['radius_client_ip'],
         $_POST['radius_secret'],
         $_POST['radius_description']
     );
+
+    /* Get full radiusClient attributes from DB*/
     if (!$radius->setRadius_fromClient()) {
+        /* IF RadiusClient was added to DB without errors*/
         if ($radius->create())
+            /* Print success code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stdout'] = "Radius Client Added Successfully";
+        /* IF RadiusClient addition in DB returned errors*/
         else
+            /* Print error code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stderr'] = "Error On Adding Radius Client";
     }
-} elseif (isset($_POST['delete_radius_client'])) {
+}
+/* If User presses "Delete Radius Client" button*/ elseif (isset($_POST['delete_radius_client'])) {
+    /* Set radiusClient object attributes from form*/
     $radius->setNasName(
         $_POST['delete_radius_client']
     );
+    /* IF RadiusClient was deleted from DB without errors*/
     if ($radius->delete())
+        /* Print success code to session superglobal (banner will be printed down on page) */
         $_SESSION['status_stdout'] = "Radius Client Deleted Successfully";
+    /* IF RadiusClient deletion from DB returned errors*/
     else
+        /* Print error code to session superglobal (banner will be printed down on page) */
         $_SESSION['status_stderr'] = "Error On Deleting Radius Client";
 }
 

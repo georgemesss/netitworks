@@ -14,10 +14,12 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Check if Admin is authenticated */
 checkAdminSession();
 
 /* Create new Database instance */
 $database = new Database();
+/* If connection is unavailable set $database_connection accordingly*/
 if ($database->getConnectionStatus())
     $database_connection = true;
 else
@@ -25,17 +27,24 @@ else
 
 /* Create new Controller instance */
 $controller = new Controller();
+/* If connection is unavailable set $database_connection accordingly*/
 if ($controller->getConnectionStatus())
     $controller_connection = true;
 else
     $controller_connection = false;
 
+/* If DB connection is available*/
 if ($database_connection) {
+    /* Create new RadiusClient instance */
     $radiusClient = new RadiusClient($database, null);
+    /* Create new User instance */
     $user = new User($database, null);
+    /* Create new Group instance */
     $group = new Group($database, null);
 }
 
+/* Gets config parameters from variable stored in config/netitworks_config.php */
+/* And set boolean variables accordingly */
 if ($GLOBALS['netitworks_conf']['permit_guest_access'] == 'yes')
     $permit_guest_access = true;
 if ($GLOBALS['netitworks_conf']['permit_user_self_registration'] == 'yes')
@@ -46,14 +55,14 @@ if ($GLOBALS['netitworks_conf']['require_admin_approval'] == 'yes')
     $require_admin_approval = true;
 $guest_group = $GLOBALS['netitworks_conf']['guest_group'];
 
-/* Gets config parameters from variable stored in config/configure_controller.php  */
+/* Gets config parameters from variable stored in config/netitworks_config.php */
+/* And set boolean variables accordingly */
 if ($GLOBALS['netitworks_conf']['first_configuration_done'] == 'no') {
     $progress = '25';
     $first_configuration_done = false;
 } else
     $first_configuration_done = true;
 
-/* Gets config parameters from variable stored in config/configure_controller.php  */
 if ($GLOBALS['netitworks_conf']['controller_configuration_done'] == 'yes') {
     /* If controller configuration is completed  */
     $controller_conf_done = true;
@@ -483,8 +492,6 @@ if ($GLOBALS['netitworks_conf']['controller_configuration_done'] == 'yes') {
         <?php
         /* Print banner status with $_SESSION stdout/stderr strings */
         printBanner();
-        unset($_SESSION['status_stderr']);
-        unset($_SESSION['status_stdout']);
         ?>
 
     </div>

@@ -1,13 +1,25 @@
 <?php
 
-//$GLOBALS['netitworks_conf']['first_configuration_done']
+/* ATTENTION --> THIS FILE IS TO BE CHANGED -> NETITWORKS CONFIGURATION SHOULD BE MOVED TO DB */
+
+/**
+ * -- Page Info -- 
+ * guest_configure.php
+ * 
+ * -- Page Description -- 
+ * This Page lets the User configure the NetTTworks Guest Configuration
+ */
+
+/* Include NetItWorks Classes and use Composer Autoloader */
 
 namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Check if Admin is authenticated */
 checkAdminSession();
 
+/* Create new Database instance */
 $database = new Database();
 
 /* Set config default variables */
@@ -29,6 +41,7 @@ if ($GLOBALS['netitworks_conf']['require_sms_verification'] == 'yes')
 if ($GLOBALS['netitworks_conf']['require_admin_approval'] == 'yes')
     $require_admin_approval = true;
 
+/* If User presses "Save Details" button*/
 if (isset($_POST['save_guest_config'])) {
 
     if (isset($_POST['permit_guest_access']))
@@ -51,6 +64,7 @@ if (isset($_POST['save_guest_config'])) {
     else
         $require_admin_approval = 'no';
 
+    /* Update Guest Configuration */
     $newConfiguration .= "
     <?php
         "   . 'global $netitworks_conf;
@@ -68,14 +82,18 @@ if (isset($_POST['save_guest_config'])) {
     ?>
     ";
 
+    /* And push to NetITworks Configuration File */
     file_put_contents("config/netitworks_config.php", $newConfiguration);
-    $_SESSION['status_stdout'] = "Config Updated Successfuly";
-    header("Refresh:1");
-} else if (isset($_POST['reset_guest_config'])) {
-
+    /* Print success code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stdout'] = "Config Updated Successfully";
+    header("Refresh:1"); //Refresh Page with 1sec timeout
+}
+/* If User presses "Reset to Default" button*/ else if (isset($_POST['reset_guest_config'])) {
+    /* Copy Default Config File to NetITworks Configuration File */
     file_put_contents("config/netitworks_config.php", file_get_contents('config/netitworks_config_default.php'));
+    /* Print success code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stdout'] = "Config Resetted Successfuly";
-    header("Refresh:1");
+    header("Refresh:1"); //Refresh Page with 1sec timeout
 }
 
 ?>

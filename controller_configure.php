@@ -2,12 +2,11 @@
 
 /**
  * -- Page Info -- 
- * user_create.php
+ * controller_configure.php
  * 
  * -- Page Description -- 
- * This Page will let the user change the Controller Configuration Details
+ * This Page lets the User configure the Controller Connection
  */
-
 
 /* Include NetItWorks Classes and use Composer Autoloader */
 
@@ -15,35 +14,21 @@ namespace NetItWorks;
 
 require_once("vendor/autoload.php");
 
+/* Check if Admin is authenticated */
 checkAdminSession();
 
 /* Create new Controller instance */
 $controller = new Controller();
 
-/* If Controller is available and online */
-if ($controller->getConnectionStatus()) {
-
-    /* Update NetItWorks Configuration */
-    $new_netitworks_conf = "
-<?php
-    "   . 'global $netitworks_conf;
-    
-    '
-        . '$netitworks_conf' . " = [
-        'first_configuration_done' => '" . 'yes' . "', 
-        'controller_configuration_done' => '" . 'yes' . "'
-    ];
-?>
-";
-    /* And push to NetItWorks Configuration File */
-    file_put_contents("config/netitworks_config.php", $new_netitworks_conf);
-}
-
 /* If User presses "Save Controller Details" button*/
 if (isset($_POST['save_controller_details'])) {
 
-    /* Force controller status to enabled */
-    $controller_disabled = false;
+    /* IF Disabled switch is set in form */
+    /* Set boolean accordingly*/
+    if (isset($_POST['controller_disabled']))
+        $controller_disabled = true;
+    else
+        $controller_disabled = false;
 
     /* Update Controller Configuration */
     $new_controller_conf = "
@@ -65,47 +50,18 @@ if (isset($_POST['save_controller_details'])) {
 
     /* And push to Controller Configuration File */
     file_put_contents("config/controller_config.php", $new_controller_conf);
-
-    /* Then Update NetItWorks Configuration */
-    $new_netitworks_conf = "
-    <?php
-        "   . 'global $netitworks_conf;
-        
-        '
-        . '$netitworks_conf' . " = [
-            'first_configuration_done' => '" . 'yes' . "', 
-            'controller_configuration_done' => '" . 'no' . "'
-        ];
-    ?>
-    ";
-
-    /* And push to NetItWorks Configuration File */
-    file_put_contents("config/netitworks_config.php", $new_netitworks_conf);
-    header("Refresh:0"); //Refresh Page
-
+    /* Print success code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stdout'] = "Config Resetted Successfuly";
+    header("Refresh:1"); //Refresh Page with 1sec timeout
 }
 
 /* If User presses "Reset Controller Details" button*/ elseif (isset($_POST['reset_controller_details'])) {
 
     /* Copy Default Config File to Controller Configuration File */
     file_put_contents("config/controller_config.php", file_get_contents('config/controller_config_default.php'));
-
-    /* Then Update NetItWorks Configuration */
-    $new_netitworks_conf = "
-    <?php
-        "   . 'global $netitworks_conf;
-        
-        '
-        . '$netitworks_conf' . " = [
-            'first_configuration_done' => '" . 'yes' . "', 
-            'controller_configuration_done' => '" . 'no' . "'
-        ];
-    ?>
-    ";
-
-    /* And push to NetItWorks Configuration File */
-    file_put_contents("config/netitworks_config.php", $new_netitworks_conf);
-    header("Refresh:0"); //Refresh Page
+    /* Print success code to session superglobal (banner will be printed down on page) */
+    $_SESSION['status_stdout'] = "Config Resetted Successfuly";
+    header("Refresh:1"); //Refresh Page with 1sec timeout
 }
 
 ?>
