@@ -19,6 +19,10 @@ require_once("config/controller_config.php");
 require_once("config/database_config.php");
 require_once("config/netitworks_config.php");
 
+/* Global notifications array of Notification Objects declaration */
+global $notifications;
+$notifications = array();
+
 /**
  * If there are messages to print, prints banner
  *

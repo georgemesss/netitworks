@@ -207,26 +207,42 @@ require_once("vendor/autoload.php");
                         <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-bell fa-fw"></i>
                             <!-- Counter - Alerts -->
-                            <span class="badge badge-danger badge-counter">1</span>
+                            <?php
+
+                            $notifications = new Notification('', '', '');
+                            $notificationsArray = $notifications->getNotifications();
+
+                            if (sizeof($notificationsArray) != 0) { ?>
+                                <span class="badge badge-danger badge-counter"><?php echo sizeof($notificationsArray); ?></span>
+                            <?php } ?>
+
                         </a>
                         <!-- Dropdown - Alerts -->
-                        <div class="dropdown-list bg-gray-200 dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                        <div class="dropdown-list bg-moon-raker dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
                             <h6 class="dropdown-header bg-danger">
                                 Alerts Center
                             </h6>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <div class="mr-3">
-                                    <div class="icon-circle bg-success">
-                                        <i class="fas fa-file-alt text-white"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="small text-info">Date</div>
-                                    <span class="font-weight-bold">Text</span>
-                                </div>
-                            </a>
-                            <a class="dropdown-item bg-primary text-center small text-white" href="#">Show All
-                                Alerts</a>
+                            <?php for ($c = 0; $c < sizeof($notificationsArray); $c++) { ?>
+                                <form action="dashboard.php" method="post">
+                                    <a class="dropdown-item d-flex align-items-center">
+                                        <div class="mr-3">
+                                            <button class="btn icon-circle bg-success" type="submit" name="dismiss_alert" value="<?php echo $notificationsArray[$c]->type . "*" .  $notificationsArray[$c]->date . "*" . $notificationsArray[$c]->data ?>">
+                                                <i class="fas fa-check text-white"></i>
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <div class="small text-danger  font-weight-bold"><?php echo ($notificationsArray[$c]->type); ?></div>
+                                            <div class="small text-primary"><?php echo date("Y-m-d H:i:s", $notificationsArray[$c]->date); ?></div>
+                                            <span class="small text-info"><?php echo ($notificationsArray[$c]->data); ?></span>
+                                        </div>
+                                    </a>
+                                </form>
+                            <?php } ?>
+                            <?php if (sizeof($notificationsArray) == 0) { ?>
+                                <a class="dropdown-item bg-info text-center small text-white" href="#">
+                                    No alerts for you :)
+                                </a>
+                            <?php } ?>
                         </div>
                     </li>
 

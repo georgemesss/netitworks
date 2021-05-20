@@ -18,7 +18,7 @@ namespace NetItWorks;
 /**
  * Netitworks Radius class
  *
- * This class contains the properties and methods of a NetItWorks's Radius nasname
+ * This class contains the properties and methods of a NetItWorks's Radius Connection
  *
  * @package Netitworks
  * @author  George Mess <4onwb@protonmail.com>

@@ -18,14 +18,8 @@ require_once("vendor/autoload.php");
 /* Start PHP Session */
 session_start();
 
-/* Set config default variables */
-$require_sms_verification = false;
-$guest_group = null;
-$permit_user_self_registration = false;
-$require_sms_verification = false;
-$require_admin_approval = false;
-
 /* Gets config parameters from variable stored in config/netitworks_config.php */
+$permit_guest_access = $GLOBALS['netitworks_conf']['permit_guest_access'];
 $guest_group = $GLOBALS['netitworks_conf']['guest_group'];
 $permit_user_self_registration = $GLOBALS['netitworks_conf']['permit_user_self_registration'];
 $require_sms_verification = $GLOBALS['netitworks_conf']['require_sms_verification'];
@@ -36,111 +30,123 @@ $database = new Database();
 /* If Database connection is OK */
 if ($database->connection) {
 
-    /* Create new Group instance and link database object */
-    $group = new Group($database, null);
-    $group->setName($guest_group);
-
-    /* Get all group attributes from DB sarching for group name */
-    $group->setGroup_fromName();
-
     /* If user is NOT permitted to register himself */
-    if (!$permit_user_self_registration | $permit_user_self_registration != 'yes')
+    if (
+        $permit_guest_access != 'yes' |
+        $guest_group == '' | empty($guest_group) |
+        $permit_user_self_registration != 'yes'
+    )
         header("Location: login.php"); //Redirect him to login page
 
     /* If user IS permitted to register himself */
     else {
 
-        /* Check if sms verification is required */
-        if (!$require_sms_verification | $require_sms_verification != 'yes')
-            $require_sms_verification = false;
-        else
-            $require_sms_verification = true;
+        /* Create new Group instance and link database object */
+        $group = new Group($database, null);
+        $group->setName($guest_group);
 
-        /* Create new User instance and link database object */
-        $user = new User($database, NULL);
+        /* Get all group attributes from DB sarching for group name */
+        $group->setGroup_fromName();
 
-        if (empty($guest_group) | !isset($group->status)) {
-            /* Print error code to session superglobal (banner will be printed down on page) */
-            $_SESSION['status_stderr'] = "Error! Default Group not set";
-        } else {
+        /* If user is NOT permitted to register himself */
+        if (!$permit_user_self_registration | $permit_user_self_registration != 'yes')
+            header("Location: login.php"); //Redirect him to login page
 
-            /* If User presses "Create User" button and username is set */
-            if (isset($_POST['create_user']) && !empty($_POST['id'])) {
+        /* If user IS permitted to register himself */
+        else {
 
-                /* If passwords are not equal */
-                if ($_POST['password_1'] != $_POST['password_2']) {
-                    /* Print error code to session superglobal (banner will be printed down on page) */
-                    $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
-                }
+            /* Check if sms verification is required */
+            if (!$require_sms_verification | $require_sms_verification != 'yes')
+                $require_sms_verification = false;
+            else
+                $require_sms_verification = true;
 
-                /* If passwords are equal */ else {
+            /* Create new User instance and link database object */
+            $user = new User($database, NULL);
 
-                    /* Perform Post Super-Global Sanification */
-                    $_POST = $user->database->sanifyArray($_POST);
+            if (empty($guest_group) | !isset($group->status)) {
+                /* Print error code to session superglobal (banner will be printed down on page) */
+                $_SESSION['status_stderr'] = "Error! Default Group not set";
+            } else {
 
-                    /* Convert empty strings to 'NULL' strings */
-                    $_POST = emptyToNull($_POST);
+                /* If User presses "Create User" button and username is set */
+                if (isset($_POST['create_user']) && !empty($_POST['id'])) {
 
-                    /* Set properties to User object  */
-                    $user->setUser(
-                        $_POST['id'],
-                        "authenticated",
-                        $user->cryptPassword($_POST['password_1']),
-                        'pending',
-                        'NULL',
-                        $_POST['email'],
-                        0,
-                        0,
-                        'NULL',
-                        'NULL',
-                        'NULL'
-                    );
+                    /* If passwords are not equal */
+                    if ($_POST['password_1'] != $_POST['password_2']) {
+                        /* Print error code to session superglobal (banner will be printed down on page) */
+                        $_SESSION['status_stderr'] = "Error: Passwords do NOT match! ";
+                    }
 
-                    /* Add new User and properties to DataBase */
-                    $result = $user->create();
+                    /* If passwords are equal */ else {
 
-                    /* IF User was added to DB without errors */
-                    if ($result) {
+                        /* Perform Post Super-Global Sanification */
+                        $_POST = $user->database->sanifyArray($_POST);
 
-                        /* Join user to given group array */
-                        $_POST['groups'] = array([0]['name'] => $guest_group);
-                        $result = $user->joinGroups($_POST['groups']);
+                        /* Convert empty strings to 'NULL' strings */
+                        $_POST = emptyToNull($_POST);
 
-                        /* Print success code to session superglobal (banner will be printed down on page) */
-                        $_SESSION['status_stdout'] = "Pending User Added";
+                        /* Set properties to User object  */
+                        $user->setUser(
+                            $_POST['id'],
+                            "authenticated",
+                            $user->cryptPassword($_POST['password_1']),
+                            'pending',
+                            'NULL',
+                            $_POST['email'],
+                            0,
+                            0,
+                            'NULL',
+                            'NULL',
+                            'NULL'
+                        );
 
-                        /* Set SESSION variables */
-                        $_SESSION['user_id'] = $_POST['id'];
-                        $_SESSION['user_phone'] = $_POST['phone'];
+                        /* Add new User and properties to DataBase */
+                        $result = $user->create();
 
-                        /* If sms verification is required */
-                        if ($require_sms_verification)
-                            header('Refresh: 1.5; user_confirm.php'); //Redirect user to confirm page
-                        else {
-                            if (!$require_admin_approval) {
-                                /* Set User status to active in DataBase */
-                                $user->changeStatus('active');
-                                /* Print success code to session superglobal (banner will be printed down on page) */
-                                $_SESSION['status_stdout'] = "Thank you!";
+                        /* IF User was added to DB without errors */
+                        if ($result) {
+
+                            /* Join user to given group array */
+                            $_POST['groups'] = array([0]['name'] => $guest_group);
+                            $result = $user->joinGroups($_POST['groups']);
+
+                            /* Print success code to session superglobal (banner will be printed down on page) */
+                            $_SESSION['status_stdout'] = "Pending User Added";
+
+                            /* Set SESSION variables */
+                            $_SESSION['user_id'] = $_POST['id'];
+                            $_SESSION['user_phone'] = $_POST['phone'];
+
+                            /* If sms verification is required */
+                            if ($require_sms_verification)
+                                header('Refresh: 1.5; user_confirm.php'); //Redirect user to confirm page
+                            else {
+                                if (!$require_admin_approval) {
+                                    /* Set User status to active in DataBase */
+                                    $user->changeStatus('active');
+                                    /* Print success code to session superglobal (banner will be printed down on page) */
+                                    $_SESSION['status_stdout'] = "Thank you!";
+                                    header('Refresh: 1.5; login.php'); //Redirect user to login page
+                                }
                                 header('Refresh: 1.5; login.php'); //Redirect user to login page
                             }
-                            header('Refresh: 1.5; login.php'); //Redirect user to login page
+                            /* IF User-Group association in DB returned errors */
+                            if (!$result)
+                                /* Print specific error code to session superglobal (banner will be printed down on page) */
+                                $_SESSION['status_stderr'] = "Error on Associating Groups!";
+                        } else { /* IF User creation in DB returned errors */
+
+                            /* IF error is known */
+                            if (strpos($user->database->connection->error, "Duplicate entry") !== false)
+                                /* Print error code to session superglobal (banner will be printed down on page) */
+                                $_SESSION['status_stderr'] = "Error: User already exists ";
+
+                            /* IF error is unknown */
+                            else
+                                /* Print specific error code to session superglobal (banner will be printed down on page) */
+                                $_SESSION['status_stderr'] = "Error: " . $user->database->connection->error;
                         }
-                        /* IF User-Group association in DB returned errors */
-                        if (!$result)
-                            /* Print specific error code to session superglobal (banner will be printed down on page) */
-                            $_SESSION['status_stderr'] = "Error on Associating Groups!";
-                    } else { /* IF User creation in DB returned errors */
-
-                        /* IF error is known */
-                        if (strpos($user->database->connection->error, "Duplicate entry") !== false)
-                            /* Print error code to session superglobal (banner will be printed down on page) */
-                            $_SESSION['status_stderr'] = "Error: User already exists ";
-
-                        /* IF error is unknown */
-                        else
-                            /* Print specific error code to session superglobal (banner will be printed down on page) */
-                            $_SESSION['status_stderr'] = "Error: " . $user->database->connection->error;
                     }
                 }
             }

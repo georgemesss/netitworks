@@ -18,21 +18,20 @@ require_once("vendor/autoload.php");
 /* Start PHP Session */
 session_start();
 
-/* Set config default variables */
-$require_sms_verification = false;
-$guest_group = null;
-$permit_user_self_registration = false;
-$require_sms_verification = false;
-$require_admin_approval = false;
-
 /* Gets config parameters from variable stored in config/netitworks_config.php */
+$permit_guest_access = $GLOBALS['netitworks_conf']['permit_guest_access'];
 $guest_group = $GLOBALS['netitworks_conf']['guest_group'];
 $permit_user_self_registration = $GLOBALS['netitworks_conf']['permit_user_self_registration'];
 $require_sms_verification = $GLOBALS['netitworks_conf']['require_sms_verification'];
 $require_admin_approval = $GLOBALS['netitworks_conf']['require_admin_approval'];
 
 /* If user is NOT permitted to register himself */
-if ((!$permit_user_self_registration | $permit_user_self_registration != 'yes') | !$require_sms_verification | $require_sms_verification != 'yes')
+if (
+    $permit_guest_access != 'yes' |
+    $guest_group == '' | empty($guest_group) |
+    $permit_user_self_registration != 'yes' |
+    $require_sms_verification != 'yes'
+)
     header("Location: login.php"); //Redirect him to login page
 
 /* If user IS permitted to register himself */
@@ -93,12 +92,24 @@ else {
                     //Send mails to admins
                     /* Print success code to session superglobal (banner will be printed down on page) */
                     $_SESSION['status_stdout'] = "Thank you! Admin will have to confirm you!";
+
+                    /* Create new notification */
+                    $notification = new Notification('New Pending Guest', time(), $user->id . ' requires admin confirmation');
+                    /* And push to notifications.json*/
+                    $notification->push();
+
                     header('Refresh: 1.5; login.php'); //Redirect user to login page
                 } else {
                     /* Set User status to active in DataBase */
                     $user->changeStatus('active');
                     /* Print success code to session superglobal (banner will be printed down on page) */
                     $_SESSION['status_stdout'] = "Thank you!";
+
+                    /* Create new notification */
+                    $notification = new Notification('New Guest', time(), $user->id . ' was successfully registered');
+                    /* And push to notifications.json*/
+                    $notification->push();
+
                     header('Refresh: 1.5; user_welcome.php'); //Redirect user to user welcome page
                 }
             }

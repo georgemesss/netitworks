@@ -18,13 +18,10 @@ require_once("vendor/autoload.php");
 /* Start PHP Session */
 session_start();
 
-/* Set config default variables */
-$guest_group = null;
-$permit_guest_access = true;
-
 /* Gets config parameters from variable stored in config/netitworks_config.php */
-$guest_group = $GLOBALS['netitworks_conf']['guest_group'];
 $permit_guest_access = $GLOBALS['netitworks_conf']['permit_guest_access'];
+$guest_group = $GLOBALS['netitworks_conf']['guest_group'];
+$permit_user_self_registration = $GLOBALS['netitworks_conf']['permit_user_self_registration'];
 
 /* Create new Database instance */
 $database = new Database();
@@ -39,8 +36,14 @@ if ($database->connection) {
     $group->setGroup_fromName();
 
     /* If configuration does NOT permit users to register themselves */
-    if (!$permit_guest_access | $permit_guest_access != 'yes' | (empty($guest_group) | ($group->status == 0)))
+    if (
+        $permit_guest_access != 'yes' |
+        $guest_group == '' | empty($guest_group) |
+        $permit_user_self_registration != 'yes'
+    )
         $permit_guest_access = false;
+    else
+        $permit_guest_access = true;
 
     /* If User presses "Login" button */
     if (isset($_POST['login']) && isset($_POST['username'])) {

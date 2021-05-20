@@ -41,6 +41,20 @@ if ($database_connection) {
     $user = new User($database, null);
     /* Create new Group instance */
     $group = new Group($database, null);
+
+    /* If User presses "Dismiss Alert" button and username is set */
+    if (isset($_POST['dismiss_alert'])) {
+        $subString = explode("*", $_POST['dismiss_alert']);
+        $type = $subString[0];
+        $date = $subString[1];
+        $data = $subString[2];
+
+        /* Create Notification object instance from POST form */
+        $notificationToDismiss = new Notification($type, $date, $data);
+        /* And delete notification */
+        if ($notificationToDismiss->pop())
+            $_SESSION['status_stdout'] = "Alert dismissed";
+    }
 }
 
 /* Gets config parameters from variable stored in config/netitworks_config.php */
@@ -492,6 +506,8 @@ if ($GLOBALS['netitworks_conf']['controller_configuration_done'] == 'yes') {
         <?php
         /* Print banner status with $_SESSION stdout/stderr strings */
         printBanner();
+        unset($_SESSION['status_stderr']);
+        unset($_SESSION['status_stdout']);
         ?>
 
     </div>
