@@ -128,7 +128,7 @@ function uploadUserImage($user_id)
         }
 
         /* Check file size*/
-        if ($_FILES["user_image"]["size"] > 500000) {
+        if ($_FILES["user_image"]["size"] > 3000000) { //3MB
             $_SESSION['status_stderr'] =  "Sorry, your file is too large.";
             $fileIntegrity = false;
         }

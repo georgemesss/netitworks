@@ -22,7 +22,7 @@ $database = new Database();
 
 /* If User presses "Save Details" button*/
 if (isset($_POST['save_database_details'])) {
-    
+
     /* IF Disabled switch is set in form */
     /* Set boolean accordingly*/
     if (isset($_POST['database_disabled']))
@@ -158,12 +158,6 @@ include "./head.html";
                                 </div>
                             </div>
                             <div class="row justify-content-center">
-                                <?php
-                                if (isset($_POST['save_database_details']))
-                                    echo "<span class='text-success'>Details saved</span>";
-                                ?>
-                            </div>
-                            <div class="row justify-content-center">
                                 <div class="mt-5 text-center"><button class="btn btn-primary group-button mr-4" data-toggle="modal" data-target="#databaseEditModal" type="button">Save Details</button></div>
                                 <div class="mt-5 text-center"><button class="btn btn-warning group-button mr-4" data-toggle="modal" data-target="#databaseResetModal" type="button">Reset to Default</button></div>
                             </div>
@@ -229,8 +223,13 @@ include "./head.html";
                     </div>
                 </div>
             </div>
+            <?php
+            /* Print banner status with $_SESSION stdout/stderr strings */
+            printBanner();
+            unset($_SESSION['status_stderr']);
+            unset($_SESSION['status_stdout']);
+            ?>
         </div>
-
     </form>
 
     <?php include "./footer.html" ?>
