@@ -19,6 +19,11 @@ checkAdminSession();
 
 /* Create new Database instance */
 $database = new Database();
+
+/* Create new User instance */
+$user = new User($database, null);
+$user->setId($_SESSION['admin_id']);
+
 /* And RadiusClient instance */
 $radius = new RadiusClient($database);
 
@@ -35,11 +40,17 @@ if (isset($_POST['add_radius_client'])) {
     /* Get full radiusClient attributes from DB*/
     if (!$radius->setRadius_fromClient()) {
         /* IF RadiusClient was added to DB without errors*/
-        if ($radius->create())
+        if ($radius->create()) {
             /* Print success code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stdout'] = "Radius Client Added Successfully";
-        /* IF RadiusClient addition in DB returned errors*/
-        else
+
+            /* Log changes into Database */
+            $user->logChange(
+                "radius_add_client",
+                "IP: " . $_POST['radius_client_ip'] .  " SECRET: " . $_POST['radius_secret'] .  " DESCRIPTION: " . $_POST['radius_description']
+            );
+        }
+        /* IF RadiusClient addition in DB returned errors*/ else
             /* Print error code to session superglobal (banner will be printed down on page) */
             $_SESSION['status_stderr'] = "Error On Adding Radius Client";
     }
@@ -50,11 +61,17 @@ if (isset($_POST['add_radius_client'])) {
         $_POST['delete_radius_client']
     );
     /* IF RadiusClient was deleted from DB without errors*/
-    if ($radius->delete())
+    if ($radius->delete()) {
         /* Print success code to session superglobal (banner will be printed down on page) */
         $_SESSION['status_stdout'] = "Radius Client Deleted Successfully";
-    /* IF RadiusClient deletion from DB returned errors*/
-    else
+
+        /* Log changes into Database */
+        $user->logChange(
+            "radius_delete_client",
+            'Deleted ' . $_POST['delete_radius_client']
+        );
+    }
+    /* IF RadiusClient deletion from DB returned errors*/ else
         /* Print error code to session superglobal (banner will be printed down on page) */
         $_SESSION['status_stderr'] = "Error On Deleting Radius Client";
 }

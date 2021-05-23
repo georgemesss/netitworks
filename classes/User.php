@@ -1,39 +1,42 @@
 <?php
+
 /**
-* Class and Function List:
-* Function list:
-* - __construct()
-* - setUser()
-* - setId()
-* - cryptPassword()
-* - setUser_fromId()
-* - create()
-* - verifyPassword()
-* - ifGroupAssociated()
-* - getUsers()
-* - getPendingUsers()
-* - delete()
-* - changeStatus()
-* - joinGroups()
-* - getGroups()
-* - update()
-* - updatePhone()
-* - deAssociateAllUsers()
-* - setHwLimitedDevices()
-* - addHwLimitedDevice()
-* - deleteHwLimitedDevice()
-* - countActiveConnections()
-* - countConnectedDevices()
-* - countTotalUsers()
-* - countActiveUsers()
-* - countDisabledUsers()
-* - countPendingUsers()
-* - getSessions()
-* - getAccess()
-* - getUserStatusStat()
-* Classes list:
-* - User
-*/
+ * Class and Function List:
+ * Function list:
+ * - __construct()
+ * - setUser()
+ * - setId()
+ * - cryptPassword()
+ * - setUser_fromId()
+ * - create()
+ * - verifyPassword()
+ * - ifGroupAssociated()
+ * - getUsers()
+ * - getPendingUsers()
+ * - delete()
+ * - changeStatus()
+ * - joinGroups()
+ * - getGroups()
+ * - update()
+ * - updatePhone()
+ * - deAssociateAllUsers()
+ * - setHwLimitedDevices()
+ * - addHwLimitedDevice()
+ * - deleteHwLimitedDevice()
+ * - countActiveConnections()
+ * - countConnectedDevices()
+ * - countTotalUsers()
+ * - countActiveUsers()
+ * - countDisabledUsers()
+ * - countPendingUsers()
+ * - getSessions()
+ * - getAccess()
+ * - getUserStatusStat()
+ * - logChange()
+ * Classes list:
+ * - User
+ */
+
 namespace NetItWorks;
 
 /**
@@ -154,17 +157,12 @@ class User
 		$query .= " WHERE id = '" . $this->id . "'";
 
 		$query_result = $this->database->query($query);
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false; //Error
-			
-		}
-		else
-		{
-			if ($query_result->num_rows == 1)
-			{
-				while ($row = $query_result->fetch_assoc())
-				{
+
+		} else {
+			if ($query_result->num_rows == 1) {
+				while ($row = $query_result->fetch_assoc()) {
 					$this->id = $row['id'];
 					$this->type = $row['type'];
 					$this->password = $row['password'];
@@ -177,8 +175,7 @@ class User
 					$this->ip_range_stop = $row['ip_range_stop'];
 					$this->active_net_group = $row['active_net_group'];
 				}
-			}
-			else return false;
+			} else return false;
 			return true;
 		}
 	}
@@ -207,8 +204,7 @@ class User
 		$query .= ' VALUES ("' . $this->id . '", "' . $this->type . '", "' . $this->password . '", "' . $this->status . '", "' . $this->phone . '", "' . $this->email . '", ' . $this->ip_limitation_status . ', ' . $this->hw_limitation_status . ', "' . $this->ip_range_start . '", "' . $this->ip_range_stop . '", "' . $this->active_net_group . '")';
 
 		$query_result = $this->database->query($query);
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false;
 		}
 		return true;
@@ -241,12 +237,10 @@ class User
 
 		$query_result = $this->database->query($query);
 
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false; //Error
-			
-		}
-		elseif ($query_result->num_rows == 1) return true;
+
+		} elseif ($query_result->num_rows == 1) return true;
 
 		return false;
 	}
@@ -273,19 +267,14 @@ class User
         " . " FROM net_user";
 
 		$query_result = $this->database->query($query);
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false; //Error
-			
-		}
-		else
-		{
+
+		} else {
 			$users[] = new User($this->database, $this->controller);
 			$c = 0;
-			if ($query_result->num_rows != 0)
-			{
-				while ($row = $query_result->fetch_assoc())
-				{
+			if ($query_result->num_rows != 0) {
+				while ($row = $query_result->fetch_assoc()) {
 					$users[$c]->id = $row['id'];
 					$users[$c]->type = $row['type'];
 					$users[$c]->password = $row['password'];
@@ -328,19 +317,14 @@ class User
 		$query .= " WHERE status = 'pending'";
 
 		$query_result = $this->database->query($query);
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false; //Error
-			
-		}
-		else
-		{
+
+		} else {
 			$users[] = new User($this->database, $this->controller);
 			$c = 0;
-			if ($query_result->num_rows != 0)
-			{
-				while ($row = $query_result->fetch_assoc())
-				{
+			if ($query_result->num_rows != 0) {
+				while ($row = $query_result->fetch_assoc()) {
 					$users[$c]->id = $row['id'];
 					$users[$c]->type = $row['type'];
 					$users[$c]->password = $row['password'];
@@ -391,26 +375,19 @@ class User
 		$query .= " WHERE id = '" . $this->id . "'";
 
 		$query_result = $this->database->query($query);
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false; //Error
-			
-		}
-		else
-		{
 
-			while ($row = $query_result->fetch_assoc())
-			{
+		} else {
+
+			while ($row = $query_result->fetch_assoc()) {
 				$previousStatus = $row["status"];
 			}
 
-			if (!isset($condition))
-			{
+			if (!isset($condition)) {
 				if ($previousStatus == "active") $newStatus = "disabled";
 				else $newStatus = "active";
-			}
-			else
-			{
+			} else {
 				$newStatus = $condition;
 			}
 
@@ -418,13 +395,10 @@ class User
 			$query = "UPDATE net_user " . "SET status ='" . $newStatus . "'" . " WHERE id = '" . $this->id . "'";
 
 			$query_result = $this->database->query($query);
-			if (!$query_result)
-			{
+			if (!$query_result) {
 				return false; //Error
-				
-			}
-			else
-			{
+
+			} else {
 				return true;
 			}
 		}
@@ -437,8 +411,7 @@ class User
 	 */
 	public function joinGroups($group_array)
 	{
-		foreach ($group_array as $group)
-		{
+		foreach ($group_array as $group) {
 
 			/* Prepare inserting query */
 			$query = "INSERT INTO user_group_partecipation(
@@ -449,10 +422,9 @@ class User
 			$query .= ' VALUES ("' . $this->id . '", "' . $group . '")';
 
 			$query_result = $this->database->query($query);
-			if (!$query_result)
-			{
+			if (!$query_result) {
 				return false; //Error
-				
+
 			}
 		}
 		return true;
@@ -471,19 +443,14 @@ class User
 		$query .= " WHERE user_id = '" . $this->id . "'";
 
 		$query_result = $this->database->query($query);
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false; //Error
-			
-		}
-		else
-		{
+
+		} else {
 			$groups[] = new Group($this->database, $this->controller);
 			$c = 0;
-			if ($query_result->num_rows != 0)
-			{
-				while ($row = $query_result->fetch_assoc())
-				{
+			if ($query_result->num_rows != 0) {
+				while ($row = $query_result->fetch_assoc()) {
 					$groups[$c]->name = $row['group_name'];
 					$c++;
 				}
@@ -520,8 +487,7 @@ class User
 		$query .= " WHERE id = '" . $this->id . "'";
 
 		$query_result = $this->database->query($query);
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false;
 		}
 		return true;
@@ -544,8 +510,7 @@ class User
 		$query .= " WHERE id = '" . $this->id . "'";
 
 		$query_result = $this->database->query($query);
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false;
 		}
 		return true;
@@ -564,10 +529,9 @@ class User
 		$query .= " WHERE user_id = '" . $this->id . "'";
 
 		$query_result = $this->database->query($query);
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false; //Error
-			
+
 		}
 		return true;
 	}
@@ -587,26 +551,19 @@ class User
 		$query .= " WHERE user_id = '" . $this->id . "'";
 
 		$query_result = $this->database->query($query);
-		if (!$query_result)
-		{
+		if (!$query_result) {
 			return false; //Error
-			
-		}
-		else
-		{
+
+		} else {
 			$c = 0;
-			if ($query_result->num_rows != 0)
-			{
-				while ($row = $query_result->fetch_assoc())
-				{
+			if ($query_result->num_rows != 0) {
+				while ($row = $query_result->fetch_assoc()) {
 					$this->limitedDevices[$c]['mac_address'] = $row['mac_address'];
 					if (empty($row['client_ip'])) $this->limitedDevices[$c]['client_ip'] = 'N/A';
 					else $this->limitedDevices[$c]['client_ip'] = $row['client_ip'];
 					$c++;
 				}
-			}
-			else
-			{
+			} else {
 				return false;
 			}
 		}
@@ -629,8 +586,7 @@ class User
 
 		$query_result = $this->database->query($query);
 		if (!$query_result) return false; //Error
-		else
-		{
+		else {
 
 			/* Prepare inserting query */
 			$query = "INSERT INTO user_hw_limitation (
@@ -680,10 +636,8 @@ class User
 
 		$query_result = $this->database->query($query);
 		if (!$query_result) return false; //Error
-		else
-		{
-			if ($query_result->num_rows != 0)
-			{
+		else {
+			if ($query_result->num_rows != 0) {
 				while ($row = $query_result->fetch_assoc()) $counter = $row["COUNT(net_user.id)"];
 			}
 			return $counter;
@@ -707,10 +661,8 @@ class User
 
 		$query_result = $this->database->query($query);
 		if (!$query_result) return false; //Error
-		else
-		{
-			if ($query_result->num_rows != 0)
-			{
+		else {
+			if ($query_result->num_rows != 0) {
 				while ($row = $query_result->fetch_assoc()) $counter = $row["COUNT(net_user.id)"];
 			}
 			return $counter;
@@ -730,7 +682,7 @@ class User
 
 		$query_result = $this->database->query($query);
 		if (!$query_result) return false; //Error
-		else return $query_result->fetch_assoc() ["COUNT(id)"];
+		else return $query_result->fetch_assoc()["COUNT(id)"];
 	}
 
 	/**
@@ -745,7 +697,7 @@ class User
 
 		$query_result = $this->database->query($query);
 		if (!$query_result) return false; //Error
-		else return $query_result->fetch_assoc() ["COUNT(id)"];
+		else return $query_result->fetch_assoc()["COUNT(id)"];
 	}
 
 	/**
@@ -760,7 +712,7 @@ class User
 
 		$query_result = $this->database->query($query);
 		if (!$query_result) return false; //Error
-		else return $query_result->fetch_assoc() ["COUNT(id)"];
+		else return $query_result->fetch_assoc()["COUNT(id)"];
 	}
 
 	/**
@@ -775,7 +727,7 @@ class User
 
 		$query_result = $this->database->query($query);
 		if (!$query_result) return false; //Error
-		else return $query_result->fetch_assoc() ["COUNT(id)"];
+		else return $query_result->fetch_assoc()["COUNT(id)"];
 	}
 
 	/**
@@ -799,12 +751,10 @@ class User
 
 		$query_result = $this->database->query($query);
 		if (!$query_result) return false; //Error
-		else
-		{
+		else {
 			$c = 0;
 			$sessions[] = array();
-			while ($row = $query_result->fetch_assoc())
-			{
+			while ($row = $query_result->fetch_assoc()) {
 				$sessions[$c] = $row;
 				$c++;
 			}
@@ -832,12 +782,10 @@ class User
 
 		$query_result = $this->database->query($query);
 		if (!$query_result) return false; //Error
-		else
-		{
+		else {
 			$c = 0;
 			$access[] = array();
-			while ($row = $query_result->fetch_assoc())
-			{
+			while ($row = $query_result->fetch_assoc()) {
 				$access[$c] = $row;
 				$c++;
 			}
@@ -869,5 +817,28 @@ class User
 		$userStatusNumbers[1]['numberUsers'] = $this->countTotalUsers() - $userStatusNumbers[0]['numberUsers'];
 
 		return ($userStatusNumbers);
+	}
+
+	/**
+	 * Logs user modification into Database Log
+	 *
+	 * @return bool Returns false upon error, true otherwise
+	 */
+	function logChange($op_type, $op_details)
+	{
+		/* Prepare inserting query */
+		$query = "INSERT INTO controller_config_log (
+            editor_name,
+            date_time,
+			operation_type,
+			operation_details
+        )";
+
+		$query .= ' VALUES ("' . $this->id . '", "' . date('Y-m-d H:i:s') . '", "' . $op_type . '", "' . $op_details . '")';
+
+		$query_result = $this->database->query($query);
+		if (!$query_result) return false; //Error
+		else
+			return true;
 	}
 }

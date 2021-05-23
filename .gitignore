@@ -1,5 +1,6 @@
 # Ignore items  
 /vendor/
+/media/user_pics/
 /tests/
 /sb_admin_template/
 /node_modules/

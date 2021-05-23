@@ -20,6 +20,10 @@ checkAdminSession();
 /* Create new Database instance */
 $database = new Database();
 
+/* Create new User instance */
+$user = new User($database, null);
+$user->setId($_SESSION['admin_id']);
+
 /* If User presses "Save Details" button*/
 if (isset($_POST['save_database_details'])) {
 
@@ -45,9 +49,33 @@ if (isset($_POST['save_database_details'])) {
     ?>
     ";
 
+    /* Get changes */
+    if ($GLOBALS['database_conf']['ip'] !== $_POST['database_ip']) {
+        $change .= "FROM ip: '" . $GLOBALS['database_conf']['ip'] . "' TO '" . $_POST['database_ip'] . "'";
+    }
+    if ($GLOBALS['database_conf']['port'] !== $_POST['database_port']) {
+        $change .= " FROM port: '" . $GLOBALS['database_conf']['port'] . "' TO '" . $_POST['database_port'] . "'";
+    }
+    if ($GLOBALS['database_conf']['username'] !== $_POST['database_username']) {
+        $change .= " FROM username: '" . $GLOBALS['database_conf']['username'] . "' TO '" . $_POST['database_username'] . "'";
+    }
+    if ($GLOBALS['database_conf']['password'] !== $_POST['database_password']) {
+        $change .= " FROM password: '" . $GLOBALS['database_conf']['password'] . "' TO '" . $_POST['database_password'] . "'";
+    }
+    if ($GLOBALS['database_conf']['disabled'] !== $database_disabled) {
+        $change .= " FROM disabled: '" . $GLOBALS['database_conf']['disabled'] . "' TO '" . $database_disabled . "'";
+    }
+
     file_put_contents("config/database_config.php", $newConfiguration);
     /* Print success code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stdout'] = "Config Resetted Successfuly";
+
+    /* Log changes into Database */
+    $user->logChange(
+        "database_configure",
+        $change
+    );
+
     header("Refresh:1"); //Refresh Page with 1sec timeout
 }
 /* If User presses "Reset Details" button*/ else if (isset($_POST['reset_database_details'])) {
@@ -56,6 +84,13 @@ if (isset($_POST['save_database_details'])) {
     file_put_contents("config/database_config.php", file_get_contents('config/database_config_default.php'));
     /* Print success code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stdout'] = "Config Resetted Successfuly";
+
+    /* Log changes into Database */
+    $user->logChange(
+        "database_configure_reset",
+        'NULL'
+    );
+
     header("Refresh:1"); //Refresh Page with 1sec timeout
 }
 

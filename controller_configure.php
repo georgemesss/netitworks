@@ -20,6 +20,13 @@ checkAdminSession();
 /* Create new Controller instance */
 $controller = new Controller();
 
+/* Create new Database instance */
+$database = new Database();
+
+/* Create new User instance */
+$user = new User($database, null);
+$user->setId($_SESSION['admin_id']);
+
 /* If User presses "Save Controller Details" button*/
 if (isset($_POST['save_controller_details'])) {
 
@@ -48,11 +55,42 @@ if (isset($_POST['save_controller_details'])) {
     ?>
     ";
 
+    /* Get changes */
+    if ($GLOBALS['controller_conf']['name'] !== $_POST['controller_name']) {
+        $change .= "FROM name: '" . $GLOBALS['controller_conf']['name'] . "' TO '" . $_POST['controller_name'] . "'";
+    }
+    if ($GLOBALS['controller_conf']['description'] !== $_POST['controller_description']) {
+        $change .= " FROM description: '" . $GLOBALS['controller_conf']['description'] . "' TO '" . $_POST['controller_description'] . "'";
+    }
+    if ($GLOBALS['controller_conf']['ip'] !== $_POST['controller_ip']) {
+        $change .= " FROM ip: '" . $GLOBALS['controller_conf']['ip'] . "' TO '" . $_POST['controller_ip'] . "'";
+    }
+    if ($GLOBALS['controller_conf']['port'] !== $_POST['controller_port']) {
+        $change .= " FROM port: '" . $GLOBALS['controller_conf']['port'] . "' TO '" . $_POST['controller_port'] . "'";
+    }
+    if ($GLOBALS['controller_conf']['username'] !== $_POST['controller_username']) {
+        $change .= " FROM username: '" . $GLOBALS['controller_conf']['username'] . "' TO '" . $_POST['controller_username'] . "'";
+    }
+    if ($GLOBALS['controller_conf']['password'] !== $_POST['controller_password']) {
+        $change .= " FROM password: '" . $GLOBALS['controller_conf']['password'] . "' TO '" . $_POST['controller_password'] . "'";
+    }
+    if ($GLOBALS['controller_conf']['disabled'] !== $controller_disabled) {
+        $change .= " FROM disabled: '" . $GLOBALS['controller_conf']['disabled'] . "' TO '" . $controller_disabled . "'";
+    }
+
     /* And push to Controller Configuration File */
-    file_put_contents("config/controller_config.php", $new_controller_conf);
-    /* Print success code to session superglobal (banner will be printed down on page) */
-    $_SESSION['status_stdout'] = "Config Resetted Successfuly";
-    header("Refresh:1"); //Refresh Page with 1sec timeout
+    if (file_put_contents("config/controller_config.php", $new_controller_conf) != false) {
+        /* Print success code to session superglobal (banner will be printed down on page) */
+        $_SESSION['status_stdout'] = "Config Resetted Successfuly";
+
+        /* Log changes into Database */
+        $user->logChange(
+            "controller_configure",
+            $change
+        );
+        
+        header("Refresh:1"); //Refresh Page with 1sec timeout
+    }
 }
 
 /* If User presses "Reset Controller Details" button*/ elseif (isset($_POST['reset_controller_details'])) {
@@ -61,6 +99,13 @@ if (isset($_POST['save_controller_details'])) {
     file_put_contents("config/controller_config.php", file_get_contents('config/controller_config_default.php'));
     /* Print success code to session superglobal (banner will be printed down on page) */
     $_SESSION['status_stdout'] = "Config Resetted Successfuly";
+    
+    /* Log changes into Database */
+    $user->logChange(
+        "controller_configure_reset",
+        'NULL'
+    );
+
     header("Refresh:1"); //Refresh Page with 1sec timeout
 }
 
