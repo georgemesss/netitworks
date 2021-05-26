@@ -1,30 +1,32 @@
-# NetItWorks UniFi Network Controller Extension
+# FreeRadius Web Manager with Optional UniFi Guest Management
+NetITworks is an open-source product that provides a ready-to-go FreeRadius configuration along with a modern web-based platform. 
 
-A PHP product that extends the Ubiquiti's [**UniFi Network Controller**](https://unifi-network.ui.com/) features to Radius User & Group Management and Simple UniFi Network Control. 
+Optionally, NetITworks can be paired with a [**UniFi Network Controller**](https://unifi-network.ui.com/) in order to use it as a captive portal guest solution, using Art of WiFi's [**UniFi API Client**](https://packagist.org/packages/art-of-wifi/unifi-api-client).
 
-This class uses Art of WiFi's [**UniFi API Client**] tool which can be found [here](https://packagist.org/packages/art-of-wifi/unifi-api-client).
+## Basic Features
+With NetITworks you will be able to
+- Manage Users and Groups that can authenticate on a FreeRadius Server 
+- Assign Groups services such as LAN, VPN or access to specific services such as Storage NAS Server 
+- Restrict Groups and/or Users to Specific MAC Addresses
+- View Radius Access and Session Logs
+- View Statistics through a Dashboard
 
-## Features
-
-The NetItWorks tool offers the following features via a Simple WEB Interface:
-
-- Radius User and Group Management for UniFi Controller
-- User limitation to specific HW addresses and IPs
-- Group limitation to specific VLANs and IP ranges
-- Guest management
-- Guest Welcome Page with Registration and Login  
+## Advanced UniFi Features
+If combined with a UniFi Controller, NetITworks will let you
+- Access all the Basic feautures
+- Associate Cabled and/or WiFi Networks to NetITworks Captive Portal Service
+- Manage Guests Self Registration - Require SMS Verification and/or Admin Approval
+- Manage Guests that are waiting for Admin Approval
+- Manage Existing UniFi Networks and Create New Ones
+- Restrict Networks with 802.11x Authentication using NetITworks FreeRadius Server
+- Restrict Groups and/or Users to Specific IP Ranges
 
 ## Requirements
 
-- a server with PHP, version 5.5.0 or higher, and the PHP cURL module installed
-- direct network connectivity between this server and the host and port (normally TCP port 8443) where the UniFi Controller is running
-- you must use **local accounts**, not UniFi Cloud accounts, to access the UniFi Controller API through this class
-
-
-## UniFi OS Support
-
-Please view Art of WiFi's [**UniFi API Client**] requirements which can be found [here](https://packagist.org/packages/art-of-wifi/unifi-api-client).
-
+- Apache Web Server with PHP, version 5.5.0 or higher, and PHP cURL and filter modules installed
+- Composer
+- NPM
+- [**(Optional) UniFi Network Controller**](https://unifi-network.ui.com/), version compatible with Art of WiFi's [**UniFi API Client**](https://packagist.org/packages/art-of-wifi/unifi-api-client).
 
 ## Usage and Installation
 
@@ -63,7 +65,7 @@ npm install
 
 ## Contribute
 
-If you would like to contribute code (improvements), please open an issue and include your code there or else create a pull request.
+If you'd love to contribute to the NetITworks Project, please open an issue or create a pull request.
 
 ## Credits
 
